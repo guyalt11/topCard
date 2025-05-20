@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const adminUser = {
           id: uuidv4(),
           username: 'admin',
-          password: 'admin123', // Preperation for backend
+          password: 'admin', // Preperation for backend
           isAdmin: true
         };
         localStorage.setItem('users', JSON.stringify([adminUser]));
