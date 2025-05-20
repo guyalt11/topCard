@@ -1,0 +1,121 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 100% 55%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 150 60% 52%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 150 45% 30%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 222.2 84% 4.9%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 212.7 26.8% 83.9%;
+  }
+
+  /* Remove light mode completely */
+  html {
+    color-scheme: dark;
+  }
+
+  /* Modified to remove @apply dark which causes the error */
+  html:not(.dark) {
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .gender-tag {
+    @apply inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium;
+  }
+  
+  .gender-tag-m {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+  }
+  
+  .gender-tag-f {
+    @apply bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200;
+  }
+  
+  .gender-tag-n {
+    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  
+  .card-flip {
+    @apply perspective-1000 relative w-full;
+  }
+
+  .card-flip-inner {
+    @apply relative w-full h-full transition-transform duration-500 transform-style-3d;
+  }
+
+  .card-flip-front, .card-flip-back {
+    @apply absolute w-full h-full backface-hidden;
+  }
+
+  .card-flip-back {
+    @apply rotate-y-180;
+  }
+
+  .card-flip.flipped .card-flip-inner {
+    @apply rotate-y-180;
+  }
+}
