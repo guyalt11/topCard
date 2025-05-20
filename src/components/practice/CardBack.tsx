@@ -23,7 +23,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
   };
   
   return (
-    <div className="mt-8 pt-4 border-t w-full">
+    <div className="text-center mt-8 pt-4 border-t w-full">
       <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
         <DirectionFlag direction={direction === 'germanToEnglish' ? 'englishToGerman' : 'germanToEnglish'} size={20} />
       </div>
