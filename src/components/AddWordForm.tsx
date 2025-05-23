@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { VocabWord, Gender } from '@/types/vocabulary';
 import { useVocab } from '@/context/VocabContext';
@@ -6,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import GenderTag from '@/components/GenderTag';
 import { Loader2, AlertCircle, X } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import {
@@ -68,7 +68,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
     return () => clearTimeout(debounceTimeout);
   }, [german, editWord]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!german.trim() || !english.trim()) {
@@ -81,7 +81,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
     }
 
     if (editWord) {
-      updateWord(editWord.id, {
+      await updateWord(editWord.id, {
         german: german.trim(),
         english: english.trim(),
         gender,
@@ -93,7 +93,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
       });
     } else {
       if (currentList) {
-        addWord(currentList.id, {
+        await addWord(currentList.id, {
           german: german.trim(),
           english: english.trim(),
           gender,
@@ -106,6 +106,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
       }
     }
 
+    // Reset form
     setGerman('');
     setEnglish('');
     setGender(undefined);

@@ -10,7 +10,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    // Could show a loading spinner here
+    // Show a loading spinner while checking authentication
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 

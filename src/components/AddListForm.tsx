@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { VocabList } from '@/types/vocabulary';
 import { useVocab } from '@/context/VocabContext';
@@ -18,19 +19,21 @@ interface AddListFormProps {
   editList?: VocabList;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: (list: VocabList) => void;
 }
 
 const AddListForm: React.FC<AddListFormProps> = ({ 
   editList, 
   open, 
-  onOpenChange 
+  onOpenChange,
+  onSuccess
 }) => {
   const { addList, updateList } = useVocab();
   
   const [name, setName] = useState(editList?.name || '');
   const [description, setDescription] = useState(editList?.description || '');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name.trim()) {
@@ -38,12 +41,28 @@ const AddListForm: React.FC<AddListFormProps> = ({
     }
 
     if (editList) {
-      updateList(editList.id, {
+      await updateList(editList.id, {
         name: name.trim(),
         description: description.trim() || undefined,
       });
+      
+      // If edit was successful and we have a callback, call it with the updated list
+      if (onSuccess) {
+        const updatedList = {
+          ...editList,
+          name: name.trim(),
+          description: description.trim() || undefined
+        };
+        onSuccess(updatedList);
+      }
     } else {
-      addList(name.trim()); // Fixed: removed second argument
+      // When creating a new list, use the description parameter correctly
+      const newList = await addList(name.trim(), description.trim() || undefined);
+      
+      // If creation was successful and we have a callback, call it with the new list
+      if (newList && onSuccess) {
+        onSuccess(newList);
+      }
     }
 
     // Reset form

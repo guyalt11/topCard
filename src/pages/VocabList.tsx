@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // added useParams
 import { useVocab } from '@/context/VocabContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,8 +32,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "@/components/ui/label";
 
 const VocabList = () => {
+  
   const navigate = useNavigate();
-  const { currentList, deleteWord, exportList, importList, deleteList, updateList } = useVocab();
+  const { listId } = useParams<{ listId: string }>();
+  const { getListById, deleteWord, exportList, importList, deleteList, updateList } = useVocab();
+
+  // Use id to get currentList
+  const currentList = getListById(listId ?? '');
+
   const [searchTerm, setSearchTerm] = useState('');
   const [addWordOpen, setAddWordOpen] = useState(false);
   const [wordToEdit, setWordToEdit] = useState<VocabWord | undefined>(undefined);
@@ -81,11 +86,7 @@ const VocabList = () => {
     setAddWordOpen(true);
   };
 
-  const handlePractice = () => {
-    navigate('/practice');
-  };
-
-  const handleExport = (format: 'json' | 'yaml') => {
+  const handleExport = (format: 'json') => {
     exportList(currentList.id, format);
   };
 
@@ -143,15 +144,29 @@ const VocabList = () => {
     return word.nextReview?.[direction];
   };
 
-  const getDueWordsCount = (): number => {
+  const getDueByLanguage = () => {
     const now = new Date();
-    return currentList.words.filter(word => {
-      const germanToEnglishDue = !getNextReviewDate(word, 'germanToEnglish') || 
-                                  getNextReviewDate(word, 'germanToEnglish')! <= now;
-      const englishToGermanDue = !getNextReviewDate(word, 'englishToGerman') || 
-                                  getNextReviewDate(word, 'englishToGerman')! <= now;
-      return germanToEnglishDue || englishToGermanDue;
-    }).length;
+    let germanDue = 0;
+    let englishDue = 0;
+  
+    currentList.words.forEach(word => {
+      if (!getNextReviewDate(word, 'germanToEnglish') || getNextReviewDate(word, 'germanToEnglish')! <= now) {
+        germanDue++;
+      }
+      if (!getNextReviewDate(word, 'englishToGerman') || getNextReviewDate(word, 'englishToGerman')! <= now) {
+        englishDue++;
+      }
+    });
+  
+    return { germanDue, englishDue };
+  };
+  
+  const germanDueCount = getDueByLanguage().germanDue;
+  const englishDueCount = getDueByLanguage().englishDue;
+
+  const getDueWordsCount = (): number => {
+    const { germanDue, englishDue } = getDueByLanguage();
+    return germanDue + englishDue;
   };
 
   const formatNextReview = (date: Date | undefined): string => {
@@ -164,6 +179,13 @@ const VocabList = () => {
     }
     
     return `In ${formatDistanceToNow(date)}`;
+  };
+
+  const getDueStatusForWord = (word: VocabWord) => {
+    const now = new Date();
+    const germanDue = !getNextReviewDate(word, 'germanToEnglish') || getNextReviewDate(word, 'germanToEnglish')! <= now;
+    const englishDue = !getNextReviewDate(word, 'englishToGerman') || getNextReviewDate(word, 'englishToGerman')! <= now;
+    return { germanDue, englishDue };
   };
 
   const isWordDueForReview = (word: VocabWord): boolean => {
@@ -183,7 +205,7 @@ const VocabList = () => {
     const eToGFormatted = formatNextReview(getNextReviewDate(word, 'englishToGerman'));
     
     return (
-      <div className="flex flex-col gap-1 items-end">
+      <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
           <DirectionFlag direction="germanToEnglish" size={14} />
           <span>{gToEFormatted}</span>
@@ -200,7 +222,7 @@ const VocabList = () => {
 
   return (
     <div className="container py-6 max-w-3xl">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 sm:flex sm:justify-between sm:items-center">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{currentList.name}</h1>
@@ -227,22 +249,31 @@ const VocabList = () => {
             <p className="text-muted-foreground mt-1">{currentList.description}</p>
           )}
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => navigate('/')}>Back to Lists</Button>
-          {currentList.words.length > 0 && (
-            <Button 
-              variant="default" 
-              onClick={handlePractice}
-              className="relative"
-            >
-              Practice
-              {dueWordsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {dueWordsCount}
-                </span>
-              )}
-            </Button>
-          )}
+        <div className="flex gap-2 mt-2 sm:mt-0">
+          <span className="flex items-center font-bold border border-transparent pr-4 pl-0 sm:pl-4 h-10 select-none">
+            Practice:
+          </span>
+          <Button
+            variant="default"
+            onClick={() => navigate(`/practice/englishToGerman`)}
+            className={`relative ${englishDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={englishDueCount === 0}
+          >
+            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => navigate(`/practice/germanToEnglish`)}
+            className={`relative ${germanDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={germanDueCount === 0}
+          >
+            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+          </Button>
+          <Button onClick={() => navigate('/')}>Home</Button>
         </div>
       </div>
 
@@ -259,13 +290,14 @@ const VocabList = () => {
           size="icon" 
           onClick={() => setShowReviewTimes(!showReviewTimes)}
           title={showReviewTimes ? "Hide review times" : "Show review times"}
+          className="px-3"
         >
           ⏱️
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" title="List actions">
-              <Download className="h-4 w-4" />
+              <Download className="mx-3 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -273,9 +305,6 @@ const VocabList = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => handleExport('json')}>
               Export as JSON
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleExport('yaml')}>
-              Export as YAML
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleImportClick}>
               <Upload className="h-4 w-4 mr-2" />
@@ -287,7 +316,7 @@ const VocabList = () => {
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept=".json,.yaml,.yml"
+          accept=".json"
           className="hidden"
         />
       </div>

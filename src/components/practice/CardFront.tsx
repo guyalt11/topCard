@@ -24,8 +24,8 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped }) => {
   
   return (
     <div className="text-center">
-      <div className="mb-4 text-muted-foreground text-sm flex items-center justify-center">
-        <DirectionFlag direction={direction} size={20} />
+      <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
+        <DirectionFlag direction={direction} size={25} />
       </div>
       <div className="flex items-center justify-center gap-2">
         <h2 className="text-2xl font-bold">{frontText}</h2>
@@ -44,7 +44,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped }) => {
             speak(word.german, 'de-DE');
           }}
         >
-          Listen
+          🔊 Listen
         </Button>
       )}
     </div>

@@ -13,9 +13,7 @@ import Practice from "./pages/Practice";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -38,20 +36,15 @@ const App = () => (
                   <Index />
                 </ProtectedRoute>
               } />
-              <Route path="/list" element={
+              <Route path="/list/:listId" element={
                 <ProtectedRoute>
                   <VocabList />
                 </ProtectedRoute>
               } />
-              <Route path="/practice" element={
+              <Route path="/practice/:urlDirection" element={
                 <ProtectedRoute>
                   <Practice />
                 </ProtectedRoute>
-              } />
-              <Route path="/admin" element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>

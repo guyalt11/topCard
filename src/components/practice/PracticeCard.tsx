@@ -47,10 +47,9 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   };
 
   const handleDifficultySelect = (difficulty: DifficultyLevel) => {
+    // Call the answer handler which will update the word difficulty
     onAnswer(difficulty);
-  };
-
-  const handleNext = () => {
+    // Immediately call onNext to advance to the next word
     onNext();
   };
 
@@ -100,14 +99,6 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
               direction={direction}
               onSelectDifficulty={handleDifficultySelect}
             />
-          </CardFooter>
-        )}
-        
-        {isAnswered && (
-          <CardFooter>
-            <Button className="w-full" onClick={handleNext}>
-              Next Word
-            </Button>
           </CardFooter>
         )}
       </Card>

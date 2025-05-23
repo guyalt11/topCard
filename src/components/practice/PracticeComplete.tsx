@@ -1,18 +1,15 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface PracticeCompleteProps {
   totalWords: number;
-  timeSpent: number;
   onRestart: () => void;
   onBack: () => void;
 }
 
 const PracticeComplete: React.FC<PracticeCompleteProps> = ({
   totalWords,
-  timeSpent,
   onRestart,
   onBack
 }) => {
@@ -30,20 +27,12 @@ const PracticeComplete: React.FC<PracticeCompleteProps> = ({
         <CardTitle>Practice Complete!</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <p>You've successfully reviewed {totalWords} words.</p>
-        <p>Total time: {formatTime(timeSpent)}</p>
+        {totalWords === 0 ? (
+          <p>Great job! You’ve reviewed all the words. Come back soon to practice some more!</p>
+        ) : (
+          <p>You’ve successfully reviewed {totalWords} words. Well done!</p>
+        )}
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button 
-          variant="outline" 
-          onClick={onRestart}
-        >
-          Practice Again
-        </Button>
-        <Button onClick={onBack}>
-          Back to List
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { toast } from '@/components/ui/use-toast';
 
 const Register = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,18 +37,18 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const success = await register({ username, password });
+      const success = await register({ email, password });
       
       if (success) {
         toast({
           title: "Registration successful",
-          description: `Welcome, ${username}!`,
+          description: `Welcome, ${email}!`,
         });
         navigate('/');
       } else {
         toast({
           title: "Registration failed",
-          description: "Username already exists.",
+          description: "Email already exists or another error occurred.",
           variant: "destructive",
         });
       }
@@ -72,13 +72,13 @@ const Register = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                minLength={3}
               />
             </div>
             <div className="space-y-2">

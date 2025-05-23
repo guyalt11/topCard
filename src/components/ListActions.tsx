@@ -12,7 +12,7 @@ import {
 
 interface ListActionsProps {
   listId: string;
-  onExport: (id: string, format: 'json' | 'yaml') => void;
+  onExport: (id: string, format: 'json') => void;
 }
 
 const ListActions = ({ listId, onExport }: ListActionsProps) => {
@@ -29,9 +29,6 @@ const ListActions = ({ listId, onExport }: ListActionsProps) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onExport(listId, 'json')}>
           Export as JSON
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onExport(listId, 'yaml')}>
-          Export as YAML
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

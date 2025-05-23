@@ -3,30 +3,32 @@ import { Button } from "@/components/ui/button";
 import { VocabList } from "@/types/vocabulary";
 import { Edit, Trash2 } from "lucide-react";
 import ListActions from "@/components/ListActions";
+import { useNavigate } from "react-router-dom";
 
 interface ListCardProps {
   list: VocabList;
   onSelect: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onPractice: (id: string) => void;
-  onExport: (id: string, format: 'json' | 'yaml') => void;
+  onPractice: (id: string, direction: string) => void;
+  onExport: (id: string, format: 'json') => void;
 }
 
 const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport }: ListCardProps) => {
+  const navigate = useNavigate();
   // Count words due for practice in each direction
   const now = new Date();
-  const dueGermanToEnglish = list.words.filter(word => {
+  const germanDueCount = list.words.filter(word => {
     const nextReview = word.nextReview?.germanToEnglish;
     return !nextReview || nextReview <= now;
   }).length;
   
-  const dueEnglishToGerman = list.words.filter(word => {
+  const englishDueCount = list.words.filter(word => {
     const nextReview = word.nextReview?.englishToGerman;
     return !nextReview || nextReview <= now;
   }).length;
   
-  const totalDueCount = dueGermanToEnglish + dueEnglishToGerman;
+  const totalDueCount = germanDueCount + englishDueCount;
 
   return (
     <Card className="h-full flex flex-col bg-muted/30">
@@ -64,26 +66,46 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport }: Li
                 {totalDueCount} due for practice
               </span>
               <span className="text-xs text-muted-foreground">
-                ({dueGermanToEnglish} German → English, {dueEnglishToGerman} English → German)
+                ({germanDueCount} German → English, {englishDueCount} English → German)
               </span>
             </>
           )}
         </CardDescription>
       </CardHeader>
-      <CardFooter className="pt-2 mt-auto flex gap-2">
-        <Button 
-          className="flex-1"
-          onClick={() => onSelect(list.id)}
-        >
-          View List
-        </Button>
-        <Button 
-          variant="outline"
-          className="flex-1"
-          onClick={() => onPractice(list.id)}
-        >
-          Practice
-        </Button>
+      <CardFooter className="pt-2 mt-auto flex flex-wrap sm:flex-nowrap gap-2">
+        <div className="w-full sm:w-auto">
+          <Button 
+            className="w-full sm:w-auto flex-1 sm:px-10"
+            onClick={() => onSelect(list.id)}
+          >
+            View List
+          </Button>
+        </div>
+        <div className="w-full flex items-center gap-2 mt-2 sm:w-auto sm:mt-0">
+          <span className="flex items-center font-bold border border-transparent px-4 h-10 sm:ml-2 select-none">
+            Practice:
+          </span>
+          <Button
+            variant="default"
+            onClick={() => onPractice(list.id, "englishToGerman")}
+            className={`relative ${englishDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={englishDueCount === 0}
+          >
+            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => onPractice(list.id, "germanToEnglish")}
+            className={`relative ${germanDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={germanDueCount === 0}
+          >
+            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

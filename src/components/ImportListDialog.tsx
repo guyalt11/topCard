@@ -42,7 +42,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
           <DialogHeader>
             <DialogTitle>Import Vocabulary List</DialogTitle>
             <DialogDescription>
-              Enter a name for the imported list and select a JSON or YAML file.
+              Enter a name for the imported list and select a JSON file.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -75,7 +75,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
-        accept=".json,.yaml,.yml"
+        accept=".json"
         className="hidden"
       />
     </>

@@ -1,30 +1,26 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { loginUser, registerUser, updateUserPassword, AuthResponse } from '@/lib/supabase';
 
 export type User = {
   id: string;
-  username: string;
-  isAdmin: boolean;
-  password?: string; // Added for updating purposes but should not be exposed
+  email: string;
 };
 
 type UserCredentials = {
-  username: string;
+  email: string;
   password: string;
 };
 
 type AuthContextType = {
   currentUser: User | null;
+  token: string | null;
   login: (credentials: UserCredentials) => Promise<boolean>;
   logout: () => void;
   register: (credentials: UserCredentials) => Promise<boolean>;
   isAuthenticated: boolean;
   isLoading: boolean;
-  users: User[];
-  createUser: (user: { username: string; password: string; isAdmin: boolean }) => void;
-  updateUser: (id: string, updates: Partial<User>) => void;
-  deleteUser: (id: string) => void;
+  updatePassword: (newPassword: string) => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,36 +37,22 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
-// In a real app, you would use a secure authentication service
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>([]);
 
-  // Initialize the auth state from localStorage
+  // Initialize the auth state from localStorage (for persistence between page reloads)
   useEffect(() => {
     const initAuth = () => {
-      // Load the users from localStorage
-      const storedUsers = localStorage.getItem('users');
-      if (storedUsers) {
-        setUsers(JSON.parse(storedUsers));
-      } else {
-        // Initialize with an admin user if no users exist
-        const adminUser = {
-          id: uuidv4(),
-          username: 'admin',
-          password: 'admin', // Preperation for backend
-          isAdmin: true
-        };
-        localStorage.setItem('users', JSON.stringify([adminUser]));
-        setUsers([adminUser]);
-      }
-
-      // Check if user is logged in
       const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
+      const storedToken = localStorage.getItem('authToken');
+      
+      if (storedUser && storedToken) {
         setCurrentUser(JSON.parse(storedUser));
+        setToken(storedToken);
       }
+      
       setIsLoading(false);
     };
 
@@ -78,113 +60,86 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const login = async (credentials: UserCredentials): Promise<boolean> => {
-    const storedUsers = localStorage.getItem('users');
-    if (!storedUsers) return false;
-
-    const users = JSON.parse(storedUsers);
-    const user = users.find(
-      (u: any) => u.username === credentials.username && u.password === credentials.password
-    );
-
-    if (user) {
-      // Remove the password before storing in state or localStorage
-      const { password, ...userWithoutPassword } = user;
-      setCurrentUser(userWithoutPassword);
-      localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+    try {
+      const { email, password } = credentials;
+      const authData = await loginUser(email, password);
+      
+      // Store the user and token
+      const user = {
+        id: authData.user.id,
+        email: authData.user.email
+      };
+      
+      setCurrentUser(user);
+      setToken(authData.access_token);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authToken', authData.access_token);
+      
       return true;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
     }
-
-    return false;
   };
 
   const logout = () => {
+    // Clear state and localStorage
     setCurrentUser(null);
+    setToken(null);
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
   };
 
   const register = async (credentials: UserCredentials): Promise<boolean> => {
-    const storedUsers = localStorage.getItem('users');
-    const users = storedUsers ? JSON.parse(storedUsers) : [];
-
-    // Check if username already exists
-    if (users.some((u: any) => u.username === credentials.username)) {
+    try {
+      const { email, password } = credentials;
+      const authData = await registerUser(email, password);
+      
+      // Store the user and token
+      const user = {
+        id: authData.user.id,
+        email: authData.user.email
+      };
+      
+      setCurrentUser(user);
+      setToken(authData.access_token);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authToken', authData.access_token);
+      
+      return true;
+    } catch (error) {
+      console.error('Registration failed:', error);
       return false;
     }
-
-    // Create new user
-    const newUser = {
-      id: uuidv4(),
-      username: credentials.username,
-      password: credentials.password, // In a real app, this should be hashed
-      isAdmin: false // New users are not admins by default
-    };
-
-    // Add to users array
-    const updatedUsers = [...users, newUser];
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
-
-    // Login the user
-    const { password, ...userWithoutPassword } = newUser;
-    setCurrentUser(userWithoutPassword);
-    localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
-
-    return true;
   };
 
-  // Admin functions
-  const createUser = (userData: { username: string; password: string; isAdmin: boolean }) => {
-    const newUser = {
-      id: uuidv4(),
-      username: userData.username,
-      password: userData.password, // In a real app, this should be hashed
-      isAdmin: userData.isAdmin
-    };
-
-    const updatedUsers = [...users, newUser];
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
-  };
-
-  const updateUser = (id: string, updates: Partial<User>) => {
-    const updatedUsers = users.map(user => {
-      if (user.id === id) {
-        return { ...user, ...updates };
-      }
-      return user;
-    });
-
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
-
-    // If updating the current user, update that too
-    if (currentUser && currentUser.id === id) {
-      const { password, ...updatesWithoutPassword } = updates;
-      const updatedCurrentUser = { ...currentUser, ...updatesWithoutPassword };
-      setCurrentUser(updatedCurrentUser);
-      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+  const updatePassword = async (newPassword: string): Promise<boolean> => {
+    if (!token || !currentUser) return false;
+    
+    try {
+      await updateUserPassword(token, newPassword);
+      return true;
+    } catch (error) {
+      console.error('Password update failed:', error);
+      return false;
     }
-  };
-
-  const deleteUser = (id: string) => {
-    const updatedUsers = users.filter(user => user.id !== id);
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
   };
 
   return (
     <AuthContext.Provider
       value={{
         currentUser,
+        token,
         login,
         logout,
         register,
         isAuthenticated: !!currentUser,
         isLoading,
-        users,
-        createUser,
-        updateUser,
-        deleteUser
+        updatePassword
       }}
     >
       {children}

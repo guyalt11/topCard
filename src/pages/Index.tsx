@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useVocab } from '@/context/VocabContext';
 import { toast } from "@/components/ui/use-toast";
 import AddListForm from '@/components/AddListForm';
@@ -10,9 +10,11 @@ import ImportListDialog from '@/components/ImportListDialog';
 import EditListDialog from '@/components/EditListDialog';
 import DeleteListDialog from '@/components/DeleteListDialog';
 import { VocabList } from '@/types/vocabulary';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const { lists, selectList, exportList, importList, deleteList, updateList } = useVocab();
+  const navigate = useNavigate();
   
   // UI state
   const [addListOpen, setAddListOpen] = useState(false);
@@ -36,10 +38,13 @@ const Index = () => {
   };
 
   const handleImport = async (file: File, listName: string) => {
-    await importList(file, listName);
+      const success = importList(file, listName);
+      if (success) {
+        setImportDialogOpen(false);
+      }
   };
 
-  const handleExport = (id: string, format: 'json' | 'yaml') => {
+  const handleExport = (id: string, format: 'json') => {
     exportList(id, format);
   };
   
@@ -91,12 +96,22 @@ const Index = () => {
           onEditList={handleEditList}
           onDeleteList={handleDeleteList}
           onExportList={handleExport}
+          urlDirection="germanToEnglish"
         />
       )}
 
       <AddListForm 
         open={addListOpen} 
         onOpenChange={setAddListOpen} 
+        onSuccess={async (list) => {
+          console.log('List created successfully:', list);
+          // Wait a bit for the list to be fully saved
+          await new Promise(resolve => setTimeout(resolve, 100));
+          // Select the list first
+          selectList(list.id);
+          // Navigate to the list page
+          navigate(`/list/${list.id}`);
+        }}
       />
 
       <ImportListDialog

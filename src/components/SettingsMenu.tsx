@@ -1,5 +1,5 @@
 
-import { Settings, LogOut, User, Shield, KeyRound } from 'lucide-react';
+import { Settings, LogOut, User, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -16,7 +16,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +25,7 @@ import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
 const SettingsMenu = () => {
-  const { currentUser, logout, updateUser } = useAuth();
+  const { currentUser, logout, updatePassword } = useAuth();
   const navigate = useNavigate();
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -37,7 +36,7 @@ const SettingsMenu = () => {
     navigate('/login');
   };
 
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!currentUser) return;
@@ -58,16 +57,24 @@ const SettingsMenu = () => {
       return;
     }
     
-    updateUser(currentUser.id, { password: newPassword });
+    const success = await updatePassword(newPassword);
     
-    setNewPassword('');
-    setConfirmPassword('');
-    setIsResetPasswordOpen(false);
-    
-    toast({
-      title: "Password updated",
-      description: "Your password has been successfully updated.",
-    });
+    if (success) {
+      setNewPassword('');
+      setConfirmPassword('');
+      setIsResetPasswordOpen(false);
+      
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully updated.",
+      });
+    } else {
+      toast({
+        title: "Password update failed",
+        description: "An error occurred while updating your password.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -83,10 +90,10 @@ const SettingsMenu = () => {
           <DropdownMenuLabel>Settings</DropdownMenuLabel>
           {currentUser && (
             <>
-              <DropdownMenuItem className="flex items-center gap-2">
+              <DropdownMenuLabel className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span>{currentUser.username}</span>
-              </DropdownMenuItem>
+                <span>{currentUser.email}</span>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
             </>
           )}
@@ -98,12 +105,6 @@ const SettingsMenu = () => {
                 <KeyRound className="h-4 w-4" />
                 <span>Reset Password</span>
               </DropdownMenuItem>
-              {currentUser.isAdmin && (
-                <DropdownMenuItem onClick={() => navigate('/admin')} className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Admin Dashboard</span>
-                </DropdownMenuItem>
-              )}
               <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2">
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>

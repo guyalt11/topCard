@@ -1,6 +1,4 @@
 
-import React from 'react';
-
 interface WordCompletionCounterProps {
   completedCount: number;
   totalWords: number;

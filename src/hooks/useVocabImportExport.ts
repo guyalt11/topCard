@@ -1,7 +1,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { VocabList } from '@/types/vocabulary';
-import yaml from 'js-yaml';
 import { toast } from '@/components/ui/use-toast';
 
 interface VocabImportExportProps {
@@ -10,8 +9,8 @@ interface VocabImportExportProps {
 }
 
 export function useVocabImportExport({ lists, setLists }: VocabImportExportProps) {
-  // Export a list to JSON or YAML
-  const exportList = (id: string, format: 'json' | 'yaml') => {
+  // Export a list to JSON
+  const exportList = (id: string, format: 'json') => {
     const list = lists.find(l => l.id === id);
     if (!list) return;
 
@@ -22,7 +21,7 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         german: word.german,
         english: word.english,
         gender: word.gender || null,
-        notes: word.notes || null,
+        description: word.notes || null, // Export notes as description for compatibility
       })),
     };
 
@@ -34,10 +33,6 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
       fileContent = JSON.stringify(exportData, null, 2);
       fileType = 'application/json';
       fileName = `${list.name.toLowerCase().replace(/\s+/g, '-')}.json`;
-    } else {
-      fileContent = yaml.dump(exportData);
-      fileType = 'application/yaml';
-      fileName = `${list.name.toLowerCase().replace(/\s+/g, '-')}.yaml`;
     }
 
     // Create and download the file
@@ -52,23 +47,21 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
     URL.revokeObjectURL(url);
   };
 
-  // Import a list from a JSON or YAML file
-  const importList = async (file: File, listName: string) => {
+  // Import a list from a JSON file
+  const importList = async (file: File, listName: string): Promise<VocabList | null> => {
     try {
       const text = await file.text();
       let importData: any;
       
       if (file.name.endsWith('.json')) {
         importData = JSON.parse(text);
-      } else if (file.name.endsWith('.yaml') || file.name.endsWith('.yml')) {
-        importData = yaml.load(text);
       } else {
         toast({
           title: "Import error",
-          description: "Only JSON or YAML files are supported.",
+          description: "Only JSON files are supported.",
           variant: "destructive",
         });
-        return;
+        return null;
       }
       
       // Validate the imported data
@@ -78,7 +71,7 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
           description: "Invalid file structure. Missing words array.",
           variant: "destructive",
         });
-        return;
+        return null;
       }
       
       // Create new list with the imported words
@@ -90,19 +83,18 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
           german: w.german || '',
           english: w.english || '',
           gender: w.gender || undefined,
-          notes: w.notes || undefined,
+          notes: w.description || undefined, // Import description as notes
         })),
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       
-      const updatedLists = [...lists, newList];
-      setLists(updatedLists);
-      
       toast({
         title: "Import successful",
         description: `Imported ${newList.words.length} words into "${newList.name}".`,
       });
+      
+      return newList;
       
     } catch (error) {
       console.error("Import error:", error);
@@ -111,6 +103,7 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         description: "Failed to parse the import file. Please check the format.",
         variant: "destructive",
       });
+      return null;
     }
   };
 

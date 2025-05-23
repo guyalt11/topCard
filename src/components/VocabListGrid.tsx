@@ -8,7 +8,8 @@ interface VocabListGridProps {
   onSelectList: (id: string) => void;
   onEditList: (id: string) => void;
   onDeleteList: (id: string) => void;
-  onExportList: (id: string, format: 'json' | 'yaml') => void;
+  onExportList: (id: string, format: 'json') => void;
+  urlDirection: string;
 }
 
 const VocabListGrid = ({ 
@@ -16,13 +17,14 @@ const VocabListGrid = ({
   onSelectList, 
   onEditList, 
   onDeleteList,
-  onExportList
+  onExportList,
+  urlDirection,
 }: VocabListGridProps) => {
   const navigate = useNavigate();
 
-  const handlePractice = (listId: string) => {
+  const handlePractice = (listId: string, direction: string) => {
     onSelectList(listId);
-    navigate('/practice');
+    navigate(`/practice/${direction}`);
   };
 
   return (
@@ -33,11 +35,11 @@ const VocabListGrid = ({
             list={list}
             onSelect={() => {
               onSelectList(list.id);
-              navigate('/list');
+              navigate(`/list/${list.id}`);
             }}
             onEdit={() => onEditList(list.id)}
             onDelete={() => onDeleteList(list.id)}
-            onPractice={() => handlePractice(list.id)}
+            onPractice={(id, direction) => handlePractice(id, direction)}
             onExport={onExportList}
           />
         </div>
