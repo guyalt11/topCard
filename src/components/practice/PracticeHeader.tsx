@@ -60,7 +60,7 @@ console.log(dueGermanToEnglish, dueEnglishToGerman, direction);
           alt={direction === 'germanToEnglish' ? 'GB' : 'DE'}
           className="inline h-5"
         />
-        <img src="/ra.png" alt="arrow" className="inline h-5" />
+        <img src="/ra.webp" alt="arrow" className="inline h-5" />
         <img
           src={direction === 'germanToEnglish' ? '/faviconDE.ico' : '/faviconGB.ico'}
           alt={direction === 'germanToEnglish' ? 'DE' : 'GB'}

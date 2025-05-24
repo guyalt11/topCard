@@ -1,6 +1,8 @@
-import { useState, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // added useParams
+import { useState, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { useVocab } from '@/context/VocabContext';
+import { useVocabImportExport } from '@/hooks/useVocabImportExport';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WordCard from '@/components/WordCard';
@@ -33,12 +35,9 @@ import { Label } from "@/components/ui/label";
 
 const VocabList = () => {
   
-  const navigate = useNavigate();
   const { listId } = useParams<{ listId: string }>();
-  const { getListById, deleteWord, exportList, importList, deleteList, updateList } = useVocab();
-
-  // Use id to get currentList
-  const currentList = getListById(listId ?? '');
+  const { getListById, deleteWord, exportList, importList, deleteList, updateList, addWord, selectList, isLoading } = useVocab();
+  const { goToHome, goToPractice } = useAppNavigation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [addWordOpen, setAddWordOpen] = useState(false);
@@ -46,6 +45,7 @@ const VocabList = () => {
   const [wordToDelete, setWordToDelete] = useState<string | null>(null);
   const [showReviewTimes, setShowReviewTimes] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [initialized, setInitialized] = useState(false);
   
   // Edit list state
   const [editListDialogOpen, setEditListDialogOpen] = useState(false);
@@ -55,8 +55,26 @@ const VocabList = () => {
   // Delete list state
   const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
 
-  if (!currentList) {
-    navigate('/');
+  useEffect(() => {
+    const initList = async () => {
+      if (listId) {
+        const list = getListById(listId);
+        if (list) {
+          await selectList(listId);
+          setInitialized(true);
+        } else if (!isLoading) {
+          // Only navigate away if we're not still loading lists
+          goToHome();
+        }
+      }
+    };
+    initList();
+  }, [listId, selectList, getListById, goToHome, isLoading]);
+
+  const currentList = getListById(listId ?? '');
+
+  // Show nothing while initializing or if no list
+  if (!initialized || !currentList) {
     return null;
   }
 
@@ -94,12 +112,50 @@ const VocabList = () => {
     fileInputRef.current?.click();
   };
 
+  const importToList = async (file: File, listId: string) => {
+    try {
+      const { importList } = useVocabImportExport({ lists: [], setLists: () => {} });
+      const importedList = await importList(file, 'temp');
+      
+      if (!importedList || !importedList.words.length) {
+        return;
+      }
+
+      // Add each word to the list asynchronously
+      const addWordPromises = importedList.words.map(async (word) => {
+        await addWord(listId, {
+          german: word.german,
+          english: word.english,
+          gender: word.gender,
+          notes: word.notes
+        });
+      });
+
+      // Process words one by one to update UI in real-time
+      for (const promise of addWordPromises) {
+        await promise;
+      }
+
+      toast({
+        title: "Import successful",
+        description: `Added ${importedList.words.length} words to the list.`,
+      });
+    } catch (error) {
+      console.error('Error importing to list:', error);
+      toast({
+        title: "Import error",
+        description: "Failed to import words to the list. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      await importList(file, file.name.split('.')[0] || 'Imported List'); // Fixed: added second parameter for list name
+      await importToList(file, currentList.id);
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -137,7 +193,7 @@ const VocabList = () => {
       description: "The vocabulary list has been deleted.",
     });
     setDeleteListDialogOpen(false);
-    navigate('/');
+    goToHome();
   };
 
   const getNextReviewDate = (word: VocabWord, direction: PracticeDirection): Date | undefined => {
@@ -255,25 +311,25 @@ const VocabList = () => {
           </span>
           <Button
             variant="default"
-            onClick={() => navigate(`/practice/englishToGerman`)}
+            onClick={() => goToPractice(currentList.id, 'englishToGerman')}
             className={`relative ${englishDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
             disabled={englishDueCount === 0}
           >
             <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
-            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/ra.webp" alt="arrow" className="inline h-5" />
             <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
           </Button>
           <Button
             variant="default"
-            onClick={() => navigate(`/practice/germanToEnglish`)}
+            onClick={() => goToPractice(currentList.id, 'germanToEnglish')}
             className={`relative ${germanDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
             disabled={germanDueCount === 0}
           >
             <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
-            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/ra.webp" alt="arrow" className="inline h-5" />
             <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
           </Button>
-          <Button onClick={() => navigate('/')}>Home</Button>
+          <Button onClick={() => goToHome()}>Home</Button>
         </div>
       </div>
 
@@ -297,7 +353,7 @@ const VocabList = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" title="List actions">
-              <Download className="mx-3 h-4 w-4" />
+              <img src="/arrows.webp" alt="List actions" className="mx-3 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>

@@ -12,9 +12,10 @@ interface ListCardProps {
   onDelete: (id: string) => void;
   onPractice: (id: string, direction: string) => void;
   onExport: (id: string, format: 'json') => void;
+  onImport: (file: File) => Promise<void>;
 }
 
-const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport }: ListCardProps) => {
+const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onImport }: ListCardProps) => {
   const navigate = useNavigate();
   // Count words due for practice in each direction
   const now = new Date();
@@ -55,6 +56,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport }: Li
             <ListActions 
               listId={list.id}
               onExport={onExport}
+              onImport={onImport}
             />
           </div>
         </div>
@@ -87,22 +89,22 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport }: Li
           </span>
           <Button
             variant="default"
-            onClick={() => onPractice(list.id, "englishToGerman")}
+            onClick={() => navigate(`/practice/${list.id}/englishToGerman`)}
             className={`relative ${englishDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
             disabled={englishDueCount === 0}
           >
             <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
-            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/ra.webp" alt="arrow" className="inline h-5" />
             <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
           </Button>
           <Button
             variant="default"
-            onClick={() => onPractice(list.id, "germanToEnglish")}
+            onClick={() => navigate(`/practice/${list.id}/germanToEnglish`)}
             className={`relative ${germanDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
             disabled={germanDueCount === 0}
           >
             <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
-            <img src="/ra.png" alt="arrow" className="inline h-5" />
+            <img src="/ra.webp" alt="arrow" className="inline h-5" />
             <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
           </Button>
         </div>

@@ -1,6 +1,7 @@
 
 import { useState, useTransition } from 'react';
 import { useVocab } from '@/context/VocabContext';
+import { useVocabImportExport } from '@/hooks/useVocabImportExport';
 import { toast } from "@/components/ui/use-toast";
 import AddListForm from '@/components/AddListForm';
 import VocabListGrid from '@/components/VocabListGrid';
@@ -10,12 +11,13 @@ import ImportListDialog from '@/components/ImportListDialog';
 import EditListDialog from '@/components/EditListDialog';
 import DeleteListDialog from '@/components/DeleteListDialog';
 import { VocabList } from '@/types/vocabulary';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 const Index = () => {
-  const { lists, selectList, exportList, importList, deleteList, updateList } = useVocab();
-  const navigate = useNavigate();
-  
+  const { lists, exportList, importList, deleteList, updateList, getListById, addWord } = useVocab();
+  const { goToList } = useAppNavigation();
+  const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
+
   // UI state
   const [addListOpen, setAddListOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -38,9 +40,11 @@ const Index = () => {
   };
 
   const handleImport = async (file: File, listName: string) => {
-      const success = importList(file, listName);
-      if (success) {
+      const list = await importList(file, listName);
+      if (list) {
         setImportDialogOpen(false);
+        // Select the list and navigate to it
+        goToList(list.id);
       }
   };
 
@@ -80,6 +84,31 @@ const Index = () => {
     }
   };
 
+  const handleImportWords = async (listId: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const list = getListById(listId);
+        if (list) {
+          const importedList = await importListFunc(file, list.name);
+          if (importedList && importedList.words) {
+            for (const word of importedList.words) {
+              await addWord(listId, word);
+            }
+            toast({
+              title: "Success",
+              description: `Successfully imported ${importedList.words.length} words`,
+            });
+          }
+        }
+      }
+    };
+    input.click();
+  };
+
   return (
     <div className="container py-6 max-w-3xl">
       <ListsHeader 
@@ -92,11 +121,13 @@ const Index = () => {
       ) : (
         <VocabListGrid 
           lists={lists}
-          onSelectList={selectList}
+          onSelectList={(id) => goToList(id)}
           onEditList={handleEditList}
           onDeleteList={handleDeleteList}
-          onExportList={handleExport}
-          urlDirection="germanToEnglish"
+          onExportList={exportList}
+          onImportWords={handleImportWords}
+          urlDirection=""
+          listId=""
         />
       )}
 
@@ -107,10 +138,8 @@ const Index = () => {
           console.log('List created successfully:', list);
           // Wait a bit for the list to be fully saved
           await new Promise(resolve => setTimeout(resolve, 100));
-          // Select the list first
-          selectList(list.id);
           // Navigate to the list page
-          navigate(`/list/${list.id}`);
+          goToList(list.id);
         }}
       />
 

@@ -13,13 +13,13 @@ interface VocabContextType {
   addList: (name: string, description?: string) => Promise<VocabList | null>;
   updateList: (id: string, updates: Partial<VocabList>) => Promise<void>;
   deleteList: (id: string) => Promise<void>;
-  selectList: (id: string) => void;
+  selectList: (id: string) => Promise<void>;
   addWord: (listId: string, word: Omit<VocabWord, 'id'>) => Promise<void>;
   updateWord: (wordId: string, updates: Partial<VocabWord>) => Promise<void>;
   deleteWord: (wordId: string) => Promise<void>;
   updateWordDifficulty: (wordId: string, difficulty: DifficultyLevel, direction: PracticeDirection) => Promise<void>;
   exportList: (id: string, format: 'json') => void;
-  importList: (file: File, listName: string) => Promise<boolean>;
+  importList: (file: File, listName: string) => Promise<VocabList | null>;
   getListById: (id: string) => VocabList | undefined;
 }
 
@@ -52,7 +52,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   const [currentList, setCurrentList] = useState<VocabList | null>(null);
   const { exportList, importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
 
-  // Add a new list - description column now exists in the schema
+  // Add a new list
   const addList = async (name: string, description?: string): Promise<VocabList | null> => {
     try {
       const newList: VocabList = {
@@ -127,9 +127,13 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Set the currently selected list
-  const selectList = (id: string) => {
-    const list = lists.find(list => list.id === id);
-    setCurrentList(list || null);
+  const selectList = async (id: string) => {
+    const list = getListById(id);
+    await new Promise<void>(resolve => {
+      setCurrentList(list ?? null);
+      // Wait for next render cycle
+      setTimeout(resolve, 0);
+    });
   };
 
   // Add a word to a list
@@ -310,7 +314,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Import function with support for Supabase
-  const importList = async (file: File, listName: string): Promise<boolean> => {
+  const importList = async (file: File, listName: string): Promise<VocabList | null> => {
     try {
       const importedList = await importListFunc(file, listName);
       if (importedList) {
@@ -327,7 +331,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
         // Save the list metadata
         const savedList = await saveList(newList);
         if (!savedList) {
-          return false;
+          return null;
         }
   
         // Save each word individually
@@ -339,9 +343,9 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           await saveWord(savedList.id, newWord);
         }
   
-        return true;
+        return savedList;
       }
-      return false;
+      return null;
     } catch (error) {
       console.error('Error importing list:', error);
       toast({
@@ -349,7 +353,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
         description: "Failed to import list. Please check the file format.",
         variant: "destructive",
       });
-      return false;
+      return null;
     }
   };
 

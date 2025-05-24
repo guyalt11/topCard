@@ -13,24 +13,37 @@ interface ImportListDialogProps {
 
 const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProps) => {
   const [importListName, setImportListName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleCreate = async () => {
+    if (!selectedFile || !importListName.trim()) return;
 
     try {
-      await onImport(file, importListName);
-      // Reset input value to allow importing the same file again
+      // Store values and reset state
+      const file = selectedFile;
+      const name = importListName;
+      setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
-      onOpenChange(false);
       setImportListName('');
+      onOpenChange(false);
+      
+      // Now import after dialog is closed
+      await onImport(file, name);
     } catch (error) {
       // Error is already handled by the import function
+      setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -55,16 +68,32 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
                 value={importListName}
                 onChange={(e) => setImportListName(e.target.value)}
                 className="col-span-3"
-                placeholder="My Imported List"
               />
+            </div>
+            <div className="flex items-center gap-4">
+              <Button variant="secondary" onClick={handleFileSelect}>
+                Select File
+              </Button>
+              {selectedFile && (
+                <span className="text-sm text-muted-foreground">
+                  {selectedFile.name}
+                </span>
+              )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="outline" onClick={() => {
+              setSelectedFile(null);
+              if (fileInputRef.current) fileInputRef.current.value = '';
+              onOpenChange(false);
+            }}>
               Cancel
             </Button>
-            <Button onClick={handleFileSelect} disabled={!importListName.trim()}>
-              Select File
+            <Button 
+              onClick={handleCreate} 
+              disabled={!importListName.trim() || !selectedFile}
+            >
+              Create List
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,6 +1,6 @@
 
-import { useNavigate } from "react-router-dom";
-import { VocabList } from "@/types/vocabulary";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
+import { VocabList, PracticeDirection } from "@/types/vocabulary";
 import ListCard from "@/components/ListCard";
 
 interface VocabListGridProps {
@@ -9,7 +9,9 @@ interface VocabListGridProps {
   onEditList: (id: string) => void;
   onDeleteList: (id: string) => void;
   onExportList: (id: string, format: 'json') => void;
+  onImportWords: (listId: string) => void;
   urlDirection: string;
+  listId: string;
 }
 
 const VocabListGrid = ({ 
@@ -18,13 +20,14 @@ const VocabListGrid = ({
   onEditList, 
   onDeleteList,
   onExportList,
+  onImportWords,
   urlDirection,
+  listId,
 }: VocabListGridProps) => {
-  const navigate = useNavigate();
+  const { goToList, goToPractice } = useAppNavigation();
 
-  const handlePractice = (listId: string, direction: string) => {
-    onSelectList(listId);
-    navigate(`/practice/${direction}`);
+  const handlePractice = (direction: string, id: string) => {
+    goToPractice(id, direction as PracticeDirection);
   };
 
   return (
@@ -35,12 +38,13 @@ const VocabListGrid = ({
             list={list}
             onSelect={() => {
               onSelectList(list.id);
-              navigate(`/list/${list.id}`);
+              goToList(list.id);
             }}
             onEdit={() => onEditList(list.id)}
             onDelete={() => onDeleteList(list.id)}
-            onPractice={(id, direction) => handlePractice(id, direction)}
+            onPractice={(direction) => handlePractice(direction, list.id)}
             onExport={onExportList}
+            onImport={async (file) => await onImportWords(list.id)}
           />
         </div>
       ))}

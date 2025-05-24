@@ -41,7 +41,7 @@ const App = () => (
                   <VocabList />
                 </ProtectedRoute>
               } />
-              <Route path="/practice/:urlDirection" element={
+              <Route path="/practice/:listId/:urlDirection" element={
                 <ProtectedRoute>
                   <Practice />
                 </ProtectedRoute>
