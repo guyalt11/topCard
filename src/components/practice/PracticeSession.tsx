@@ -18,7 +18,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   direction,
   onDirectionChange
 }) => {
-  const { currentList, updateWordDifficulty, selectList } = useVocab();
+  const { currentList, updateWordDifficulty, selectList, deleteWord } = useVocab();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -49,6 +49,13 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
     totalWordsRef.current = 0;
   };
 
+  // Reset only the session state without fetching new words
+  const resetSessionState = () => {
+    setCurrentIndex(0);
+    setCompletedCount(0);
+    setIsAnswered(false);
+  };
+
   useEffect(() => {
     resetSession();
   }, [direction]);
@@ -65,7 +72,9 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   const wordsToUse = initialWordsRef.current.length > 0 ? initialWordsRef.current : practiceWords;
   const currentWord = wordsToUse[currentIndex];
   const totalWords = totalWordsRef.current > 0 ? totalWordsRef.current : wordsToUse.length;
-  const isComplete = currentIndex >= wordsToUse.length;
+  console.log(`currentIndex: ${currentIndex}`);
+  console.log(`wordsToUse: ${wordsToUse.length}`);
+  const isComplete = currentIndex >= wordsToUse.length || wordsToUse.length === 0;
   
   const handleAnswered = (difficulty: DifficultyLevel) => {
     if (currentWord) {
@@ -83,6 +92,24 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
 
   const handleRestart = () => {
     resetSession();
+  };
+
+  const handleDelete = async () => {
+    console.log(`isComplete: ${isComplete}`);
+    if (currentWord) {
+      await deleteWord(currentWord.id);
+      // Remove the word from our practice list
+      initialWordsRef.current = initialWordsRef.current.filter(w => w.id !== currentWord.id);
+      totalWordsRef.current = initialWordsRef.current.length;
+      
+      // If we've deleted all words, set counts to trigger completion screen
+      if (initialWordsRef.current.length === 0) {
+        setCompletedCount(0);
+        totalWordsRef.current = 0;
+        setCurrentIndex(0);
+        return;
+      }
+    }
   };
 
   return (
@@ -122,6 +149,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
           onAnswer={handleAnswered}
           onNext={handleNext}
           isAnswered={isAnswered}
+          onDelete={handleDelete}
         />
       )}
     </div>

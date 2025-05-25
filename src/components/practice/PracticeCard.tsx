@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { VocabWord, PracticeDirection, DifficultyLevel } from '@/types/vocabulary';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -13,6 +12,7 @@ interface PracticeCardProps {
   onAnswer: (difficulty: DifficultyLevel) => void;
   onNext: () => void;
   isAnswered: boolean;
+  onDelete: () => void;
 }
 
 const PracticeCard: React.FC<PracticeCardProps> = ({
@@ -21,6 +21,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   onAnswer,
   onNext,
   isAnswered,
+  onDelete,
 }) => {
   const [flipped, setFlipped] = useState(false);
   
@@ -74,7 +75,8 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
           <CardFront 
             word={word} 
             direction={direction} 
-            flipped={flipped} 
+            flipped={flipped}
+            onDelete={onDelete}
           />
           
           {flipped && (
@@ -85,7 +87,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
           )}
           
           {!flipped && (
-            <div className="mt-4 text-sm text-muted-foreground">
+            <div className="mt-28 mb-24 text-sm text-muted-foreground">
               Click to reveal the answer
             </div>
           )}
