@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -14,17 +13,51 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { register, isAuthenticated } = useAuth();
+  const { register, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // If already authenticated, redirect to home
-  if (isAuthenticated) {
-    navigate('/');
+  // Handle redirection after successful registration
+  useEffect(() => {
+    if (isAuthenticated && isSubmitting) {
+      console.log('User registered, redirecting...');
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
+    }
+  }, [isAuthenticated, isSubmitting, navigate]);
+
+  // Show loading state while checking initial auth
+  if (isLoading && !isSubmitting) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't show register form if already authenticated
+  if (isAuthenticated && !isSubmitting) {
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (isSubmitting) return;
+    
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password || !confirmPassword) {
+      toast({
+        title: "Invalid input",
+        description: "Please fill in all fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast({
         title: "Password mismatch",
@@ -37,15 +70,15 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const success = await register({ email, password });
+      const success = await register({ email: trimmedEmail, password });
       
       if (success) {
         toast({
           title: "Registration successful",
-          description: `Welcome, ${email}!`,
+          description: `Welcome, ${trimmedEmail}!`,
         });
-        navigate('/');
       } else {
+        setIsSubmitting(false);
         toast({
           title: "Manual registration not permitted at the moment",
           description: "Contact guyalt11@gmail.com for registration",
@@ -53,13 +86,13 @@ const Register = () => {
         });
       }
     } catch (error) {
+      console.error('Registration error:', error);
+      setIsSubmitting(false);
       toast({
         title: "Manual registration not permitted at the moment",
         description: "Contact guyalt11@gmail.com for registration.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -79,6 +112,9 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isSubmitting}
+                autoComplete="email"
+                placeholder="Enter your email"
               />
             </div>
             <div className="space-y-2">
@@ -89,7 +125,9 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                disabled={isSubmitting}
+                autoComplete="new-password"
+                placeholder="Enter your password"
               />
             </div>
             <div className="space-y-2">
@@ -100,9 +138,16 @@ const Register = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                disabled={isSubmitting}
+                autoComplete="new-password"
+                placeholder="Confirm your password"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isSubmitting}
+            >
               {isSubmitting ? 'Registering...' : 'Register'}
             </Button>
           </form>
@@ -110,7 +155,7 @@ const Register = () => {
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-center text-sm">
             Already have an account?{' '}
-            <Link to="/login" className="underline">
+            <Link to="/login" className="underline" tabIndex={isSubmitting ? -1 : 0}>
               Login
             </Link>
           </div>
