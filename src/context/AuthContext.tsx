@@ -1,6 +1,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { loginUser, registerUser, updateUserPassword, AuthResponse } from '@/lib/supabase';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 export type User = {
   id: string;
@@ -21,6 +23,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   updatePassword: (newPassword: string) => Promise<boolean>;
+  checkAndRefreshToken: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,27 +40,88 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
+const TOKEN_EXPIRY_DAYS = 1; // 1 day expiry
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const refreshTokenExpiry = (user: User, authToken: string) => {
+    const expiryTime = new Date().getTime() + (TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
+    Cookies.set('currentUser', JSON.stringify(user), { expires: TOKEN_EXPIRY_DAYS });
+    Cookies.set('authToken', authToken, { expires: TOKEN_EXPIRY_DAYS });
+    Cookies.set('tokenExpiry', expiryTime.toString(), { expires: TOKEN_EXPIRY_DAYS });
+  };
+
+  const checkAndRefreshToken = () => {
+    const storedUser = Cookies.get('currentUser');
+    const storedToken = Cookies.get('authToken');
+    const tokenExpiry = Cookies.get('tokenExpiry');
+
+    if (!storedUser || !storedToken || !tokenExpiry) {
+      logout();
+      navigate('/login');
+      return;
+    }
+
+    const now = new Date().getTime();
+    const expiryTime = parseInt(tokenExpiry);
+
+    if (now >= expiryTime) {
+      logout();
+      navigate('/login');
+      return;
+    }
+
+    // Refresh the expiry time
+    const user = JSON.parse(storedUser);
+    refreshTokenExpiry(user, storedToken);
+  };
 
   // Initialize the auth state from localStorage (for persistence between page reloads)
   useEffect(() => {
     const initAuth = () => {
-      const storedUser = localStorage.getItem('currentUser');
-      const storedToken = localStorage.getItem('authToken');
+      const storedUser = Cookies.get('currentUser');
+      const storedToken = Cookies.get('authToken');
+      const tokenExpiry = Cookies.get('tokenExpiry');
       
-      if (storedUser && storedToken) {
-        setCurrentUser(JSON.parse(storedUser));
-        setToken(storedToken);
+      if (storedUser && storedToken && tokenExpiry) {
+        const now = new Date().getTime();
+        const expiryTime = parseInt(tokenExpiry);
+        
+        if (now < expiryTime) {
+          setCurrentUser(JSON.parse(storedUser));
+          setToken(storedToken);
+        } else {
+          // Token has expired
+          logout();
+          navigate('/login');
+        }
       }
       
       setIsLoading(false);
     };
 
     initAuth();
-  }, []);
+
+    // Check token expiration every minute
+    const expirationCheck = setInterval(() => {
+      const tokenExpiry = Cookies.get('tokenExpiry');
+      if (tokenExpiry) {
+        const now = new Date().getTime();
+        const expiryTime = parseInt(tokenExpiry);
+        
+        if (now >= expiryTime) {
+          logout();
+          navigate('/login');
+        }
+      }
+    }, 60000);
+
+    return () => clearInterval(expirationCheck);
+  }, [navigate]);
 
   const login = async (credentials: UserCredentials): Promise<boolean> => {
     try {
@@ -73,10 +137,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setCurrentUser(user);
       setToken(authData.access_token);
       
-      // Save to localStorage for persistence
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('authToken', authData.access_token);
-      
+      // Save to cookies with initial expiry
+      refreshTokenExpiry(user, authData.access_token);
+
       return true;
     } catch (error) {
       console.error('Login failed:', error);
@@ -88,8 +151,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Clear state and localStorage
     setCurrentUser(null);
     setToken(null);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authToken');
+    Cookies.remove('currentUser');
+    Cookies.remove('authToken');
+    Cookies.remove('tokenExpiry');
   };
 
   const register = async (credentials: UserCredentials): Promise<boolean> => {
@@ -106,9 +170,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setCurrentUser(user);
       setToken(authData.access_token);
       
-      // Save to localStorage for persistence
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('authToken', authData.access_token);
+      // Save to cookies with initial expiry
+      refreshTokenExpiry(user, authData.access_token);
       
       return true;
     } catch (error) {
@@ -139,7 +202,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         register,
         isAuthenticated: !!currentUser,
         isLoading,
-        updatePassword
+        updatePassword,
+        checkAndRefreshToken
       }}
     >
       {children}

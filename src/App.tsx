@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TokenExpiryChecker from "./components/TokenExpiryChecker";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
+          <TokenExpiryChecker />
           <VocabProvider>
             <Toaster />
             <Sonner />

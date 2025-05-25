@@ -1,5 +1,4 @@
 
-import { Flag } from 'lucide-react';
 import { PracticeDirection } from '@/types/vocabulary';
 
 interface FlagIconProps {

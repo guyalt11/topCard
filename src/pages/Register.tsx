@@ -47,15 +47,15 @@ const Register = () => {
         navigate('/');
       } else {
         toast({
-          title: "Registration failed",
-          description: "Email already exists or another error occurred.",
+          title: "Manual registration not permitted at the moment",
+          description: "Contact guyalt11@gmail.com for registration",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Registration error",
-        description: "An error occurred during registration.",
+        title: "Manual registration not permitted at the moment",
+        description: "Contact guyalt11@gmail.com for registration.",
         variant: "destructive",
       });
     } finally {

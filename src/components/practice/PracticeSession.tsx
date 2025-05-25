@@ -5,6 +5,7 @@ import PracticeCard from '@/components/practice/PracticeCard';
 import PracticeHeader from './PracticeHeader';
 import PracticeComplete from './PracticeComplete';
 import WordCompletionCounter from './WordCompletionCounter';
+import PracticeProgressBar from '@/components/PracticeProgressBar';
 import { DifficultyLevel, PracticeDirection } from '@/types/vocabulary';
 import { usePracticeWords } from '@/hooks/usePracticeWords';
 
@@ -17,7 +18,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   direction,
   onDirectionChange
 }) => {
-  const { currentList, updateWordDifficulty } = useVocab();
+  const { currentList, updateWordDifficulty, selectList } = useVocab();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -52,6 +53,14 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
     resetSession();
   }, [direction]);
 
+  // Handle refresh by reloading the list and resetting the session
+  const handleRefresh = async () => {
+    if (currentList) {
+      await selectList(currentList.id);
+      resetSession();
+    }
+  };
+
   // Use the initial words list if it exists, otherwise fall back to practiceWords
   const wordsToUse = initialWordsRef.current.length > 0 ? initialWordsRef.current : practiceWords;
   const currentWord = wordsToUse[currentIndex];
@@ -83,7 +92,15 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
         direction={direction}
         onDirectionChange={onDirectionChange}
         onBack={() => navigate(`/list/${currentList?.id}`)}
+        onRefresh={handleRefresh}
       />
+
+      <div className="mb-4">
+        <PracticeProgressBar 
+          currentProgress={completedCount}
+          totalWords={totalWords}
+        />
+      </div>
 
       <div className="mb-6">
         <WordCompletionCounter 
