@@ -19,17 +19,17 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   const navigate = useNavigate();
   // Count words due for practice in each direction
   const now = new Date();
-  const germanDueCount = list.words.filter(word => {
-    const nextReview = word.nextReview?.germanToEnglish;
+  const translateFromCount = list.words.filter(word => {
+    const nextReview = word.nextReview?.translateFrom;
     return !nextReview || nextReview <= now;
   }).length;
   
-  const englishDueCount = list.words.filter(word => {
-    const nextReview = word.nextReview?.englishToGerman;
+  const translateToCount = list.words.filter(word => {
+    const nextReview = word.nextReview?.translateTo;
     return !nextReview || nextReview <= now;
   }).length;
   
-  const totalDueCount = germanDueCount + englishDueCount;
+  const totalDueCount = translateFromCount + translateToCount;
 
   return (
     <Card className="h-full flex flex-col bg-muted/30">
@@ -68,7 +68,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
                 {totalDueCount} due for practice
               </span>
               <span className="text-xs text-muted-foreground">
-                ({germanDueCount} German → English, {englishDueCount} English → German)
+                ({translateFromCount} EN → {list.language.toUpperCase()}, {translateToCount} {list.language.toUpperCase()} → EN)
               </span>
             </>
           )}
@@ -89,23 +89,23 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
           </span>
           <Button
             variant="default"
-            onClick={() => navigate(`/practice/${list.id}/englishToGerman`)}
-            className={`relative ${englishDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={englishDueCount === 0}
+            onClick={() => navigate(`/practice/${list.id}/translateFrom`)}
+            className={`relative ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={translateFromCount === 0}
           >
-            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
             <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+            <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="inline h-5" />
           </Button>
           <Button
             variant="default"
-            onClick={() => navigate(`/practice/${list.id}/germanToEnglish`)}
-            className={`relative ${germanDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={germanDueCount === 0}
+            onClick={() => navigate(`/practice/${list.id}/translateTo`)}
+            className={`relative ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={translateToCount === 0}
           >
-            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+            <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="inline h-5" />
             <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
           </Button>
         </div>
       </CardFooter>

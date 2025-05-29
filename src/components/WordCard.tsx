@@ -18,10 +18,10 @@ const WordCard = ({ word, onEdit, onDelete }: WordCardProps) => {
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h3 className="font-medium text-lg">{word.german}</h3>
+              <h3 className="font-medium text-lg">{word.lng}</h3>
               {word.gender && <GenderTag gender={word.gender} />}
             </div>
-            <p className="text-muted-foreground">{word.english}</p>
+            <p className="text-muted-foreground">{word.en}</p>
             {word.notes && <p className="text-sm text-muted-foreground mt-2">{word.notes}</p>}
           </div>
           <div className="flex space-x-1">

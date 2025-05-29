@@ -8,6 +8,16 @@ import WordCompletionCounter from './WordCompletionCounter';
 import PracticeProgressBar from '@/components/PracticeProgressBar';
 import { DifficultyLevel, PracticeDirection } from '@/types/vocabulary';
 import { usePracticeWords } from '@/hooks/usePracticeWords';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface PracticeSessionProps {
   direction: PracticeDirection;
@@ -24,6 +34,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   const [completedCount, setCompletedCount] = useState(0);
   const { practiceWords, resetPracticeWords } = usePracticeWords(direction);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   // Store the initial word list as a ref so it never changes during the session
   const initialWordsRef = useRef<typeof practiceWords>([]);
@@ -72,8 +83,6 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   const wordsToUse = initialWordsRef.current.length > 0 ? initialWordsRef.current : practiceWords;
   const currentWord = wordsToUse[currentIndex];
   const totalWords = totalWordsRef.current > 0 ? totalWordsRef.current : wordsToUse.length;
-  console.log(`currentIndex: ${currentIndex}`);
-  console.log(`wordsToUse: ${wordsToUse.length}`);
   const isComplete = currentIndex >= wordsToUse.length || wordsToUse.length === 0;
   
   const handleAnswered = (difficulty: DifficultyLevel) => {
@@ -95,7 +104,6 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   };
 
   const handleDelete = async () => {
-    console.log(`isComplete: ${isComplete}`);
     if (currentWord) {
       await deleteWord(currentWord.id);
       // Remove the word from our practice list
@@ -149,9 +157,32 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
           onAnswer={handleAnswered}
           onNext={handleNext}
           isAnswered={isAnswered}
-          onDelete={handleDelete}
+          onDelete={() => setShowDeleteDialog(true)}
         />
       )}
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Word</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this word? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleDelete();
+                setShowDeleteDialog(false);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

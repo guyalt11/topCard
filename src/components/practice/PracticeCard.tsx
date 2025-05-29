@@ -54,8 +54,9 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
     onNext();
   };
 
+  console.log(word)
   // Safeguard against undefined word
-  if (!word || !word.german) {
+  if (!word || !word.lng) {
     return (
       <Card className="min-h-[200px] flex flex-col justify-center items-center bg-muted/30">
         <CardContent className="text-center">

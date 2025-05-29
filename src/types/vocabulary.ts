@@ -1,9 +1,8 @@
-
 export type Gender = 'm' | 'f' | 'n';
 
 export type DifficultyLevel = 'hard' | 'ok' | 'good' | 'perfect';
 
-export type PracticeDirection = 'germanToEnglish' | 'englishToGerman';
+export type PracticeDirection = 'translateTo' | 'translateFrom';
 
 // SM-2 Algorithm parameters
 export interface SM2Params {
@@ -14,29 +13,29 @@ export interface SM2Params {
 
 export interface VocabWord {
   id: string;
-  german: string;
-  english: string;
+  en: string;      // English (anchor language)
+  lng: string;     // Target language word
   gender?: Gender;
   notes?: string;
   
   // Track practice separately for each direction
   lastPracticed?: {
-    germanToEnglish?: Date;
-    englishToGerman?: Date;
+    translateTo?: Date;
+    translateFrom?: Date;
   };
   nextReview?: {
-    germanToEnglish?: Date;
-    englishToGerman?: Date;
+    translateTo?: Date;
+    translateFrom?: Date;
   };
   difficulty?: {
-    germanToEnglish?: DifficultyLevel;
-    englishToGerman?: DifficultyLevel;
+    translateTo?: DifficultyLevel;
+    translateFrom?: DifficultyLevel;
   };
   
   // SM-2 parameters for each direction
   sm2?: {
-    germanToEnglish?: SM2Params;
-    englishToGerman?: SM2Params;
+    translateTo?: SM2Params;
+    translateFrom?: SM2Params;
   };
 }
 
@@ -44,6 +43,7 @@ export interface VocabList {
   id: string;
   name: string;
   description?: string;
+  language: string;  // The target language code (e.g., 'de', 'fr', etc.)
   words: VocabWord[];
   createdAt: Date;
   updatedAt: Date;
@@ -74,8 +74,8 @@ export const INITIAL_REVIEW_SCHEDULE: Record<DifficultyLevel, number> = {
 
 // Direction-specific multipliers - both directions use the same timing
 export const DIRECTION_MULTIPLIERS: Record<PracticeDirection, number> = {
-  germanToEnglish: 1.0, // Same multiplier
-  englishToGerman: 1.0, // Same multiplier
+  translateTo: 1.0, // Same multiplier
+  translateFrom: 1.0, // Same multiplier
 };
 
 export const FOLLOW_UP_REVIEW_SCHEDULE: Record<DifficultyLevel, Record<DifficultyLevel, number>> = {

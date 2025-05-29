@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { VocabList, VocabWord, DifficultyLevel, PracticeDirection, DIFFICULTY_TO_SM2_QUALITY } from '@/types/vocabulary';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +9,7 @@ interface VocabContextType {
   lists: VocabList[];
   isLoading: boolean;
   currentList: VocabList | null;
-  addList: (name: string, description?: string) => Promise<VocabList | null>;
+  addList: (name: string, description?: string, language?: string) => Promise<VocabList | null>;
   updateList: (id: string, updates: Partial<VocabList>) => Promise<void>;
   deleteList: (id: string) => Promise<void>;
   selectList: (id: string) => Promise<void>;
@@ -53,12 +52,13 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   const { exportList, importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
 
   // Add a new list
-  const addList = async (name: string, description?: string): Promise<VocabList | null> => {
+  const addList = async (name: string, description?: string, language: string = 'de'): Promise<VocabList | null> => {
     try {
       const newList: VocabList = {
         id: uuidv4(),
         name,
         description,
+        language,
         words: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -323,6 +323,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           id: uuidv4(),
           name: listName,
           description: importedList.description,
+          language: importedList.language, // Use the language from the imported list
           words: [],
           createdAt: new Date(),
           updatedAt: new Date(),

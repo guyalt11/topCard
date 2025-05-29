@@ -14,9 +14,9 @@ interface GenderTagProps {
 
 const GenderTag: React.FC<GenderTagProps> = ({ gender, className, showTooltip = false }) => {
   const tooltipContent = {
-    m: 'Masculine (der)',
-    f: 'Feminine (die)',
-    n: 'Neuter (das)'
+    m: 'Masculine',
+    f: 'Feminine',
+    n: 'Neuter'
   };
 
   const tag = (

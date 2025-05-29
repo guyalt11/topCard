@@ -77,10 +77,10 @@ const VocabList = () => {
   if (!initialized || !currentList) {
     return null;
   }
-
+  
   const filteredWords = currentList.words.filter(word => 
-    word.german.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    word.english.toLowerCase().includes(searchTerm.toLowerCase())
+    word.lng.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    word.en.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleEditWord = (word: VocabWord) => {
@@ -124,8 +124,8 @@ const VocabList = () => {
       // Add each word to the list asynchronously
       const addWordPromises = importedList.words.map(async (word) => {
         await addWord(listId, {
-          german: word.german,
-          english: word.english,
+          lng: word.lng,
+          en: word.en,
           gender: word.gender,
           notes: word.notes
         });
@@ -202,27 +202,25 @@ const VocabList = () => {
 
   const getDueByLanguage = () => {
     const now = new Date();
-    let germanDue = 0;
-    let englishDue = 0;
-  
-    currentList.words.forEach(word => {
-      if (!getNextReviewDate(word, 'germanToEnglish') || getNextReviewDate(word, 'germanToEnglish')! <= now) {
-        germanDue++;
+    let translateFromDue = 0;
+    let translateToDue = 0;
+
+    currentList?.words.forEach(word => {
+      if (!getNextReviewDate(word, 'translateFrom') || getNextReviewDate(word, 'translateFrom')! <= now) {
+        translateFromDue++;
       }
-      if (!getNextReviewDate(word, 'englishToGerman') || getNextReviewDate(word, 'englishToGerman')! <= now) {
-        englishDue++;
+      if (!getNextReviewDate(word, 'translateTo') || getNextReviewDate(word, 'translateTo')! <= now) {
+        translateToDue++;
       }
     });
-  
-    return { germanDue, englishDue };
-  };
-  
-  const germanDueCount = getDueByLanguage().germanDue;
-  const englishDueCount = getDueByLanguage().englishDue;
 
-  const getDueWordsCount = (): number => {
-    const { germanDue, englishDue } = getDueByLanguage();
-    return germanDue + englishDue;
+    return { translateFromDue, translateToDue };
+  };
+
+  const getDueWordsCount = () => {
+    const translateFromDueCount = getDueByLanguage().translateFromDue;
+    const translateToDueCount = getDueByLanguage().translateToDue;
+    return translateFromDueCount + translateToDueCount;
   };
 
   const formatNextReview = (date: Date | undefined): string => {
@@ -239,36 +237,36 @@ const VocabList = () => {
 
   const getDueStatusForWord = (word: VocabWord) => {
     const now = new Date();
-    const germanDue = !getNextReviewDate(word, 'germanToEnglish') || getNextReviewDate(word, 'germanToEnglish')! <= now;
-    const englishDue = !getNextReviewDate(word, 'englishToGerman') || getNextReviewDate(word, 'englishToGerman')! <= now;
-    return { germanDue, englishDue };
+    const translateFromDue = !getNextReviewDate(word, 'translateFrom') || getNextReviewDate(word, 'translateFrom')! <= now;
+    const translateToDue = !getNextReviewDate(word, 'translateTo') || getNextReviewDate(word, 'translateTo')! <= now;
+    return { translateFromDue, translateToDue };
   };
 
   const isWordDueForReview = (word: VocabWord): boolean => {
     if (!word.nextReview) return true;
     const now = new Date();
     
-    const germanToEnglishDue = !getNextReviewDate(word, 'germanToEnglish') || 
-                                getNextReviewDate(word, 'germanToEnglish')! <= now;
-    const englishToGermanDue = !getNextReviewDate(word, 'englishToGerman') || 
-                                getNextReviewDate(word, 'englishToGerman')! <= now;
+    const translateFromDue = !getNextReviewDate(word, 'translateFrom') || 
+                              getNextReviewDate(word, 'translateFrom')! <= now;
+    const translateToDue = !getNextReviewDate(word, 'translateTo') || 
+                            getNextReviewDate(word, 'translateTo')! <= now;
     
-    return germanToEnglishDue || englishToGermanDue;
+    return translateFromDue || translateToDue;
   };
 
   const getFormattedReviewTimes = (word: VocabWord): React.ReactNode => {
-    const gToEFormatted = formatNextReview(getNextReviewDate(word, 'germanToEnglish'));
-    const eToGFormatted = formatNextReview(getNextReviewDate(word, 'englishToGerman'));
+    const translateFromFormatted = formatNextReview(getNextReviewDate(word, 'translateFrom'));
+    const translateToFormatted = formatNextReview(getNextReviewDate(word, 'translateTo'));
     
     return (
       <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
-          <DirectionFlag direction="germanToEnglish" size={14} />
-          <span>{gToEFormatted}</span>
+          <DirectionFlag direction="translateFrom" size={14} />
+          <span>{translateFromFormatted}</span>
         </div>
         <div className="flex items-center gap-1">
-          <DirectionFlag direction="englishToGerman" size={14} />
-          <span>{eToGFormatted}</span>
+          <DirectionFlag direction="translateTo" size={14} />
+          <span>{translateToFormatted}</span>
         </div>
       </div>
     );
@@ -311,23 +309,23 @@ const VocabList = () => {
           </span>
           <Button
             variant="default"
-            onClick={() => goToPractice(currentList.id, 'englishToGerman')}
-            className={`relative ${englishDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={englishDueCount === 0}
+            onClick={() => goToPractice(currentList.id, 'translateFrom')}
+            className={`relative ${dueWordsCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={dueWordsCount === 0}
           >
-            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
             <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="inline h-5" />
           </Button>
           <Button
             variant="default"
-            onClick={() => goToPractice(currentList.id, 'germanToEnglish')}
-            className={`relative ${germanDueCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={germanDueCount === 0}
+            onClick={() => goToPractice(currentList.id, 'translateTo')}
+            className={`relative ${dueWordsCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={dueWordsCount === 0}
           >
-            <img src="/faviconDE.ico" alt="DE" className="inline h-5" />
+            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="inline h-5" />
             <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src="/faviconGB.ico" alt="GB" className="inline h-5" />
+            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
           </Button>
           <Button onClick={() => goToHome()}>Home</Button>
         </div>

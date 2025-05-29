@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { VocabList, VocabWord } from '@/types/vocabulary';
 import { useAuth } from '@/context/AuthContext';
@@ -53,6 +52,7 @@ export const useSupabaseVocabLists = () => {
             id: list.id,
             name: list.name,
             description: list.description || undefined,
+            language: list.language || 'de', // Default to 'de' for backward compatibility
             words: words.map(word => ({
               ...word,
               // Parse JSON fields if they exist
@@ -110,6 +110,7 @@ export const useSupabaseVocabLists = () => {
           id: list.id,
           name: list.name,
           description: list.description || null,
+          language: list.language,
           user_id: currentUser.id
         })
       });
@@ -128,6 +129,7 @@ export const useSupabaseVocabLists = () => {
           body: JSON.stringify({
             name: list.name,
             description: list.description || null,
+            language: list.language,
             updated_at: new Date().toISOString()
           })
         }
@@ -196,8 +198,8 @@ export const useSupabaseVocabLists = () => {
     // Prepare the word data for Supabase - excluding removed columns
     const wordData = {
       list_id: listId,
-      german: word.german,
-      english: word.english,
+      en: word.en,
+      lng: word.lng,
       gender: word.gender || null,
       notes: word.notes || null,
       nextReview: word.nextReview || null,

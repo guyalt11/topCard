@@ -1,1 +1,1 @@
-# Flashcard DE - an app to practice German vocabulary
+# Flashcards - an app to practice vocabulary

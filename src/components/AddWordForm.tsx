@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { VocabWord, Gender } from '@/types/vocabulary';
 import { useVocab } from '@/context/VocabContext';
@@ -18,7 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { translateGermanWord } from '@/services/translationService';
+import { translateWord } from '@/services/translationService';
 
 interface AddWordFormProps {
   editWord?: VocabWord;
@@ -33,8 +32,8 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 }) => {
   const { addWord, updateWord, currentList } = useVocab();
   
-  const [german, setGerman] = useState(editWord?.german || '');
-  const [english, setEnglish] = useState(editWord?.english || '');
+  const [lng, setLng] = useState(editWord?.lng || '');
+  const [en, setEn] = useState(editWord?.en || '');
   const [gender, setGender] = useState<Gender | undefined>(editWord?.gender);
   const [notes, setNotes] = useState(editWord?.notes || '');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -42,15 +41,15 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 
   useEffect(() => {
     const debounceTimeout = setTimeout(async () => {
-      if (german.trim().length >= 2 && !editWord) {
+      if (lng.trim().length >= 2 && !editWord) {
         setIsTranslating(true);
         setTranslateError(null);
         
         try {
-          const result = await translateGermanWord(german);
+          const result = await translateWord(lng, currentList?.language || 'de');
           
           if (result.translation) {
-            setEnglish(result.translation);
+            setEn(result.translation);
             console.log("Setting translation:", result.translation);
           }
           
@@ -66,15 +65,15 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
     }, 800); // Debounce for 800ms
     
     return () => clearTimeout(debounceTimeout);
-  }, [german, editWord]);
+  }, [lng, editWord, currentList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!german.trim() || !english.trim()) {
+    if (!lng.trim() || !en.trim()) {
       toast({
         title: "Error",
-        description: "Both German word and English translation are required",
+        description: "Both words are required",
         variant: "destructive",
       });
       return;
@@ -82,33 +81,33 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 
     if (editWord) {
       await updateWord(editWord.id, {
-        german: german.trim(),
-        english: english.trim(),
+        lng: lng.trim(),
+        en: en.trim(),
         gender,
         notes: notes.trim() || undefined,
       });
       toast({
         title: "Word updated",
-        description: `"${german}" has been updated in your vocabulary list.`,
+        description: `"${lng}" has been updated in your vocabulary list.`,
       });
     } else {
       if (currentList) {
         await addWord(currentList.id, {
-          german: german.trim(),
-          english: english.trim(),
+          lng: lng.trim(),
+          en: en.trim(),
           gender,
           notes: notes.trim() || undefined,
         });
         toast({
           title: "Word added",
-          description: `"${german}" has been added to your vocabulary list.`,
+          description: `"${lng}" has been added to your vocabulary list.`,
         });
       }
     }
 
     // Reset form
-    setGerman('');
-    setEnglish('');
+    setLng('');
+    setEn('');
     setGender(undefined);
     setNotes('');
     onOpenChange(false);
@@ -131,13 +130,13 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="german">German Word</Label>
+            <Label htmlFor="lng">{currentList?.language.toUpperCase() || 'Target Language'} Word</Label>
             <div className="relative">
               <Input
-                id="german"
-                value={german}
-                onChange={(e) => setGerman(e.target.value)}
-                placeholder="e.g. Apfel"
+                id="lng"
+                value={lng}
+                onChange={(e) => setLng(e.target.value)}
+                placeholder={`e.g. ${currentList?.language === 'de' ? 'Apfel' : 'word'}`}
                 required
                 autoFocus
               />
@@ -186,25 +185,27 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="m" id="male" />
-                <Label htmlFor="male" className="gender-tag-m px-2 rounded">der (m)</Label>
+                <Label htmlFor="male" className="gender-tag-m px-2 rounded">m.</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="f" id="female" />
-                <Label htmlFor="female" className="gender-tag-f px-2 rounded">die (f)</Label>
+                <Label htmlFor="female" className="gender-tag-f px-2 rounded">f.</Label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="n" id="neutral" />
-                <Label htmlFor="neutral" className="gender-tag-n px-2 rounded">das (n)</Label>
-              </div>
+              {currentList?.language !== 'he' && (
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="n" id="neutral" />
+                  <Label htmlFor="neutral" className="gender-tag-n px-2 rounded">n.</Label>
+                </div>
+              )}
             </RadioGroup>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="english">English Translation</Label>
+            <Label htmlFor="en">English Translation</Label>
             <Input
-              id="english"
-              value={english}
-              onChange={(e) => setEnglish(e.target.value)}
+              id="en"
+              value={en}
+              onChange={(e) => setEn(e.target.value)}
               placeholder="e.g. apple"
               required
             />

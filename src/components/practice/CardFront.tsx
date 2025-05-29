@@ -4,6 +4,7 @@ import GenderTag from '@/components/GenderTag';
 import { DirectionFlag } from '@/components/FlagIcon';
 import { VocabWord, PracticeDirection } from '@/types/vocabulary';
 import { Trash2 } from 'lucide-react';
+import { speak } from '@/lib/speech';
 
 interface CardFrontProps {
   word: VocabWord;
@@ -13,15 +14,9 @@ interface CardFrontProps {
 }
 
 const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelete }) => {
-  const frontText = direction === 'germanToEnglish' ? word.german : word.english;
-  
-  const speak = (text: string, lang: 'de-DE' | 'en-US') => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
-      window.speechSynthesis.speak(utterance);
-    }
-  };
+  // For translateTo (Language to English), show language word
+  // For translateFrom (English to Language), show English word
+  const frontText = direction === 'translateTo' ? word.lng : word.en;
   
   return (
     <div className="text-center w-full">
@@ -30,19 +25,19 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
       </div>
       <div className="flex items-center justify-center gap-2">
         <h2 className="text-2xl font-bold">{frontText}</h2>
-        {direction === 'germanToEnglish' && word.gender && (
+        {direction === 'translateTo' && word.gender && (
           <GenderTag gender={word.gender} />
         )}
       </div>
 
-      {direction === 'germanToEnglish' && (
+      {direction === 'translateTo' && (
         <Button
           variant="ghost"
           size="sm"
           className="mt-4"
           onClick={(e) => {
             e.stopPropagation();
-            speak(word.german, 'de-DE');
+            speak(word.lng, 'de-DE');
           }}
         >
           🔊 Listen

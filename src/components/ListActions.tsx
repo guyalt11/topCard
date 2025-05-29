@@ -53,8 +53,8 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
           // Add each word to the list asynchronously
           const addWordPromises = importedList.words.map(async (word) => {
             await addWord(listId, {
-              german: word.german,
-              english: word.english,
+              lng: word.lng,
+              en: word.en,
               gender: word.gender,
               notes: word.notes
             });

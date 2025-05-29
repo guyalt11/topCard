@@ -63,7 +63,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				german: {
+				lng: {
 					light: '#5DA9E9',
 					DEFAULT: '#3D8BD9',
 					dark: '#2E6EB3'

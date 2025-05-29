@@ -10,7 +10,7 @@ const PracticeContainer = () => {
   const { listId, urlDirection } = useParams();
   const { getListById, selectList, currentList, isLoading } = useVocab();
   const navigate = useNavigate();
-  const [direction, setDirection] = useState<PracticeDirection>(urlDirection as PracticeDirection || 'germanToEnglish');
+  const [direction, setDirection] = useState<PracticeDirection>(urlDirection as PracticeDirection || 'translateTo');
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {

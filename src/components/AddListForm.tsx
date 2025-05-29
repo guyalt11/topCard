@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { VocabList } from '@/types/vocabulary';
 import { useVocab } from '@/context/VocabContext';
@@ -6,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +38,7 @@ const AddListForm: React.FC<AddListFormProps> = ({
   
   const [name, setName] = useState(editList?.name || '');
   const [description, setDescription] = useState(editList?.description || '');
+  const [language, setLanguage] = useState(editList?.language || 'de');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +51,7 @@ const AddListForm: React.FC<AddListFormProps> = ({
       await updateList(editList.id, {
         name: name.trim(),
         description: description.trim() || undefined,
+        language,
       });
       
       // If edit was successful and we have a callback, call it with the updated list
@@ -51,13 +59,14 @@ const AddListForm: React.FC<AddListFormProps> = ({
         const updatedList = {
           ...editList,
           name: name.trim(),
-          description: description.trim() || undefined
+          description: description.trim() || undefined,
+          language,
         };
         onSuccess(updatedList);
       }
     } else {
       // When creating a new list, use the description parameter correctly
-      const newList = await addList(name.trim(), description.trim() || undefined);
+      const newList = await addList(name.trim(), description.trim() || undefined, language);
       
       // If creation was successful and we have a callback, call it with the new list
       if (newList && onSuccess) {
@@ -68,6 +77,7 @@ const AddListForm: React.FC<AddListFormProps> = ({
     // Reset form
     setName('');
     setDescription('');
+    setLanguage('de');
     onOpenChange(false);
   };
 
@@ -92,6 +102,20 @@ const AddListForm: React.FC<AddListFormProps> = ({
               placeholder="e.g. Food Vocabulary"
               required
             />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="language">Language</Label>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="de">German</SelectItem>
+                <SelectItem value="he">Hebrew</SelectItem>
+                <SelectItem value="is">Icelandic</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">

@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { VocabList } from '@/types/vocabulary';
 import { toast } from '@/components/ui/use-toast';
@@ -17,12 +16,14 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
     // Create a simplified version for export
     const exportData = {
       name: list.name,
+      description: list.description,
+      language: list.language,
       words: list.words.map(word => ({
-        german: word.german,
-        english: word.english,
-        gender: word.gender || null,
-        description: word.notes || null, // Export notes as description for compatibility
-      })),
+        lng: word.lng,
+        en: word.en,
+        gender: word.gender,
+        notes: word.notes
+      }))
     };
 
     let fileContent: string;
@@ -73,6 +74,16 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         });
         return null;
       }
+
+      // Validate language
+      if (!importData.language) {
+        toast({
+          title: "Import error",
+          description: "Invalid language",
+          variant: "destructive",
+        });
+        return null;
+      }
       
       // Create new list with the imported words
       const newList: VocabList = {
@@ -80,13 +91,14 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         name: listName || importData.name || 'Imported List',
         words: importData.words.map((w: any) => ({
           id: uuidv4(),
-          german: w.german || '',
-          english: w.english || '',
+          lng: w.lng || '',
+          en: w.en || '',
           gender: w.gender || undefined,
-          notes: w.description || undefined, // Import description as notes
+          notes: w.notes || undefined,
         })),
         createdAt: new Date(),
         updatedAt: new Date(),
+        language: importData.language
       };
       
       toast({

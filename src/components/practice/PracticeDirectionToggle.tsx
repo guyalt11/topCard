@@ -17,9 +17,9 @@ const PracticeDirectionToggle: React.FC<PracticeDirectionToggleProps> = ({
     <div className="flex items-center space-x-2">
       <span className="text-sm font-medium">Practice Direction:</span>
       <div className="flex items-center gap-2">
-        <DirectionFlag direction={direction === 'germanToEnglish' ? 'germanToEnglish' : 'englishToGerman'} size={20} />
+        <DirectionFlag direction={direction === 'translateTo' ? 'translateTo' : 'translateFrom'} size={20} />
         <Switch 
-          checked={direction === 'englishToGerman'}
+          checked={direction === 'translateTo'}
           onCheckedChange={onToggle}
           id="direction-toggle"
         />
