@@ -36,9 +36,6 @@ export async function translateWord(word: string, fromLanguage: string): Promise
 }
 
 function extractTranslationData(wikitext: string, fromLanguage: string): TranslationResult {
-  console.log("Raw wikitext length:", wikitext.length);
-  console.log("wikitext: " + wikitext);
-
   let translation: string | null = null;
   let gender: Gender | undefined = undefined;
 

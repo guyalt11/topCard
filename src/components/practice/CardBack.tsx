@@ -4,6 +4,7 @@ import GenderTag from '@/components/GenderTag';
 import { DirectionFlag } from '@/components/FlagIcon';
 import { VocabWord, PracticeDirection } from '@/types/vocabulary';
 import { speak } from '@/lib/speech';
+import { useVocab } from '@/context/VocabContext';
 
 interface CardBackProps {
   word: VocabWord;
@@ -11,10 +12,20 @@ interface CardBackProps {
 }
 
 const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
+  const { currentList } = useVocab();
   // For translateTo (Language to English), show English word
   // For translateFrom (English to Language), show language word
   const backText = direction === 'translateTo' ? word.en : word.lng;
   const showGender = direction === 'translateFrom' && word.gender;
+  
+  const getLanguageCode = (lang: string) => {
+    switch (lang) {
+      case 'de': return 'de-DE';
+      case 'he': return 'he-IL';
+      case 'is': return 'is-IS';
+      default: return 'en-US';
+    }
+  };
   
   return (
     <div className="text-center mt-6 pt-4 w-full">
@@ -33,7 +44,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
           className="mt-2"
           onClick={(e) => {
             e.stopPropagation();
-            speak(word.lng, 'de-DE');
+            speak(word.lng, getLanguageCode(currentList?.language || 'en'));
           }}
         >
           🔊 Listen

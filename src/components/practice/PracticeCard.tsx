@@ -54,7 +54,6 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
     onNext();
   };
 
-  console.log(word)
   // Safeguard against undefined word
   if (!word || !word.lng) {
     return (

@@ -5,6 +5,7 @@ import { DirectionFlag } from '@/components/FlagIcon';
 import { VocabWord, PracticeDirection } from '@/types/vocabulary';
 import { Trash2 } from 'lucide-react';
 import { speak } from '@/lib/speech';
+import { useVocab } from '@/context/VocabContext';
 
 interface CardFrontProps {
   word: VocabWord;
@@ -14,9 +15,19 @@ interface CardFrontProps {
 }
 
 const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelete }) => {
+  const { currentList } = useVocab();
   // For translateTo (Language to English), show language word
   // For translateFrom (English to Language), show English word
   const frontText = direction === 'translateTo' ? word.lng : word.en;
+  
+  const getLanguageCode = (lang: string) => {
+    switch (lang) {
+      case 'de': return 'de-DE';
+      case 'he': return 'he-IL';
+      case 'is': return 'is-IS';
+      default: return 'en-US';
+    }
+  };
   
   return (
     <div className="text-center w-full">
@@ -37,7 +48,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
           className="mt-4"
           onClick={(e) => {
             e.stopPropagation();
-            speak(word.lng, 'de-DE');
+            speak(word.lng, getLanguageCode(currentList?.language || 'en'));
           }}
         >
           🔊 Listen
