@@ -48,10 +48,10 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   };
 
   const handleDifficultySelect = (difficulty: DifficultyLevel) => {
-    // Call the answer handler which will update the word difficulty
-    onAnswer(difficulty);
-    // Immediately call onNext to advance to the next word
-    onNext();
+    if (!isAnswered) {
+      onAnswer(difficulty);
+      // The parent component will handle moving to the next card
+    }
   };
 
   // Safeguard against undefined word

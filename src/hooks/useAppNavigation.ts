@@ -27,7 +27,7 @@ export const useAppNavigation = () => {
       return;
     }
     await selectList(listId);
-    navigate(`/practice/${listId}/${direction}`);
+    navigate(`/practice/${listId}?direction=${direction}`);
   };
 
   return {

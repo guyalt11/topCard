@@ -99,10 +99,43 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   
   const handleAnswered = (difficulty: DifficultyLevel) => {
     if (currentWord) {
-      updateWordDifficulty(currentWord.id, difficulty, direction);
+      // Update the word's difficulty and next review time
+      const now = new Date();
+      const updatedWord = {
+        ...currentWord,
+        sm2: {
+          ...currentWord.sm2 || {},
+          [direction]: {
+            easeFactor: 2.5,
+            interval: 0,
+            repetitions: 0
+          }
+        },
+        nextReview: {
+          ...currentWord.nextReview || {},
+          [direction]: new Date(now.getTime() + (difficulty === 'hard' ? 60000 : 3600000))
+        }
+      };
+
+      // Update the word in the practice list
+      initialWordsRef.current = initialWordsRef.current.map(w => 
+        w.id === currentWord.id ? updatedWord : w
+      );
+
+      // Update the completed count and answered state
       setCompletedCount(prev => prev + 1);
       setIsAnswered(true);
       console.log(`Word completed. Completed count: ${completedCount + 1}/${totalWords}`);
+
+      // Call updateWordDifficulty in the background
+      updateWordDifficulty(currentWord.id, difficulty, direction).catch(error => {
+        console.error('Error updating word difficulty:', error);
+      });
+
+      // Move to the next card after a short delay
+      setTimeout(() => {
+        handleNext();
+      }, 100);
     }
   };
 

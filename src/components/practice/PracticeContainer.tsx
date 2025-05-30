@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useVocab } from '@/context/VocabContext';
 import PracticeSession from './PracticeSession';
 import { PracticeDirection } from '@/types/vocabulary';
 
 const PracticeContainer: React.FC = () => {
-  const { listId, urlDirection } = useParams<{ listId: string; urlDirection: string }>();
+  const { listId } = useParams<{ listId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { currentList, selectList, isLoading, getListById } = useVocab();
   const [direction, setDirection] = useState<PracticeDirection>('translateFrom');
@@ -27,6 +28,7 @@ const PracticeContainer: React.FC = () => {
       if (list) {
         await selectList(listId);
         // Set direction from URL if valid
+        const urlDirection = searchParams.get('direction');
         if (urlDirection === 'translateFrom' || urlDirection === 'translateTo') {
           setDirection(urlDirection);
         }
@@ -38,13 +40,13 @@ const PracticeContainer: React.FC = () => {
     };
 
     initList();
-  }, [listId, urlDirection, selectList, isLoading, getListById, navigate]);
+  }, [listId, searchParams, selectList, isLoading, getListById, navigate]);
 
   // Handle direction change
   const handleDirectionChange = (newDirection: PracticeDirection) => {
     setDirection(newDirection);
-    // Update URL to reflect new direction
-    navigate(`/practice/${listId}/${newDirection}`);
+    // Update URL parameters without causing a page refresh
+    setSearchParams({ direction: newDirection });
   };
 
   // Show loading state while initializing

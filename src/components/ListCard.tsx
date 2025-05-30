@@ -1,9 +1,10 @@
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { VocabList } from "@/types/vocabulary";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, FileDown, FileUp } from "lucide-react";
 import ListActions from "@/components/ListActions";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 interface ListCardProps {
   list: VocabList;
@@ -16,7 +17,7 @@ interface ListCardProps {
 }
 
 const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onImport }: ListCardProps) => {
-  const navigate = useNavigate();
+  const { goToPractice } = useAppNavigation();
   // Count words due for practice in each direction
   const now = new Date();
   const translateFromCount = list.words.filter(word => {
@@ -30,6 +31,13 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   }).length;
   
   const totalDueCount = translateFromCount + translateToCount;
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onImport(file);
+    }
+  };
 
   return (
     <Card className="h-full flex flex-col bg-muted/30">
@@ -89,7 +97,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
           </span>
           <Button
             variant="default"
-            onClick={() => navigate(`/practice/${list.id}/translateFrom`)}
+            onClick={() => goToPractice(list.id, 'translateFrom')}
             className={`relative ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
             disabled={translateFromCount === 0}
           >
@@ -99,7 +107,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
           </Button>
           <Button
             variant="default"
-            onClick={() => navigate(`/practice/${list.id}/translateTo`)}
+            onClick={() => goToPractice(list.id, 'translateTo')}
             className={`relative ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
             disabled={translateToCount === 0}
           >
