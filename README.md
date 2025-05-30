@@ -1,1 +1,1 @@
-# Flashcards - an app to practice vocabulary
+# Top Card - an app to practice vocabulary

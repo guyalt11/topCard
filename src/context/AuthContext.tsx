@@ -1,18 +1,9 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { loginUser, registerUser, updateUserPassword, AuthResponse } from '@/lib/supabase';
-import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabaseClient';
+import { User } from '@supabase/supabase-js';
 
-export type User = {
-  id: string;
-  email: string;
-};
-
-type UserCredentials = {
-  email: string;
-  password: string;
-};
+type UserCredentials = { email: string; password: string; };
 
 type AuthContextType = {
   currentUser: User | null;
@@ -30,116 +21,43 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
-type AuthProviderProps = {
-  children: ReactNode;
-};
-
-const TOKEN_EXPIRY_DAYS = 1; // 1 day expiry
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const refreshTokenExpiry = (user: User, authToken: string) => {
-    const expiryTime = new Date().getTime() + (TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
-    Cookies.set('currentUser', JSON.stringify(user), { expires: TOKEN_EXPIRY_DAYS });
-    Cookies.set('authToken', authToken, { expires: TOKEN_EXPIRY_DAYS });
-    Cookies.set('tokenExpiry', expiryTime.toString(), { expires: TOKEN_EXPIRY_DAYS });
-  };
-
-  const checkAndRefreshToken = () => {
-    const storedUser = Cookies.get('currentUser');
-    const storedToken = Cookies.get('authToken');
-    const tokenExpiry = Cookies.get('tokenExpiry');
-
-    if (!storedUser || !storedToken || !tokenExpiry) {
-      logout();
-      navigate('/login');
-      return;
-    }
-
-    const now = new Date().getTime();
-    const expiryTime = parseInt(tokenExpiry);
-
-    if (now >= expiryTime) {
-      logout();
-      navigate('/login');
-      return;
-    }
-
-    // Refresh the expiry time
-    const user = JSON.parse(storedUser);
-    refreshTokenExpiry(user, storedToken);
-  };
-
-  // Initialize the auth state from localStorage (for persistence between page reloads)
   useEffect(() => {
-    const initAuth = () => {
-      const storedUser = Cookies.get('currentUser');
-      const storedToken = Cookies.get('authToken');
-      const tokenExpiry = Cookies.get('tokenExpiry');
-      
-      if (storedUser && storedToken && tokenExpiry) {
-        const now = new Date().getTime();
-        const expiryTime = parseInt(tokenExpiry);
-        
-        if (now < expiryTime) {
-          setCurrentUser(JSON.parse(storedUser));
-          setToken(storedToken);
-        } else {
-          // Token has expired
-          logout();
-          navigate('/login');
-        }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setCurrentUser(session.user);
+        setToken(session.access_token);
       }
-      
       setIsLoading(false);
-    };
+    });
 
-    initAuth();
-
-    // Check token expiration every minute
-    const expirationCheck = setInterval(() => {
-      const tokenExpiry = Cookies.get('tokenExpiry');
-      if (tokenExpiry) {
-        const now = new Date().getTime();
-        const expiryTime = parseInt(tokenExpiry);
-        
-        if (now >= expiryTime) {
-          logout();
-          navigate('/login');
-        }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setCurrentUser(session.user);
+        setToken(session.access_token);
+      } else {
+        setCurrentUser(null);
+        setToken(null);
       }
-    }, 60000);
+      setIsLoading(false);
+    });
 
-    return () => clearInterval(expirationCheck);
-  }, [navigate]);
+    return () => subscription.unsubscribe();
+  }, []);
 
   const login = async (credentials: UserCredentials): Promise<boolean> => {
     try {
-      const { email, password } = credentials;
-      const authData = await loginUser(email, password);
-      
-      // Store the user and token
-      const user = {
-        id: authData.user.id,
-        email: authData.user.email
-      };
-      
-      setCurrentUser(user);
-      setToken(authData.access_token);
-      
-      // Save to cookies with initial expiry
-      refreshTokenExpiry(user, authData.access_token);
-
+      const { error } = await supabase.auth.signInWithPassword(credentials);
+      if (error) throw error;
       return true;
     } catch (error) {
       console.error('Login failed:', error);
@@ -147,32 +65,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const logout = () => {
-    // Clear state and localStorage
-    setCurrentUser(null);
-    setToken(null);
-    Cookies.remove('currentUser');
-    Cookies.remove('authToken');
-    Cookies.remove('tokenExpiry');
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const register = async (credentials: UserCredentials): Promise<boolean> => {
     try {
-      const { email, password } = credentials;
-      const authData = await registerUser(email, password);
-      
-      // Store the user and token
-      const user = {
-        id: authData.user.id,
-        email: authData.user.email
-      };
-      
-      setCurrentUser(user);
-      setToken(authData.access_token);
-      
-      // Save to cookies with initial expiry
-      refreshTokenExpiry(user, authData.access_token);
-      
+      const { error } = await supabase.auth.signUp(credentials);
+      if (error) throw error;
       return true;
     } catch (error) {
       console.error('Registration failed:', error);
@@ -181,10 +86,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const updatePassword = async (newPassword: string): Promise<boolean> => {
-    if (!token || !currentUser) return false;
-    
     try {
-      await updateUserPassword(token, newPassword);
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
       return true;
     } catch (error) {
       console.error('Password update failed:', error);
@@ -192,20 +96,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const checkAndRefreshToken = () => {}; // No-op as Supabase handles this automatically
+
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        token,
-        login,
-        logout,
-        register,
-        isAuthenticated: !!currentUser,
-        isLoading,
-        updatePassword,
-        checkAndRefreshToken
-      }}
-    >
+    <AuthContext.Provider value={{
+      currentUser,
+      token,
+      login,
+      logout,
+      register,
+      isAuthenticated: !!currentUser,
+      isLoading,
+      updatePassword,
+      checkAndRefreshToken,
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -43,7 +43,7 @@ const VocabList = () => {
   const [addWordOpen, setAddWordOpen] = useState(false);
   const [wordToEdit, setWordToEdit] = useState<VocabWord | undefined>(undefined);
   const [wordToDelete, setWordToDelete] = useState<string | null>(null);
-  const [showReviewTimes, setShowReviewTimes] = useState(true);
+  const [showReviewTimes, setShowReviewTimes] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [initialized, setInitialized] = useState(false);
   

@@ -1,5 +1,5 @@
-
 import { PracticeDirection } from '@/types/vocabulary';
+import { useVocab } from '@/context/VocabContext';
 
 interface FlagIconProps {
   country: 'lng' | 'en';
@@ -8,9 +8,11 @@ interface FlagIconProps {
 }
 
 const FlagIcon: React.FC<FlagIconProps> = ({ country, className = "", size = 16 }) => {
+  const { currentList } = useVocab();
+
   if (country === 'lng') {
     return (
-      <img src="/flags/de.ico" alt="DE" className="inline h-5" />
+      <img src={`/flags/${currentList?.language || 'de'}.ico`} alt={currentList?.language?.toUpperCase() || 'DE'} className="inline h-5" />
     );
   } else if (country === 'en') {
     return (
