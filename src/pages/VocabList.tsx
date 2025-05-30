@@ -415,12 +415,8 @@ const VocabList = () => {
                 word={word}
                 onEdit={() => handleEditWord(word)}
                 onDelete={() => handleDeleteWord(word.id)}
+                showReviewTimes={showReviewTimes}
               />
-              {showReviewTimes && (
-                <div className={`text-right text-xs mt-1 ${isWordDueForReview(word) ? 'text-green-500 font-medium' : 'text-muted-foreground'}`}>
-                  {getFormattedReviewTimes(word)}
-                </div>
-              )}
             </div>
           ))}
         </div>
