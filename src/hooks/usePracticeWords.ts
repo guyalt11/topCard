@@ -1,10 +1,9 @@
-
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useVocab } from '@/context/VocabContext';
 import { PracticeDirection, VocabWord } from '@/types/vocabulary';
 
 export function usePracticeWords(direction: PracticeDirection) {
-  const { currentList } = useVocab();
+  const { currentList, isLoading } = useVocab();
   const [practiceWords, setPracticeWords] = useState<VocabWord[]>([]);
   const isInitializedRef = useRef(false);
   const directionRef = useRef(direction);
@@ -22,23 +21,25 @@ export function usePracticeWords(direction: PracticeDirection) {
   
   // Reset and shuffle practice words
   const resetPracticeWords = useCallback(() => {
-    if (!isInitializedRef.current && directionRef.current === direction) return;
-    isInitializedRef.current = true;
-  
+    if (!currentList) return;
+    
     const dueWords = getDueWords();
     const shuffled = [...dueWords].sort(() => Math.random() - 0.5);
     setPracticeWords(shuffled);
     console.log(`Reset practice words: ${shuffled.length} words available`);
-  }, [getDueWords, direction]);
+  }, [getDueWords, currentList]);
   
-  // Initialize practice words only on mount or when direction changes
-  directionRef.current = direction;
+  // Initialize practice words when list is loaded or direction changes
   useEffect(() => {
-    if (!isInitializedRef.current) {
-      resetPracticeWords();
-      isInitializedRef.current = true;
+    if (isLoading) return;
+    
+    if (!currentList) {
+      setPracticeWords([]);
+      return;
     }
-  }, [resetPracticeWords]);
+    
+    resetPracticeWords();
+  }, [currentList, direction, isLoading, resetPracticeWords]);
 
   return { practiceWords, resetPracticeWords };
 }

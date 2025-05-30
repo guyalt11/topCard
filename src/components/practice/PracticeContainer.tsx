@@ -1,45 +1,72 @@
-
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useVocab } from '@/context/VocabContext';
-import { PracticeDirection } from '@/types/vocabulary';
 import PracticeSession from './PracticeSession';
-import { useParams } from 'react-router-dom';
+import { PracticeDirection } from '@/types/vocabulary';
 
-const PracticeContainer = () => {
-  const { listId, urlDirection } = useParams();
-  const { getListById, selectList, currentList, isLoading } = useVocab();
+const PracticeContainer: React.FC = () => {
+  const { listId, urlDirection } = useParams<{ listId: string; urlDirection: string }>();
   const navigate = useNavigate();
-  const [direction, setDirection] = useState<PracticeDirection>(urlDirection as PracticeDirection || 'translateTo');
+  const { currentList, selectList, isLoading, getListById } = useVocab();
+  const [direction, setDirection] = useState<PracticeDirection>('translateFrom');
   const [initialized, setInitialized] = useState(false);
+  const [listNotFound, setListNotFound] = useState(false);
 
+  // Initialize list and direction from URL
   useEffect(() => {
     const initList = async () => {
-      if (listId) {
-        const list = getListById(listId);
-        if (list) {
-          await selectList(listId);
-          setInitialized(true);
-        } else if (!isLoading) {
-          // Only navigate away if we're not still loading lists
-          navigate('/');
+      if (!listId) {
+        navigate('/404');
+        return;
+      }
+
+      // Wait for lists to load before checking
+      if (isLoading) return;
+
+      const list = getListById(listId);
+      if (list) {
+        await selectList(listId);
+        // Set direction from URL if valid
+        if (urlDirection === 'translateFrom' || urlDirection === 'translateTo') {
+          setDirection(urlDirection);
         }
+        setInitialized(true);
+        setListNotFound(false);
+      } else {
+        setListNotFound(true);
       }
     };
-    initList();
-  }, [listId, selectList, getListById, navigate, isLoading]);
 
+    initList();
+  }, [listId, urlDirection, selectList, isLoading, getListById, navigate]);
+
+  // Handle direction change
   const handleDirectionChange = (newDirection: PracticeDirection) => {
     setDirection(newDirection);
+    // Update URL to reflect new direction
+    navigate(`/practice/${listId}/${newDirection}`);
   };
-  
-  // Show nothing while initializing or if no list
-  if (!initialized || !currentList) {
+
+  // Show loading state while initializing
+  if (isLoading || !initialized) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading practice session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to 404 if list not found
+  if (listNotFound || !currentList) {
+    navigate('/404');
     return null;
   }
 
   return (
-    <PracticeSession 
+    <PracticeSession
       direction={direction}
       onDirectionChange={handleDirectionChange}
     />

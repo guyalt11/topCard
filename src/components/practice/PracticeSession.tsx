@@ -28,7 +28,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   direction,
   onDirectionChange
 }) => {
-  const { currentList, updateWordDifficulty, selectList, deleteWord } = useVocab();
+  const { currentList, updateWordDifficulty, selectList, deleteWord, isLoading } = useVocab();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -78,6 +78,18 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
       resetSession();
     }
   };
+
+  // Show loading state while loading lists
+  if (isLoading || !currentList) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading practice session...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Use the initial words list if it exists, otherwise fall back to practiceWords
   const wordsToUse = initialWordsRef.current.length > 0 ? initialWordsRef.current : practiceWords;

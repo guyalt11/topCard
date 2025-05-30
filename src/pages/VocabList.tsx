@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { useVocab } from '@/context/VocabContext';
 import { useVocabImportExport } from '@/hooks/useVocabImportExport';
@@ -46,6 +46,7 @@ const VocabList = () => {
   const [showReviewTimes, setShowReviewTimes] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [initialized, setInitialized] = useState(false);
+  const [listNotFound, setListNotFound] = useState(false);
   
   // Edit list state
   const [editListDialogOpen, setEditListDialogOpen] = useState(false);
@@ -57,23 +58,43 @@ const VocabList = () => {
 
   useEffect(() => {
     const initList = async () => {
-      if (listId) {
-        const list = getListById(listId);
-        if (list) {
-          await selectList(listId);
-          setInitialized(true);
-        } else if (!isLoading) {
-          // Only navigate away if we're not still loading lists
-          goToHome();
-        }
+      if (!listId) return;
+
+      // Wait for lists to be loaded
+      if (isLoading) return;
+
+      const list = getListById(listId);
+      if (list) {
+        await selectList(listId);
+        setInitialized(true);
+        setListNotFound(false);
+      } else {
+        setListNotFound(true);
       }
     };
     initList();
-  }, [listId, selectList, getListById, goToHome, isLoading]);
+  }, [listId, selectList, getListById, isLoading]);
 
   const currentList = getListById(listId ?? '');
 
-  // Show nothing while initializing or if no list
+  // Show loading state while loading lists
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only redirect to 404 if we're sure the list doesn't exist and lists are loaded
+  if (listNotFound && !isLoading && !currentList) {
+    return <Navigate to="/404" replace />;
+  }
+
+  // Show nothing while initializing
   if (!initialized || !currentList) {
     return null;
   }
