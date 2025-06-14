@@ -1,5 +1,6 @@
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useVocab } from '@/context/VocabContext';
 import { useVocabImportExport } from '@/hooks/useVocabImportExport';
 import { toast } from "@/components/ui/use-toast";
@@ -12,11 +13,18 @@ import EditListDialog from '@/components/EditListDialog';
 import DeleteListDialog from '@/components/DeleteListDialog';
 import { VocabList } from '@/types/vocabulary';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import { useEffect, useRef } from 'react';
 
 const Index = () => {
   const { lists, exportList, importList, deleteList, updateList, getListById, addWord } = useVocab();
+  const navigate = useNavigate();
   const { goToList } = useAppNavigation();
   const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
+
+  const listsRef = useRef(lists);
+  useEffect(() => {
+    listsRef.current = lists;
+  }, [lists]);
 
   // UI state
   const [addListOpen, setAddListOpen] = useState(false);
@@ -46,10 +54,6 @@ const Index = () => {
         // Select the list and navigate to it
         goToList(list.id);
       }
-  };
-
-  const handleExport = (id: string, format: 'json') => {
-    exportList(id, format);
   };
   
   const handleEditList = (id: string) => {
@@ -135,11 +139,33 @@ const Index = () => {
         open={addListOpen} 
         onOpenChange={setAddListOpen} 
         onSuccess={async (list) => {
-          console.log('List created successfully:', list);
-          // Wait a bit for the list to be fully saved
-          await new Promise(resolve => setTimeout(resolve, 100));
-          // Navigate to the list page
-          goToList(list.id);
+          console.log('Index: List created successfully:', listsRef.current);
+        
+          const maxRetries = 3;
+          let retryCount = 0;
+        
+          const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+        
+          while (retryCount < maxRetries) {
+            const exists = listsRef.current.some(list => list.id === listsRef.current?.[0].id);
+            console.log('onSuccess retry:', listsRef.current);
+            if (exists) {
+              console.log('Index: List found in backend, navigating to:', `/list/${listsRef.current?.[0].id}`);
+              navigate(`/list/${list.id}`);
+              return;
+            }
+        
+            console.log(`Index: Retry ${retryCount + 1}/${maxRetries} - List not yet in context`);
+            retryCount++;
+            await delay(300 * retryCount); // Exponential backoff
+          }
+        
+          console.error('Index: Failed to find list after retries');
+          toast({
+            title: "Error",
+            description: "Failed to navigate to list. Please try again.",
+            variant: "destructive",
+          });
         }}
       />
 
