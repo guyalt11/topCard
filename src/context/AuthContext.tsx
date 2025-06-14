@@ -42,8 +42,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        setCurrentUser(session.user);
-        setToken(session.access_token);
+        setCurrentUser(prev => prev?.id !== session.user.id ? session.user : prev);
+        setToken(prev => prev !== session.access_token ? session.access_token : prev);
       } else {
         setCurrentUser(null);
         setToken(null);
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const checkAndRefreshToken = () => {}; // No-op as Supabase handles this automatically
+  const checkAndRefreshToken = () => {}; // Optional if Supabase handles it
 
   return (
     <AuthContext.Provider value={{
