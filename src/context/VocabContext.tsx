@@ -375,20 +375,20 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       // Calculate interval based on repetitions
       if (repetitions === 1) {
         // First successful repetition
-        interval = quality === 3 ? 0.5 :  // 12 hours for quality 3
-                  quality === 4 ? 1 :     // 1 day for quality 4
-                  3;                      // 3 days for quality 5 (perfect)
+        interval = quality === 3 ? 0.021 :  // 12 hours for quality 3
+                  quality === 4 ? 0.083 :     // 1 day for quality 4
+                  0.33;                      // 3 days for quality 5 (perfect)
       } else if (repetitions === 2) {
         // Second successful repetition
-        interval = quality === 3 ? 3 :    // 3 days for quality 3
-                  quality === 4 ? 5 :     // 5 days for quality 4
-                  7;                      // 7 days for quality 5
+        interval = quality === 3 ? 0.083 :    // 3 days for quality 3
+                  quality === 4 ? 0.33 :     // 5 days for quality 4
+                  1;                      // 7 days for quality 5
       } else {
         // For repetitions > 2, use the formula with quality adjustments
-        const qualityFactor = quality === 3 ? 0.7 :   // Reduce interval for OK
+        const qualityFactor = quality === 3 ? 0.5 :   // Reduce interval for OK
                              quality === 4 ? 1.0 :   // Normal interval for Good
                              1.5;                    // Increase interval for Perfect
-        interval = Math.round(interval * easeFactor * qualityFactor);
+        interval = interval * easeFactor * qualityFactor;
       }
     }
     

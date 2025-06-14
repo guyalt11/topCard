@@ -66,43 +66,10 @@ export const INITIAL_SM2_PARAMS: SM2Params = {
 
 // Default review times for first practice (in milliseconds)
 export const INITIAL_REVIEW_SCHEDULE: Record<DifficultyLevel, number> = {
-  hard: 1 * 60 * 1000, // Exactly 1 minute
-  ok: 10 * 60 * 1000, // 10 minutes
-  good: 30 * 60 * 1000, // 30 minutes
-  perfect: 2 * 60 * 60 * 1000, // 2 hours
-};
-
-// Direction-specific multipliers - both directions use the same timing
-export const DIRECTION_MULTIPLIERS: Record<PracticeDirection, number> = {
-  translateTo: 1.0, // Same multiplier
-  translateFrom: 1.0, // Same multiplier
-};
-
-export const FOLLOW_UP_REVIEW_SCHEDULE: Record<DifficultyLevel, Record<DifficultyLevel, number>> = {
-  hard: {
-    hard: 1 * 60 * 1000, // 1 minute
-    ok: 30 * 60 * 1000, // 30 minutes
-    good: 1 * 60 * 60 * 1000, // 1 hour
-    perfect: 3 * 60 * 60 * 1000, // 3 hours
-  },
-  ok: {
-    hard: 1 * 60 * 1000, // 1 minute
-    ok: 1 * 60 * 60 * 1000, // 1 hour
-    good: 3 * 60 * 60 * 1000, // 3 hours
-    perfect: 8 * 60 * 60 * 1000, // 8 hours
-  },
-  good: {
-    hard: 1 * 60 * 1000, // 1 minute
-    ok: 3 * 60 * 60 * 1000, // 3 hours
-    good: 8 * 60 * 60 * 1000, // 8 hours
-    perfect: 1 * 24 * 60 * 60 * 1000, // 1 day
-  },
-  perfect: {
-    hard: 1 * 60 * 1000, // 1 minute
-    ok: 8 * 60 * 60 * 1000, // 8 hours
-    good: 1 * 24 * 60 * 60 * 1000, // 1 day
-    perfect: 3 * 24 * 60 * 60 * 1000, // 3 days
-  },
+  hard: 1 * 60 * 1000, // 1 minute
+  ok: 30 * 60 * 1000, // 30 minutes
+  good: 4 * 60 * 60 * 1000, // 4 hours
+  perfect: 12 * 60 * 60 * 1000, // 12 hours
 };
 
 // Get next review time based on SM2 algorithm
@@ -149,9 +116,7 @@ export function calculateSM2NextInterval(
     nextParams.interval = 0;
     
     // Calculate next interval for poor quality
-    let intervalMs = quality === 0 ? 1 * 60 * 1000 : // 1 minute for complete failure
-                    quality === 1 ? 1 * 60 * 1000 : // 1 minute for hard
-                    30 * 60 * 1000; // 30 minutes for barely failed
+    let intervalMs = 1 * 60 * 1000; // 1 minute for hard
     
     return { nextParams, intervalMs };
   } else {
@@ -161,21 +126,21 @@ export function calculateSM2NextInterval(
     // Calculate interval based on repetition number
     if (nextParams.repetitions === 1) {
       // First successful review
-      nextParams.interval = quality === 3 ? 0.5 : // 12 hours for quality 3
-                           quality === 4 ? 1 : // 1 day for quality 4
-                           3; // 3 days for quality 5 (perfect)
+      nextParams.interval = quality === 3 ? 0.021 : // 30 minutes for quality 3
+                           quality === 4 ? 0.083 : // 2 hours for quality 4
+                           0.33; // 8 hours for quality 5 (perfect)
     } else if (nextParams.repetitions === 2) {
       // Second successful review
-      nextParams.interval = quality === 3 ? 3 : // 3 days for quality 3
-                           quality === 4 ? 5 : // 5 days for quality 4
-                           7; // 7 days for quality 5
+      nextParams.interval = quality === 3 ? 0.083 : // 2 hours for quality 3
+                           quality === 4 ? 0.33 : // 8 hours for quality 4
+                           1; // 1 day for quality 5
     } else {
       // For repetitions > 2, use the formula with quality adjustments
-      const qualityFactor = quality === 3 ? 0.7 : // Reduce interval more for OK
+      const qualityFactor = quality === 3 ? 0.5 : // Reduce interval more for OK
                            quality === 4 ? 1.0 : // Normal interval for Good
                            1.5;  // Increase interval for Perfect
                            
-      nextParams.interval = Math.round(nextParams.interval * nextParams.easeFactor * qualityFactor);
+      nextParams.interval = nextParams.interval * nextParams.easeFactor * qualityFactor;
     }
     
     // Update ease factor (E-Factor) based on quality of response
