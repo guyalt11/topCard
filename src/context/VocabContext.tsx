@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useSupabaseVocabLists } from '@/hooks/useSupabaseVocabLists';
 import { useVocabImportExport } from '@/hooks/useVocabImportExport';
 import { toast } from '@/components/ui/use-toast';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 interface VocabContextType {
   lists: VocabList[];
@@ -42,14 +44,19 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   const { 
     lists, 
     isLoading, 
+    error,
+    refreshLists,
     saveList, 
     deleteList: deleteListFromSupabase,
     saveWord, 
-    deleteWord: deleteWordFromSupabase 
+    deleteWord: deleteWordFromSupabase,
+    setLists,
+    currentUser
   } = useSupabaseVocabLists();
   
   const [currentList, setCurrentList] = useState<VocabList | null>(null);
-  const { exportList, importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
+  const { exportList, importList: importListFunc } = useVocabImportExport({ lists, setLists });
+  const { token } = useAuth();
 
   // Add a new list
   const addList = async (name: string, description?: string, language: string = 'de'): Promise<VocabList | null> => {
@@ -319,8 +326,9 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       const importedList = await importListFunc(file, listName);
       if (importedList) {
         // Create a new list object without words
+        const newListId = uuidv4();
         const newList: VocabList = {
-          id: uuidv4(),
+          id: newListId,
           name: listName,
           description: importedList.description,
           language: importedList.language, // Use the language from the imported list
@@ -328,23 +336,49 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-  
+
         // Save the list metadata
-        const savedList = await saveList(newList);
-        if (!savedList) {
-          return null;
+        await saveList(newList);
+
+        // Prepare all words for batch update
+        const wordsToSave = importedList.words.map(word => ({
+          ...word,
+          id: uuidv4(),
+          list_id: newListId
+        }));
+
+        // Save all words in a single batch
+        if (!token) {
+          throw new Error('User not authenticated');
         }
-  
-        // Save each word individually
-        for (const word of importedList.words) {
-          const newWord: VocabWord = {
-            ...word,
-            id: uuidv4(), // Ensure each word has a unique ID
-          };
-          await saveWord(savedList.id, newWord);
+
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/words`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(wordsToSave)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save words');
         }
-  
-        return savedList;
+
+        // Update the local state with all words at once
+        const updatedList = {
+          ...newList,
+          words: wordsToSave as VocabWord[]
+        };
+
+        // Clear existing lists state and update with fresh data
+        setLists([updatedList]);
+
+        // Refresh the lists from the server to ensure we have the latest data
+        await refreshLists();
+
+        return updatedList;
       }
       return null;
     } catch (error) {

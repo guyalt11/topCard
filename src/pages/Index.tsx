@@ -22,6 +22,7 @@ const Index = () => {
   const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
 
   const listsRef = useRef(lists);
+  
   useEffect(() => {
     listsRef.current = lists;
   }, [lists]);
@@ -48,12 +49,29 @@ const Index = () => {
   };
 
   const handleImport = async (file: File, listName: string) => {
-      const list = await importList(file, listName);
-      if (list) {
+    const list = await importList(file, listName);
+    const maxRetries = 3;
+    let retryCount = 0;
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+    while (retryCount < maxRetries) {
+      const allListIds = listsRef.current.map(list => list.id);
+
+      const exists = listsRef.current.some(l => l.id === list.id);
+      if (exists) {
         setImportDialogOpen(false);
-        // Select the list and navigate to it
-        goToList(list.id);
+        navigate(`/list/${list.id}`);
+        return;
       }
+      retryCount++;
+      await delay(300);
+    }
+
+    toast({
+      title: "Error",
+      description: "Failed to navigate to list after import. Please try again.",
+      variant: "destructive",
+    });
   };
   
   const handleEditList = (id: string) => {
@@ -157,7 +175,7 @@ const Index = () => {
         
             console.log(`Index: Retry ${retryCount + 1}/${maxRetries} - List not yet in context`);
             retryCount++;
-            await delay(300 * retryCount); // Exponential backoff
+            await delay(300);
           }
         
           console.error('Index: Failed to find list after retries');

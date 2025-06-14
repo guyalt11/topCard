@@ -1,10 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { VocabList, VocabWord } from '@/types/vocabulary';
 import { useAuth } from '@/context/AuthContext';
 import { SUPABASE_URL, getAuthHeaders } from '@/lib/supabase';
 
 export const useSupabaseVocabLists = () => {
-  const [lists, setLists] = useState<VocabList[]>([]);
+  const [lists, setListsInternal] = useState<VocabList[]>([]);
+  const setLists = (newLists: VocabList[] | ((prevLists: VocabList[]) => VocabList[])) => {
+    if (typeof newLists === 'function') {
+      setListsInternal(prevLists => newLists(prevLists));
+    } else {
+      setListsInternal(newLists);
+    }
+  };
+  const listsRef = useRef(lists);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { currentUser, token } = useAuth();
@@ -327,6 +335,8 @@ export const useSupabaseVocabLists = () => {
     saveList,
     deleteList,
     saveWord,
-    deleteWord
+    deleteWord,
+    setLists,
+    currentUser
   };
 };
