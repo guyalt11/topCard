@@ -135,9 +135,9 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
     onOpenChange(false);
-    // Don't need to clear state here since it will be cleared by the useEffect
   };
 
   const clearGender = () => {
