@@ -72,7 +72,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
           console.log("Setting gender:", result.gender);
         } catch (error) {
           console.error("Translation error:", error);
-          setTranslateError("Translation failed. Please enter the translation manually.");
+          setTranslateError(" ");
         } finally {
           setIsTranslating(false);
         }
@@ -119,6 +119,12 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
           description: "Word added successfully.",
         });
       }
+
+      // Clear form state after successful submission
+      setLng('');
+      setEn('');
+      setGender(undefined);
+      setNotes('');
     } catch (error) {
       console.error('Error saving word:', error);
       toast({
@@ -127,6 +133,11 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
         variant: "destructive",
       });
     }
+  };
+
+  const handleCancel = () => {
+    onOpenChange(false);
+    // Don't need to clear state here since it will be cleared by the useEffect
   };
 
   const clearGender = () => {
@@ -168,9 +179,11 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
               </p>
             )}
             {translateError && (
-              <Alert variant="destructive" className="py-2">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Translation Error</AlertTitle>
+              <Alert variant="destructive" className="p-0 text-orange-800 border border-transparent">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle className="text-sm">Translation Failed</AlertTitle>
+                </div>
                 <AlertDescription>
                   {translateError}
                 </AlertDescription>
@@ -240,6 +253,9 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
           <DialogFooter>
             <Button type="submit">
               {editWord ? 'Update Word' : 'Add Word'}
+            </Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
             </Button>
           </DialogFooter>
         </form>
