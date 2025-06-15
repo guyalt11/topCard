@@ -54,7 +54,13 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
           🔊 Listen
         </Button>
       )}
-      
+
+      {direction === 'translateTo' && word.notes && (
+        <div className="mt-4 text-sm text-muted-foreground">
+          <p>{word.notes}</p>
+        </div>
+      )}
+
       <div className="mt-6 border-b pb-4">
         <Button 
           variant="ghost" 

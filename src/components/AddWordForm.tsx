@@ -32,12 +32,27 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 }) => {
   const { addWord, updateWord, currentList } = useVocab();
   
-  const [lng, setLng] = useState(editWord?.lng || '');
-  const [en, setEn] = useState(editWord?.en || '');
-  const [gender, setGender] = useState<Gender | undefined>(editWord?.gender);
-  const [notes, setNotes] = useState(editWord?.notes || '');
+  // Initialize form state with existing word data if editing
+  const [lng, setLng] = useState('');
+  const [en, setEn] = useState('');
+  const [gender, setGender] = useState<Gender | undefined>();
+  const [notes, setNotes] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
   const [translateError, setTranslateError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (editWord) {
+      setLng(editWord.lng);
+      setEn(editWord.en);
+      setGender(editWord.gender);
+      setNotes(editWord.notes || '');
+    } else {
+      setLng('');
+      setEn('');
+      setGender(undefined);
+      setNotes('');
+    }
+  }, [editWord]);
 
   useEffect(() => {
     const debounceTimeout = setTimeout(async () => {
@@ -69,48 +84,49 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!currentList) return;
+
     if (!lng.trim() || !en.trim()) {
       toast({
         title: "Error",
-        description: "Both words are required",
+        description: "Both language and English fields are required.",
         variant: "destructive",
       });
       return;
     }
 
-    if (editWord) {
-      await updateWord(editWord.id, {
-        lng: lng.trim(),
-        en: en.trim(),
+    try {
+      const wordData = {
+        lng,
+        en,
         gender,
-        notes: notes.trim() || undefined,
-      });
-      toast({
-        title: "Word updated",
-        description: `"${lng}" has been updated in your vocabulary list.`,
-      });
-    } else {
-      if (currentList) {
-        await addWord(currentList.id, {
-          lng: lng.trim(),
-          en: en.trim(),
-          gender,
-          notes: notes.trim() || undefined,
-        });
+        notes,
+        ...(editWord ? { id: editWord.id } : { list_id: currentList.id })
+      };
+
+      if (editWord) {
+        await updateWord(editWord.id, wordData);
+        onOpenChange(false);
         toast({
-          title: "Word added",
-          description: `"${lng}" has been added to your vocabulary list.`,
+          title: "Success",
+          description: "Word updated successfully.",
+        });
+      } else {
+        await addWord(currentList.id, wordData);
+        onOpenChange(false);
+        toast({
+          title: "Success",
+          description: "Word added successfully.",
         });
       }
+    } catch (error) {
+      console.error('Error saving word:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save word. Please try again.",
+        variant: "destructive",
+      });
     }
-
-    // Reset form
-    setLng('');
-    setEn('');
-    setGender(undefined);
-    setNotes('');
-    onOpenChange(false);
   };
 
   const clearGender = () => {

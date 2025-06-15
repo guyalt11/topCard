@@ -50,6 +50,12 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
           🔊 Listen
         </Button>
       )}
+
+      {direction === 'translateFrom' && word.notes && (
+        <div className="mt-4 text-sm text-muted-foreground">
+          <p>{word.notes}</p>
+        </div>
+      )}
     </div>
   );
 };
