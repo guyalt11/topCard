@@ -20,11 +20,17 @@ const Index = () => {
   const navigate = useNavigate();
   const { goToList } = useAppNavigation();
   const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
-
+  const [showEmptyState, setShowEmptyState] = useState(false);
   const listsRef = useRef(lists);
   
   useEffect(() => {
     listsRef.current = lists;
+    if (lists.length === 0) {
+      const timer = setTimeout(() => setShowEmptyState(true), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowEmptyState(false);
+    }
   }, [lists]);
 
   // UI state
@@ -138,7 +144,7 @@ const Index = () => {
         onImport={handleImportClick} 
       />
 
-      {lists.length === 0 ? (
+      {showEmptyState ? (
         <EmptyListsState onAddList={handleAddList} />
       ) : (
         <VocabListGrid 
