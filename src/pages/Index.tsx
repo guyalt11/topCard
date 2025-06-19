@@ -36,6 +36,7 @@ const Index = () => {
   // UI state
   const [addListOpen, setAddListOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [showOnlyDue, setShowOnlyDue] = useState(false);
   
   // Edit list state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -141,7 +142,10 @@ const Index = () => {
     <div className="container py-6 max-w-3xl">
       <ListsHeader 
         onAddList={handleAddList} 
-        onImport={handleImportClick} 
+        onImport={handleImportClick}
+        lists={lists}
+        onFilterChange={setShowOnlyDue}
+        showOnlyDue={showOnlyDue}
       />
 
       {showEmptyState ? (
@@ -149,13 +153,16 @@ const Index = () => {
       ) : (
         <VocabListGrid 
           lists={lists}
-          onSelectList={(id) => goToList(id)}
+          onSelectList={goToList}
           onEditList={handleEditList}
           onDeleteList={handleDeleteList}
           onExportList={exportList}
-          onImportWords={handleImportWords}
+          onImportWords={async (file, listName) => {
+          await importListFunc(file, listName);
+        }}
           urlDirection=""
           listId=""
+          showOnlyDue={showOnlyDue}
         />
       )}
 

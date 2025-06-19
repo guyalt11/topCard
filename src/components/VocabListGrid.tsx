@@ -9,9 +9,10 @@ interface VocabListGridProps {
   onEditList: (id: string) => void;
   onDeleteList: (id: string) => void;
   onExportList: (id: string, format: 'json') => void;
-  onImportWords: (listId: string) => void;
+  onImportWords: (file: File, listName: string) => Promise<void>;
   urlDirection: string;
   listId: string;
+  showOnlyDue: boolean;
 }
 
 const VocabListGrid = ({ 
@@ -23,6 +24,7 @@ const VocabListGrid = ({
   onImportWords,
   urlDirection,
   listId,
+  showOnlyDue,
 }: VocabListGridProps) => {
   const { goToList, goToPractice } = useAppNavigation();
 
@@ -32,7 +34,13 @@ const VocabListGrid = ({
 
   return (
     <div className="space-y-4">
-      {lists.map((list) => (
+      {lists
+        .filter(list => !showOnlyDue || list.words.some(word => {
+          const now = new Date();
+          return (!word.nextReview?.translateFrom || word.nextReview.translateFrom <= now) ||
+                 (!word.nextReview?.translateTo || word.nextReview.translateTo <= now);
+        }))
+        .map((list) => (
         <div key={list.id} className="flex flex-col">
           <ListCard
             list={list}
@@ -44,7 +52,7 @@ const VocabListGrid = ({
             onDelete={() => onDeleteList(list.id)}
             onPractice={(direction) => handlePractice(direction, list.id)}
             onExport={onExportList}
-            onImport={async (file) => await onImportWords(list.id)}
+            onImport={async (file) => await onImportWords(file, list.name)}
           />
         </div>
       ))}

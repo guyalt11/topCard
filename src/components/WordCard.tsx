@@ -50,11 +50,15 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
       <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateFrom" size={14} />
-          <span>{translateFromFormatted}</span>
+          <span className={translateFromFormatted === 'Due now' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
+             {translateFromFormatted}
+          </span>
         </div>
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateTo" size={14} />
-          <span>{translateToFormatted}</span>
+          <span className={translateToFormatted === 'Due now' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
+            {translateToFormatted}
+          </span>
         </div>
       </div>
     );
@@ -72,7 +76,7 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
             <p className="text-muted-foreground">{word.en}</p>
             {word.notes && <p className="text-sm text-muted-foreground mt-2">{word.notes}</p>}
             {showReviewTimes && (
-              <div className={`text-xs mt-2 ${isWordDueForReview(word) ? 'text-green-500 font-medium' : 'text-muted-foreground'}`}>
+              <div className="text-xs mt-2">
                 {getFormattedReviewTimes(word)}
               </div>
             )}

@@ -293,7 +293,7 @@ const VocabList = () => {
     );
   };
 
-  const dueWordsCount = getDueWordsCount();
+  const { translateFromDue, translateToDue } = getDueByLanguage();
 
   return (
     <div className="container py-6 max-w-3xl">
@@ -301,6 +301,7 @@ const VocabList = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{currentList.name}</h1>
+            <span>({translateFromDue + translateToDue} / {2 * currentList.words.length})</span>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -331,8 +332,8 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateFrom')}
-            className={`relative ${dueWordsCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={dueWordsCount === 0}
+            className={`relative ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={translateFromDue === 0}
           >
             <img src="/flags/en.ico" alt="EN" className="inline h-5" />
             <img src="/ra.webp" alt="arrow" className="inline h-5" />
@@ -341,8 +342,8 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateTo')}
-            className={`relative ${dueWordsCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={dueWordsCount === 0}
+            className={`relative ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
+            disabled={translateToDue === 0}
           >
             <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="inline h-5" />
             <img src="/ra.webp" alt="arrow" className="inline h-5" />
@@ -371,7 +372,7 @@ const VocabList = () => {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" title="List actions">
+            <Button variant="outline" size="icon" title="List actions" className="px-3">
               <img src="/arrows.webp" alt="List actions" className="mx-3 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

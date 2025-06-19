@@ -45,6 +45,11 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg mb-1 flex-1 text-left">{list.name}</CardTitle>
           <div className="flex space-x-1">
+            <ListActions 
+              listId={list.id}
+              onExport={onExport}
+              onImport={onImport}
+            />
             <Button 
               variant="ghost" 
               size="icon" 
@@ -56,16 +61,11 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-8 w-8"
+              className="text-destructive h-8 w-8"
               onClick={() => onDelete(list.id)}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
-            <ListActions 
-              listId={list.id}
-              onExport={onExport}
-              onImport={onImport}
-            />
           </div>
         </div>
         <CardDescription className="text-left">

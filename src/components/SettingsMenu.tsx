@@ -83,11 +83,11 @@ const SettingsMenu = () => {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-9 w-9">
             <Settings className="h-5 w-5" />
-            <span className="sr-only">Settings</span>
+            <span className="sr-only">Top Card - Settings</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Settings</DropdownMenuLabel>
+          <DropdownMenuLabel>Top Card - Settings</DropdownMenuLabel>
           {currentUser && (
             <>
               <DropdownMenuLabel className="flex items-center gap-2">
