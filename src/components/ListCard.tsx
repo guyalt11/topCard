@@ -69,6 +69,11 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
           </div>
         </div>
         <CardDescription className="text-left">
+          {list.description && (
+            <p className="text-muted-foreground mb-2">
+              {list.description}
+            </p>
+          )}
           {list.words.length} words total
           {totalDueCount > 0 && (
             <>

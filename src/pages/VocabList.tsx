@@ -297,11 +297,34 @@ const VocabList = () => {
 
   return (
     <div className="container py-6 max-w-3xl">
-      <div className="mb-6 sm:flex sm:justify-between sm:items-center">
-        <div>
+      <div className="mb-4 sm:flex sm:justify-between sm:items-center">
+        <div className="flex gap-2 mr-0 sm:mr-4">
+          <Button onClick={() => goToHome()}>Home</Button>
+          <Button
+            variant="default"
+            onClick={() => goToPractice(currentList.id, 'translateFrom')}
+            className={`relative overflow-hidden truncate ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+            disabled={translateFromDue === 0}
+          >
+            <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
+            <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
+            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="w-5 h-5 object-contain" />
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => goToPractice(currentList.id, 'translateTo')}
+            className={`relative overflow-hidden truncate ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+            disabled={translateToDue === 0}
+          >
+            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="w-5 h-5 object-contain" />
+            <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
+            <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
+          </Button>
+        </div>
+        <div className="mt-4 sm:mt-0">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{currentList.name}</h1>
-            <span>({translateFromDue + translateToDue} / {2 * currentList.words.length})</span>
+            <span>({currentList.words.length} words)</span>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -322,44 +345,31 @@ const VocabList = () => {
             </Button>
           </div>
           {currentList.description && (
-            <p className="text-muted-foreground mt-1">{currentList.description}</p>
+            <p className="text-muted-foreground mt-2 max-w-lg line-clamp-3">
+              {currentList.description}
+            </p>
           )}
         </div>
-        <div className="flex gap-2 mt-2 sm:mt-0">
-          <span className="flex items-center font-bold border border-transparent pr-4 pl-0 sm:pl-4 h-10 select-none">
-            Practice:
-          </span>
-          <Button
-            variant="default"
-            onClick={() => goToPractice(currentList.id, 'translateFrom')}
-            className={`relative ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={translateFromDue === 0}
-          >
-            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
-            <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="inline h-5" />
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => goToPractice(currentList.id, 'translateTo')}
-            className={`relative ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={translateToDue === 0}
-          >
-            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="inline h-5" />
-            <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
-          </Button>
-          <Button onClick={() => goToHome()}>Home</Button>
-        </div>
       </div>
-
       <div className="flex items-center space-x-2 mb-6">
+      <div className="relative max-w-sm w-full">
         <Input
           placeholder="Search words..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
+          className="w-full pr-8"
         />
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => setSearchTerm('')}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            title="Clear"
+          >
+            ×
+          </button>
+        )}
+      </div>
         <Button onClick={handleAddWord}>Add Word</Button>
         <Button 
           variant="outline" 
