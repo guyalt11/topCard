@@ -37,6 +37,7 @@ const Index = () => {
   const [addListOpen, setAddListOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [showOnlyDue, setShowOnlyDue] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   // Edit list state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -146,13 +147,14 @@ const Index = () => {
         lists={lists}
         onFilterChange={setShowOnlyDue}
         showOnlyDue={showOnlyDue}
+        onSearchChange={setSearchQuery}
       />
 
       {showEmptyState ? (
         <EmptyListsState onAddList={handleAddList} />
       ) : (
         <VocabListGrid 
-          lists={lists}
+          lists={lists.filter(list => list.name.toLowerCase().includes(searchQuery.toLowerCase()))}
           onSelectList={goToList}
           onEditList={handleEditList}
           onDeleteList={handleDeleteList}

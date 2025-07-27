@@ -76,13 +76,11 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
           )}
           {list.words.length} words total
           {totalDueCount > 0 && (
-            <>
-              <span className="block mt-1 text-primary font-medium">
-                {totalDueCount} due for practice
-              </span>
-              <span className="text-xs text-muted-foreground">
-                ({translateFromCount} EN → {list.language.toUpperCase()}, {translateToCount} {list.language.toUpperCase()} → EN)
-              </span>
+            <> 
+            <span> - </span>
+            <span className="text-green-500 font-medium">
+              {totalDueCount} due for practice
+            </span>
             </>
           )}
         </CardDescription>
