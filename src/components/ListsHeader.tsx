@@ -18,7 +18,7 @@ const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChang
   const [searchQuery, setSearchQuery] = useState("");
   return (
     <>
-      <div className="flex flex-wrap flex-col sm:flex-row items-center gap-2 mb-6">
+      <div className="flex flex-wrap flex-col sm:flex-row items-center gap-2 mb-5 sm:mb-6">
         <div className="flex items-center gap-2">
           <Button onClick={onAddList} className="gap-1">
             <Plus className="h-4 w-4" />
