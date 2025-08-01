@@ -340,36 +340,60 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
         // Save the list metadata
         await saveList(newList);
 
-        // Prepare all words for batch update
-        const wordsToSave = importedList.words.map(word => ({
-          ...word,
-          id: uuidv4(),
-          list_id: newListId
-        }));
-
-        // Save all words in a single batch
+        // Save words one by one
         if (!token) {
           throw new Error('User not authenticated');
         }
 
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/words`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(wordsToSave)
-        });
+        // Format and save words
+        const savedWords: VocabWord[] = [];
+        for (const word of importedList.words) {
+          const newWordId = uuidv4();
+          
+          // Create formatted word for Supabase
+          const supabaseWord = {
+            id: newWordId,
+            list_id: newListId,
+            en: word.en,
+            lng: word.lng,
+            gender: word.gender || null,
+            notes: word.notes || null,
+            nextReview: word.nextReview ? JSON.stringify(word.nextReview) : null,
+            sm2: word.sm2 ? JSON.stringify(word.sm2) : null
+          };
 
-        if (!response.ok) {
-          throw new Error('Failed to save words');
+          // Create word for local state
+          const localWord: VocabWord = {
+            id: newWordId,
+            en: word.en,
+            lng: word.lng,
+            gender: word.gender || null,
+            notes: word.notes || null,
+            nextReview: word.nextReview || undefined,
+            sm2: word.sm2 || undefined
+          };
+
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/words`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(supabaseWord)
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to save word');
+          }
+
+          savedWords.push(localWord);
         }
 
-        // Update the local state with all words at once
+        // Update the local state with all saved words
         const updatedList = {
           ...newList,
-          words: wordsToSave as VocabWord[]
+          words: savedWords
         };
 
         // Clear existing lists state and update with fresh data
