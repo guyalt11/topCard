@@ -94,30 +94,30 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             View List
           </Button>
         </div>
-        <div className="w-full flex items-center gap-2 mt-2 sm:w-auto sm:mt-0">
-          <span className="flex items-center font-bold border border-transparent px-4 h-10 sm:ml-2 select-none">
-            Practice:
-          </span>
-          <Button
-            variant="default"
-            onClick={() => goToPractice(list.id, 'translateFrom')}
-            className={`relative ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={translateFromCount === 0}
-          >
-            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
-            <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="inline h-5" />
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => goToPractice(list.id, 'translateTo')}
-            className={`relative ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-2`}
-            disabled={translateToCount === 0}
-          >
-            <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="inline h-5" />
-            <img src="/ra.webp" alt="arrow" className="inline h-5" />
-            <img src="/flags/en.ico" alt="EN" className="inline h-5" />
-          </Button>
+        <div className="w-full sm:w-auto mt-2 sm:mt-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold">Practice:</h3>
+            <Button
+              variant="default"
+              onClick={() => goToPractice(list.id, 'translateFrom')}
+              className={`relative overflow-hidden truncate ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+              disabled={translateFromCount === 0}
+            >
+              <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
+              <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
+              <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="w-5 h-5 object-contain" />
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => goToPractice(list.id, 'translateTo')}
+              className={`relative overflow-hidden truncate ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+              disabled={translateToCount === 0}
+            >
+              <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="w-5 h-5 object-contain" />
+              <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
+              <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
+            </Button>
+          </div>
         </div>
       </CardFooter>
     </Card>

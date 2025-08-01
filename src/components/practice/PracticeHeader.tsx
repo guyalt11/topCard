@@ -46,7 +46,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
         <Button
           variant="default"
           onClick={toggleDirection}
-          className={`relative px-2 ${
+          className={`relative px-[6px] ${
             (direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0)
               ? 'bg-muted text-muted-foreground cursor-not-allowed'
@@ -57,17 +57,25 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
               (direction !== 'translateFrom' && dueTranslateFrom === 0)
             } 
           >
-          <img
-            src={direction !== 'translateTo' ? `/flags/${currentList?.language}.ico` : '/flags/en.ico'}
-            alt={direction !== 'translateTo' ? currentList?.language.toUpperCase() : 'EN'}
-            className="h-6 w-6"
-          />
-          <img src="/ra.webp" alt="arrow" className="inline h-5" />
-          <img
-            src={direction !== 'translateTo' ? '/flags/en.ico' : `/flags/${currentList?.language}.ico`}
-            alt={direction !== 'translateTo' ? 'EN' : currentList?.language.toUpperCase()}
-            className="h-6 w-6"
-          />
+          <div className="flex items-center">
+            <span className="inline-block align-middle">
+              <img
+                src={direction !== 'translateTo' ? `/flags/${currentList?.language}.ico` : '/flags/en.ico'}
+                alt={direction !== 'translateTo' ? currentList?.language.toUpperCase() : 'EN'}
+                className="w-6 h-6 object-contain"
+              />
+            </span>
+            <span className="inline-block align-middle mx-1">
+              <img src="/ra.webp" alt="arrow" className="w-4 h-4 object-contain" />
+            </span>
+            <span className="inline-block align-middle">
+              <img
+                src={direction !== 'translateTo' ? '/flags/en.ico' : `/flags/${currentList?.language}.ico`}
+                alt={direction !== 'translateTo' ? 'EN' : currentList?.language.toUpperCase()}
+                className="w-6 h-6 object-contain"
+              />
+            </span>
+          </div>
         </Button>
         <Button onClick={onBack}>Back to List</Button>
         <Button onClick={() => navigate('/')}>Home</Button>
