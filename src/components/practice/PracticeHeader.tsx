@@ -46,7 +46,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
         <Button
           variant="default"
           onClick={toggleDirection}
-          className={`relative px-[6px] ${
+          className={`relative px-[6px] sm:px-2 ${
             (direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0)
               ? 'bg-muted text-muted-foreground cursor-not-allowed'
@@ -66,7 +66,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
               />
             </span>
             <span className="inline-block align-middle mx-1">
-              <img src="/ra.webp" alt="arrow" className="w-4 h-4 object-contain" />
+              <img src="/ra.webp" alt="arrow" className="w-4 h-4 sm:w-6 sm:h-6 object-contain" />
             </span>
             <span className="inline-block align-middle">
               <img
