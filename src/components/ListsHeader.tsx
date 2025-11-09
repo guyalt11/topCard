@@ -79,7 +79,7 @@ const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChang
           )}
         </div>
         <div className="h-full flex mt-3 sm:mt-0 sm:ml-auto justify-start w-full sm:w-auto self-center">
-          Total words: {lists.reduce((total, list) => total + list.words.length, 0)}&nbsp;&nbsp;·&nbsp;&nbsp;{totalDueWords} Ready for practice
+          Total words: {lists.reduce((total, list) => total + list.words.length, 0)}&nbsp;&nbsp;·&nbsp;&nbsp;{totalDueWords} Ready for review
         </div>
       </div>
       <div className="w-full mb-6">
