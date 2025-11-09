@@ -18,7 +18,7 @@ import { useEffect, useRef } from 'react';
 const Index = () => {
   const { lists, exportList, importList, deleteList, updateList, getListById, addWord } = useVocab();
   const navigate = useNavigate();
-  const { goToList } = useAppNavigation();
+  const { goToList, goToPracticeAll } = useAppNavigation();
   const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
   const [showEmptyState, setShowEmptyState] = useState(false);
   const listsRef = useRef(lists);
@@ -139,6 +139,10 @@ const Index = () => {
     input.click();
   };
 
+  const handlePracticeAll = () => {
+    goToPracticeAll('translateFrom');
+  };
+
   return (
     <div className="container py-6 max-w-3xl">
       <ListsHeader 
@@ -148,6 +152,7 @@ const Index = () => {
         onFilterChange={setShowOnlyDue}
         showOnlyDue={showOnlyDue}
         onSearchChange={setSearchQuery}
+        onPracticeAll={handlePracticeAll}
       />
 
       {showEmptyState ? (
@@ -172,7 +177,6 @@ const Index = () => {
         open={addListOpen} 
         onOpenChange={setAddListOpen} 
         onSuccess={async (list) => {
-          console.log('Index: List created successfully:', listsRef.current);
         
           const maxRetries = 3;
           let retryCount = 0;
@@ -181,14 +185,11 @@ const Index = () => {
         
           while (retryCount < maxRetries) {
             const exists = listsRef.current.some(list => list.id === listsRef.current?.[0].id);
-            console.log('onSuccess retry:', listsRef.current);
             if (exists) {
-              console.log('Index: List found in backend, navigating to:', `/list/${listsRef.current?.[0].id}`);
               navigate(`/list/${list.id}`);
               return;
             }
         
-            console.log(`Index: Retry ${retryCount + 1}/${maxRetries} - List not yet in context`);
             retryCount++;
             await delay(300);
           }

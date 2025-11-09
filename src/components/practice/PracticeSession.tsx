@@ -46,7 +46,6 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
     if (practiceWords.length > 0 && initialWordsRef.current.length === 0) {
       initialWordsRef.current = [...practiceWords]; // Create a deep copy
       totalWordsRef.current = practiceWords.length;
-      console.log(`Session initialized with ${practiceWords.length} words to practice`);
     }
   }, [practiceWords]);
 
@@ -125,7 +124,6 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
       // Update the completed count and answered state
       setCompletedCount(prev => prev + 1);
       setIsAnswered(true);
-      console.log(`Word completed. Completed count: ${completedCount + 1}/${totalWords}`);
 
       // Call updateWordDifficulty in the background
       updateWordDifficulty(currentWord.id, difficulty, direction).catch(error => {

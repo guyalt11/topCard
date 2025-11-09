@@ -26,7 +26,6 @@ export function usePracticeWords(direction: PracticeDirection) {
     const dueWords = getDueWords();
     const shuffled = [...dueWords].sort(() => Math.random() - 0.5);
     setPracticeWords(shuffled);
-    console.log(`Reset practice words: ${shuffled.length} words available`);
   }, [getDueWords, currentList]);
   
   // Initialize practice words when list is loaded or direction changes

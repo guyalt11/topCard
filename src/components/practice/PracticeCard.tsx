@@ -87,8 +87,8 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
           )}
           
           {!flipped && (
-            <div className="mt-28 mb-24 text-sm text-muted-foreground">
-              Click to reveal the answer
+            <div className={`text-sm text-muted-foreground ${direction === 'translateFrom' ? 'py-2 mb-24 mt-28' : 'pb-1 mb-20 mt-24'} `}>
+              Click to reveal the answer 
             </div>
           )}
         </CardContent>

@@ -79,7 +79,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <> 
             <span> - </span>
             <span className="text-green-500 font-medium">
-              {totalDueCount} due for practice
+              {totalDueCount} Ready for review
             </span>
             </>
           )}

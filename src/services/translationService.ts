@@ -6,7 +6,6 @@ interface TranslationResult {
 }
 
 export async function translateWord(word: string, fromLanguage: string): Promise<TranslationResult> {
-  console.log(`Attempting to translate: "${word}" from ${fromLanguage}`);
   
   try {
     // Make API request to Wiktionary with the exact word (no capitalization changes)
@@ -44,13 +43,11 @@ function extractTranslationData(wikitext: string, fromLanguage: string): Transla
     const genderMatch = wikitext.match(/\|מין=(זכר|נקבה)/);
     if (genderMatch) {
       gender = genderMatch[1] === 'זכר' ? 'm' : 'f';
-      console.log("Hebrew gender:", gender);
     }
 
     const translationMatch = wikitext.match(/\*\s*אנגלית:\s*\{\{ת\|אנגלית\|([^}|]+)/);
     if (translationMatch && translationMatch[1]) {
       translation = translationMatch[1].trim();
-      console.log("Hebrew translation:", translation);
     }
   } else if (fromLanguage === 'is') {
     // Icelandic-specific parsing
@@ -73,13 +70,11 @@ function extractTranslationData(wikitext: string, fromLanguage: string): Transla
     const genderMatch = firstFewRows.match(/\{\{(m|f|n)\}\}/);
     if (genderMatch && genderMatch[1]) {
       gender = genderMatch[1] as Gender;
-      console.log("Extracted gender:", gender);
     }
 
     const translationMatch = wikitext.match(/\{\{Ü\|en\|(.*?)(?:\}\}|\|)/);
     if (translationMatch && translationMatch[1]) {
       translation = translationMatch[1].trim();
-      console.log("Found translation:", translation);
     }
   }
 

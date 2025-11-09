@@ -9,6 +9,7 @@ import SettingsMenu from "@/components/SettingsMenu";
 import Index from "./pages/Index";
 import VocabList from "./pages/VocabList";
 import Practice from "./pages/Practice";
+import PracticeAll from "./pages/PracticeAll";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -45,6 +46,11 @@ const App = () => (
               <Route path="/practice/:listId" element={
                 <ProtectedRoute>
                   <Practice />
+                </ProtectedRoute>
+              } />
+              <Route path="/practice-all" element={
+                <ProtectedRoute>
+                  <PracticeAll />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />

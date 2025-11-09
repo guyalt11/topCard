@@ -245,12 +245,12 @@ const VocabList = () => {
   };
 
   const formatNextReview = (date: Date | undefined): string => {
-    if (!date) return 'Due now';
+    if (!date) return 'Ready for review';
     
     const now = new Date();
     
     if (date <= now) {
-      return 'Due now';
+      return 'Ready for review';
     }
     
     return `In ${formatDistanceToNow(date)}`;

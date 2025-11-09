@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Upload, Eye, EyeOff, Search, X } from "lucide-react";
+import { Plus, Upload, Eye, EyeOff, Search, X, Play } from "lucide-react";
 import { useState } from "react";
 import { VocabList } from "@/types/vocabulary";
 
@@ -11,25 +11,48 @@ interface ListsHeaderProps {
   onFilterChange: (showOnlyDue: boolean) => void;
   showOnlyDue: boolean;
   onSearchChange: (searchQuery: string) => void;
+  onPracticeAll?: () => void;
 }
 
-const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChange }: ListsHeaderProps) => {
+const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChange, onPracticeAll }: ListsHeaderProps) => {
   const [showOnlyDue, setShowOnlyDue] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Calculate total due words from all lists
+  const getTotalDueWords = () => {
+    const now = new Date();
+    let totalDue = 0;
+    
+    lists.forEach(list => {
+      list.words.forEach(word => {
+        const nextReviewFrom = word.nextReview?.translateFrom;
+        const nextReviewTo = word.nextReview?.translateTo;
+        
+        if (!nextReviewFrom || nextReviewFrom <= now) {
+          totalDue++;
+        }
+        if (!nextReviewTo || nextReviewTo <= now) {
+          totalDue++;
+        }
+      });
+    });
+    
+    return totalDue;
+  };
+  
+  const totalDueWords = getTotalDueWords();
   return (
     <>
-      <div className="flex flex-wrap flex-col sm:flex-row items-center gap-2 mb-5 sm:mb-6">
-        <div className="flex items-center gap-2">
-          <Button onClick={onAddList} className="gap-1">
+      <div className="flex flex-wrap flex-col sm:flex-row gap-2 mb-5 sm:mb-6">
+        <div className="flex gap-2">
+          <Button title="Add new list" onClick={onAddList} className="gap-1">
             <Plus className="h-4 w-4" />
-            Create New List
           </Button>
-          <Button variant="outline" onClick={onImport} className="gap-1">
+          <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1">
             <Upload className="h-4 w-4" />
-            Import List
           </Button>
           <Button 
-            title={showOnlyDue ? "Show all lists" : "Show only due lists"} 
+            title={showOnlyDue ? "All lists" : "Only practicable lists"} 
             variant="outline" 
             onClick={() => {
               setShowOnlyDue(!showOnlyDue);
@@ -43,9 +66,20 @@ const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChang
               <EyeOff className="h-4 w-4" />
             )}
           </Button>
+          {onPracticeAll && (
+            <Button 
+              title="Practice all words"
+              onClick={onPracticeAll}
+              disabled={totalDueWords === 0}
+              className={`gap-1 ${totalDueWords === 0 ? 'cursor-not-allowed' : ''}`}
+              variant="default"
+            >
+              <Play className="h-4 w-4" />
+            </Button>
+          )}
         </div>
-        <div className="h-full flex items-center mt-3 sm:mt-0 sm:ml-auto justify-start w-full sm:w-auto">
-          Total words: {lists.reduce((total, list) => total + list.words.length, 0)}
+        <div className="h-full flex mt-3 sm:mt-0 sm:ml-auto justify-start w-full sm:w-auto self-center">
+          Total words: {lists.reduce((total, list) => total + list.words.length, 0)}&nbsp;&nbsp;·&nbsp;&nbsp;{totalDueWords} Ready for practice
         </div>
       </div>
       <div className="w-full mb-6">

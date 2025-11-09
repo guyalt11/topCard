@@ -23,7 +23,6 @@ const Login = () => {
     const cleanupAuth = async () => {
       if (cleanupDone.current) return;
       
-      console.log('Cleaning up auth state...');
       try {
         // Clear all auth-related cookies
         Cookies.remove('currentUser');
@@ -47,7 +46,6 @@ const Login = () => {
   // Handle redirection after successful login
   useEffect(() => {
     if (isAuthenticated && isSubmitting) {
-      console.log('User authenticated, redirecting...');
       // Use setTimeout to ensure state updates are processed
       setTimeout(() => {
         navigate('/', { replace: true });

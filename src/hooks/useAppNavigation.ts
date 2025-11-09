@@ -30,9 +30,14 @@ export const useAppNavigation = () => {
     navigate(`/practice/${listId}?direction=${direction}`);
   };
 
+  const goToPracticeAll = (direction: PracticeDirection = 'translateFrom') => {
+    navigate(`/practice-all?direction=${direction}`);
+  };
+
   return {
     goToHome,
     goToList,
-    goToPractice
+    goToPractice,
+    goToPracticeAll
   };
 };

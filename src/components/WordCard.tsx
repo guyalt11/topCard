@@ -19,12 +19,12 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
   };
 
   const formatNextReview = (date: Date | undefined): string => {
-    if (!date) return 'Due now';
+    if (!date) return 'Ready for review';
     
     const now = new Date();
     
     if (date <= now) {
-      return 'Due now';
+      return 'Ready for review';
     }
     
     return `In ${formatDistanceToNow(date)}`;
@@ -50,13 +50,13 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
       <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateFrom" size={14} />
-          <span className={translateFromFormatted === 'Due now' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
+          <span className={translateFromFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
              {translateFromFormatted}
           </span>
         </div>
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateTo" size={14} />
-          <span className={translateToFormatted === 'Due now' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
+          <span className={translateToFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
             {translateToFormatted}
           </span>
         </div>

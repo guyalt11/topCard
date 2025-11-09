@@ -19,7 +19,6 @@ const Register = () => {
   // Handle redirection after successful registration
   useEffect(() => {
     if (isAuthenticated && isSubmitting) {
-      console.log('User registered, redirecting...');
       setTimeout(() => {
         navigate('/', { replace: true });
       }, 100);

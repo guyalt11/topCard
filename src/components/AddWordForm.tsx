@@ -65,11 +65,9 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
           
           if (result.translation) {
             setEn(result.translation);
-            console.log("Setting translation:", result.translation);
           }
           
           setGender(result.gender);
-          console.log("Setting gender:", result.gender);
         } catch (error) {
           console.error("Translation error:", error);
           setTranslateError(" ");
