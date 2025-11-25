@@ -1,8 +1,10 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { VocabList } from "@/types/vocabulary";
-import { Edit, Trash2, FileDown, FileUp } from "lucide-react";
+import { Edit, Trash2, Share2 } from "lucide-react";
 import ListActions from "@/components/ListActions";
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import FlagIcon from '@/components/FlagIcon';
@@ -16,9 +18,10 @@ interface ListCardProps {
   onPractice: (id: string, direction: string) => void;
   onExport: (id: string, format: 'json') => void;
   onImport: (file: File) => Promise<void>;
+  onShareToggle: (id: string, share: boolean) => void;
 }
 
-const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onImport }: ListCardProps) => {
+const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onImport, onShareToggle }: ListCardProps) => {
   const { goToPractice } = useAppNavigation();
   // Count words due for practice in each direction
   const now = new Date();
@@ -44,28 +47,26 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   return (
     <Card className="h-full flex flex-col bg-muted/30">
       <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg mb-1 flex-1 text-left">{list.name}</CardTitle>
-          <div className="flex space-x-1">
-            <ListActions
-              listId={list.id}
-              onExport={onExport}
-              onImport={onImport}
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onEdit(list.id)}
-            >
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+          <CardTitle className="text-lg mb-2 sm:mb-0 w-full sm:flex-1 text-left">
+            {list.name}
+          </CardTitle>
+          <div className="flex flex-wrap sm:flex-row items-start sm:items-center space-x-1 gap-1 w-full sm:w-auto">
+            <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
+                <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
+              </svg>
+              <Switch
+                id={`share-${list.id}`}
+                checked={list.share || false}
+                onCheckedChange={(checked) => onShareToggle(list.id, checked)}
+              />
+            </div>
+            <ListActions listId={list.id} onExport={onExport} onImport={onImport} />
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(list.id)}>
               <Edit className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-destructive h-8 w-8"
-              onClick={() => onDelete(list.id)}
-            >
+            <Button variant="ghost" size="icon" className="text-destructive h-8 w-8" onClick={() => onDelete(list.id)}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>

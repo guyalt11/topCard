@@ -11,6 +11,7 @@ import EmptyListsState from '@/components/EmptyListsState';
 import ImportListDialog from '@/components/ImportListDialog';
 import EditListDialog from '@/components/EditListDialog';
 import DeleteListDialog from '@/components/DeleteListDialog';
+import LibraryDialog from '@/components/LibraryDialog';
 import { VocabList } from '@/types/vocabulary';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { useEffect, useRef } from 'react';
@@ -19,10 +20,10 @@ const Index = () => {
   const { lists, exportList, importList, deleteList, updateList, getListById, addWord } = useVocab();
   const navigate = useNavigate();
   const { goToList, goToPracticeAll } = useAppNavigation();
-  const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => {} });
+  const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => { } });
   const [showEmptyState, setShowEmptyState] = useState(false);
   const listsRef = useRef(lists);
-  
+
   useEffect(() => {
     listsRef.current = lists;
     if (lists.length === 0) {
@@ -38,14 +39,17 @@ const Index = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [showOnlyDue, setShowOnlyDue] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   // Edit list state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedList, setSelectedList] = useState<VocabList | null>(null);
-  
+
   // Delete list state
   const [deleteListId, setDeleteListId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Library state
+  const [libraryDialogOpen, setLibraryDialogOpen] = useState(false);
 
   // Handlers
   const handleAddList = () => {
@@ -54,6 +58,10 @@ const Index = () => {
 
   const handleImportClick = () => {
     setImportDialogOpen(true);
+  };
+
+  const handleLibraryClick = () => {
+    setLibraryDialogOpen(true);
   };
 
   const handleImport = async (file: File, listName: string) => {
@@ -81,7 +89,7 @@ const Index = () => {
       variant: "destructive",
     });
   };
-  
+
   const handleEditList = (id: string) => {
     const list = lists.find(l => l.id === id);
     if (list) {
@@ -89,7 +97,7 @@ const Index = () => {
       setEditDialogOpen(true);
     }
   };
-  
+
   const handleSaveEdit = (id: string, updates: Partial<VocabList>) => {
     updateList(id, updates);
     toast({
@@ -97,12 +105,12 @@ const Index = () => {
       description: `List "${updates.name}" has been updated.`,
     });
   };
-  
+
   const handleDeleteList = (id: string) => {
     setDeleteListId(id);
     setDeleteDialogOpen(true);
   };
-  
+
   const confirmDeleteList = () => {
     if (deleteListId) {
       deleteList(deleteListId);
@@ -143,11 +151,16 @@ const Index = () => {
     goToPracticeAll('translateFrom');
   };
 
+  const handleShareToggle = (id: string, share: boolean) => {
+    updateList(id, { share });
+  };
+
   return (
     <div className="container py-6 max-w-3xl">
-      <ListsHeader 
-        onAddList={handleAddList} 
+      <ListsHeader
+        onAddList={handleAddList}
         onImport={handleImportClick}
+        onLibrary={handleLibraryClick}
         lists={lists}
         onFilterChange={setShowOnlyDue}
         showOnlyDue={showOnlyDue}
@@ -158,42 +171,43 @@ const Index = () => {
       {showEmptyState ? (
         <EmptyListsState onAddList={handleAddList} />
       ) : (
-        <VocabListGrid 
+        <VocabListGrid
           lists={lists.filter(list => list.name.toLowerCase().includes(searchQuery.toLowerCase()))}
           onSelectList={goToList}
           onEditList={handleEditList}
           onDeleteList={handleDeleteList}
           onExportList={exportList}
           onImportWords={async (file, listName) => {
-          await importListFunc(file, listName);
-        }}
+            await importListFunc(file, listName);
+          }}
+          onShareToggle={handleShareToggle}
           urlDirection=""
           listId=""
           showOnlyDue={showOnlyDue}
         />
       )}
 
-      <AddListForm 
-        open={addListOpen} 
-        onOpenChange={setAddListOpen} 
+      <AddListForm
+        open={addListOpen}
+        onOpenChange={setAddListOpen}
         onSuccess={async (list) => {
-        
+
           const maxRetries = 3;
           let retryCount = 0;
-        
+
           const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-        
+
           while (retryCount < maxRetries) {
             const exists = listsRef.current.some(list => list.id === listsRef.current?.[0].id);
             if (exists) {
               navigate(`/list/${list.id}`);
               return;
             }
-        
+
             retryCount++;
             await delay(300);
           }
-        
+
           console.error('Index: Failed to find list after retries');
           toast({
             title: "Error",
@@ -208,18 +222,23 @@ const Index = () => {
         onOpenChange={setImportDialogOpen}
         onImport={handleImport}
       />
-      
+
       <EditListDialog
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSave={handleSaveEdit}
         list={selectedList}
       />
-      
+
       <DeleteListDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onConfirm={confirmDeleteList}
+      />
+
+      <LibraryDialog
+        open={libraryDialogOpen}
+        onOpenChange={setLibraryDialogOpen}
       />
     </div>
   );

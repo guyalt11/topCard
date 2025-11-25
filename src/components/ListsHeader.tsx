@@ -1,12 +1,13 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Upload, Eye, EyeOff, Search, X, Play } from "lucide-react";
+import { Plus, Upload, Eye, EyeOff, Search, X, Play, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { VocabList } from "@/types/vocabulary";
 
 interface ListsHeaderProps {
   onAddList: () => void;
   onImport: () => void;
+  onLibrary: () => void;
   lists: VocabList[];
   onFilterChange: (showOnlyDue: boolean) => void;
   showOnlyDue: boolean;
@@ -14,20 +15,20 @@ interface ListsHeaderProps {
   onPracticeAll?: () => void;
 }
 
-const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChange, onPracticeAll }: ListsHeaderProps) => {
+const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, onSearchChange, onPracticeAll }: ListsHeaderProps) => {
   const [showOnlyDue, setShowOnlyDue] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   // Calculate total due words from all lists
   const getTotalDueWords = () => {
     const now = new Date();
     let totalDue = 0;
-    
+
     lists.forEach(list => {
       list.words.forEach(word => {
         const nextReviewFrom = word.nextReview?.translateFrom;
         const nextReviewTo = word.nextReview?.translateTo;
-        
+
         if (!nextReviewFrom || nextReviewFrom <= now) {
           totalDue++;
         }
@@ -36,10 +37,10 @@ const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChang
         }
       });
     });
-    
+
     return totalDue;
   };
-  
+
   const totalDueWords = getTotalDueWords();
   return (
     <>
@@ -51,13 +52,13 @@ const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChang
           <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1">
             <Upload className="h-4 w-4" />
           </Button>
-          <Button 
-            title={showOnlyDue ? "All lists" : "Only practicable lists"} 
-            variant="outline" 
+          <Button
+            title={showOnlyDue ? "All lists" : "Only practicable lists"}
+            variant="outline"
             onClick={() => {
               setShowOnlyDue(!showOnlyDue);
               onFilterChange(!showOnlyDue);
-            }} 
+            }}
             className="gap-1"
           >
             {showOnlyDue ? (
@@ -66,8 +67,11 @@ const ListsHeader = ({ onAddList, onImport, lists, onFilterChange, onSearchChang
               <EyeOff className="h-4 w-4" />
             )}
           </Button>
+          <Button title="Browse shared lists" variant="outline" onClick={onLibrary} className="gap-1">
+            <BookOpen className="h-4 w-4" />
+          </Button>
           {onPracticeAll && (
-            <Button 
+            <Button
               title="Practice all words"
               onClick={onPracticeAll}
               disabled={totalDueWords === 0}

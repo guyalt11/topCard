@@ -28,7 +28,7 @@ export const useSupabaseVocabLists = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Fetch the user's lists
       const response = await fetch(
         `${SUPABASE_URL}/rest/v1/lists?user_id=eq.${currentUser.id}&order=created_at.desc`,
@@ -36,9 +36,9 @@ export const useSupabaseVocabLists = () => {
       );
 
       if (!response.ok) throw new Error('Failed to fetch lists');
-      
+
       const fetchedLists: any[] = await response.json();
-      
+
       // For each list, fetch its words
       const listsWithWords = await Promise.all(
         fetchedLists.map(async (list) => {
@@ -46,21 +46,22 @@ export const useSupabaseVocabLists = () => {
             `${SUPABASE_URL}/rest/v1/words?list_id=eq.${list.id}&order=id.asc`,
             { headers: getAuthHeaders(token) }
           );
-          
+
           if (!wordsResponse.ok) throw new Error(`Failed to fetch words for list ${list.id}`);
-          
+
           const words: VocabWord[] = await wordsResponse.json();
-          
+
           // Parse dates from strings
           const createdAt = new Date(list.created_at);
           const updatedAt = new Date(list.updated_at);
-          
+
           // Format the list to match our application's VocabList type
           return {
             id: list.id,
             name: list.name,
             description: list.description || undefined,
             language: list.language || 'de', // Default to 'de' for backward compatibility
+            share: list.share || false, // Default to false if not set
             words: words.map(word => ({
               ...word,
               // Parse JSON fields if they exist
@@ -72,7 +73,7 @@ export const useSupabaseVocabLists = () => {
           } as VocabList;
         })
       );
-      
+
       setLists(listsWithWords);
     } catch (err) {
       console.error('Error fetching lists:', err);
@@ -89,7 +90,7 @@ export const useSupabaseVocabLists = () => {
   // Helper to parse nested dates in JSON objects
   const parseJsonDates = (jsonObj: any) => {
     if (!jsonObj) return undefined;
-    
+
     const result: any = {};
     Object.keys(jsonObj).forEach(key => {
       if (typeof jsonObj[key] === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(jsonObj[key])) {
@@ -106,9 +107,9 @@ export const useSupabaseVocabLists = () => {
     if (!currentUser || !token) {
       throw new Error('User not authenticated');
     }
-    
+
     const isNew = !lists.some(l => l.id === list.id);
-    
+
     if (isNew) {
       // Create a new list
       const response = await fetch(`${SUPABASE_URL}/rest/v1/lists`, {
@@ -119,10 +120,11 @@ export const useSupabaseVocabLists = () => {
           name: list.name,
           description: list.description || null,
           language: list.language,
+          share: list.share || false,
           user_id: currentUser.id
         })
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to create list');
@@ -138,20 +140,21 @@ export const useSupabaseVocabLists = () => {
             name: list.name,
             description: list.description || null,
             language: list.language,
+            share: list.share !== undefined ? list.share : false,
             updated_at: new Date().toISOString()
           })
         }
       );
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to update list');
       }
     }
-    
+
     // After saving the list, refresh the lists from the server
     await fetchLists();
-    
+
     // Return the updated list from our state
     const updatedList = lists.find(l => l.id === list.id) || list;
     return updatedList;
@@ -162,7 +165,7 @@ export const useSupabaseVocabLists = () => {
     if (!currentUser || !token) {
       throw new Error('User not authenticated');
     }
-    
+
     // First delete all words in the list (foreign key constraint)
     const deleteWordsResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/words?list_id=eq.${id}`,
@@ -171,12 +174,12 @@ export const useSupabaseVocabLists = () => {
         headers: getAuthHeaders(token)
       }
     );
-    
+
     if (!deleteWordsResponse.ok) {
       const error = await deleteWordsResponse.json();
       throw new Error(error.message || 'Failed to delete list words');
     }
-    
+
     // Then delete the list itself
     const deleteListResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/lists?id=eq.${id}`,
@@ -185,12 +188,12 @@ export const useSupabaseVocabLists = () => {
         headers: getAuthHeaders(token)
       }
     );
-    
+
     if (!deleteListResponse.ok) {
       const error = await deleteListResponse.json();
       throw new Error(error.message || 'Failed to delete list');
     }
-    
+
     // Refresh the lists after deletion
     await fetchLists();
   };
@@ -200,9 +203,9 @@ export const useSupabaseVocabLists = () => {
     if (!currentUser || !token) {
       throw new Error('User not authenticated');
     }
-    
+
     const isNew = !lists.some(l => l.words.some(w => w.id === word.id));
-    
+
     // Prepare the word data for Supabase - excluding removed columns
     const wordData = {
       list_id: listId,
@@ -213,7 +216,7 @@ export const useSupabaseVocabLists = () => {
       nextReview: word.nextReview || null,
       sm2: word.sm2 || null
     };
-    
+
     if (isNew) {
       // Create a new word
       const response = await fetch(`${SUPABASE_URL}/rest/v1/words`, {
@@ -224,7 +227,7 @@ export const useSupabaseVocabLists = () => {
           ...wordData
         })
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to create word');
@@ -239,13 +242,13 @@ export const useSupabaseVocabLists = () => {
           body: JSON.stringify(wordData)
         }
       );
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to update word');
       }
     }
-    
+
     // Update the list's updated_at timestamp
     await fetch(
       `${SUPABASE_URL}/rest/v1/lists?id=eq.${listId}`,
@@ -257,11 +260,11 @@ export const useSupabaseVocabLists = () => {
         })
       }
     );
-    
+
     // Update the local list state instead of fetching all lists
     const updatedLists = lists.map(list => {
       if (list.id === listId) {
-        const updatedWords = isNew 
+        const updatedWords = isNew
           ? [...list.words, word]
           : list.words.map(w => w.id === word.id ? word : w);
         return {
@@ -273,7 +276,7 @@ export const useSupabaseVocabLists = () => {
       return list;
     });
     setLists(updatedLists);
-    
+
     return word;
   };
 
@@ -282,7 +285,7 @@ export const useSupabaseVocabLists = () => {
     if (!currentUser || !token) {
       throw new Error('User not authenticated');
     }
-    
+
     // Find which list contains this word
     let listId: string | undefined;
     for (const list of lists) {
@@ -292,11 +295,11 @@ export const useSupabaseVocabLists = () => {
         break;
       }
     }
-    
+
     if (!listId) {
       throw new Error('Word not found in any list');
     }
-    
+
     // Delete the word
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/words?id=eq.${wordId}`,
@@ -305,12 +308,12 @@ export const useSupabaseVocabLists = () => {
         headers: getAuthHeaders(token)
       }
     );
-    
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Failed to delete word');
     }
-    
+
     // Update the list's updated_at timestamp
     await fetch(
       `${SUPABASE_URL}/rest/v1/lists?id=eq.${listId}`,
@@ -322,15 +325,15 @@ export const useSupabaseVocabLists = () => {
         })
       }
     );
-    
+
     // Refresh the lists after deletion
     await fetchLists();
   };
 
-  return { 
-    lists, 
-    isLoading, 
-    error, 
+  return {
+    lists,
+    isLoading,
+    error,
     refreshLists: fetchLists,
     saveList,
     deleteList,

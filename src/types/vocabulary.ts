@@ -17,7 +17,7 @@ export interface VocabWord {
   lng: string;     // Target language word
   gender?: Gender;
   notes?: string;
-  
+
   // Track practice separately for each direction
   lastPracticed?: {
     translateTo?: Date;
@@ -31,7 +31,7 @@ export interface VocabWord {
     translateTo?: DifficultyLevel;
     translateFrom?: DifficultyLevel;
   };
-  
+
   // SM-2 parameters for each direction
   sm2?: {
     translateTo?: SM2Params;
@@ -44,6 +44,7 @@ export interface VocabList {
   name: string;
   description?: string;
   language: string;  // The target language code (e.g., 'de', 'fr', etc.)
+  share?: boolean;
   words: VocabWord[];
   createdAt: Date;
   updatedAt: Date;
@@ -78,20 +79,20 @@ export const getNextReviewTime = (word: VocabWord, selectedDifficulty: Difficult
   if (selectedDifficulty === 'hard') {
     return 1 * 60 * 1000; // Always exactly 1 minute for Hard
   }
-  
+
   // Get current SM2 params or initialize if not exist
   const sm2Params = word.sm2?.[direction] || {
     easeFactor: 2.5,
     interval: 0,
     repetitions: 0
   };
-  
+
   // Map our difficulty to SM2 quality
   const quality = DIFFICULTY_TO_SM2_QUALITY[selectedDifficulty];
-  
+
   // Calculate next interval using SM2 algorithm
   const { intervalMs } = calculateSM2NextInterval(sm2Params, quality);
-  
+
   return intervalMs;
 };
 
@@ -109,51 +110,51 @@ export function calculateSM2NextInterval(
 ): { nextParams: SM2Params; intervalMs: number } {
   // Make a copy to avoid mutating the original
   const nextParams: SM2Params = { ...params };
-  
+
   // If response quality < 3, start repetitions from scratch
   if (quality < 3) {
     nextParams.repetitions = 0;
     nextParams.interval = 0;
-    
+
     // Calculate next interval for poor quality
     let intervalMs = 1 * 60 * 1000; // 1 minute for hard
-    
+
     return { nextParams, intervalMs };
   } else {
     // Update repetitions counter
     nextParams.repetitions += 1;
-    
+
     // Calculate interval based on repetition number
     if (nextParams.repetitions === 1) {
       // First successful review
       nextParams.interval = quality === 3 ? 0.021 : // 30 minutes for quality 3
-                           quality === 4 ? 0.083 : // 2 hours for quality 4
-                           0.33; // 8 hours for quality 5 (perfect)
+        quality === 4 ? 0.083 : // 2 hours for quality 4
+          0.33; // 8 hours for quality 5 (perfect)
     } else if (nextParams.repetitions === 2) {
       // Second successful review
       nextParams.interval = quality === 3 ? 0.083 : // 2 hours for quality 3
-                           quality === 4 ? 0.33 : // 8 hours for quality 4
-                           1; // 1 day for quality 5
+        quality === 4 ? 0.33 : // 8 hours for quality 4
+          1; // 1 day for quality 5
     } else {
       // For repetitions > 2, use the formula with quality adjustments
       const qualityFactor = quality === 3 ? 0.5 : // Reduce interval more for OK
-                           quality === 4 ? 1.0 : // Normal interval for Good
-                           1.5;  // Increase interval for Perfect
-                           
+        quality === 4 ? 1.0 : // Normal interval for Good
+          1.5;  // Increase interval for Perfect
+
       nextParams.interval = nextParams.interval * nextParams.easeFactor * qualityFactor;
     }
-    
+
     // Update ease factor (E-Factor) based on quality of response
     // E-Factor formula from SM-2: EF' = EF + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02))
-    const newEF = 
+    const newEF =
       nextParams.easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-    
+
     // EF must remain ≥ 1.3
     nextParams.easeFactor = Math.max(1.3, newEF);
-    
+
     // Convert interval from days to milliseconds
     const intervalMs = nextParams.interval * 24 * 60 * 60 * 1000;
-    
+
     return { nextParams, intervalMs };
   }
 }

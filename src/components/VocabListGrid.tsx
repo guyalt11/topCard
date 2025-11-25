@@ -10,18 +10,20 @@ interface VocabListGridProps {
   onDeleteList: (id: string) => void;
   onExportList: (id: string, format: 'json') => void;
   onImportWords: (file: File, listName: string) => Promise<void>;
+  onShareToggle: (id: string, share: boolean) => void;
   urlDirection: string;
   listId: string;
   showOnlyDue: boolean;
 }
 
-const VocabListGrid = ({ 
-  lists, 
-  onSelectList, 
-  onEditList, 
+const VocabListGrid = ({
+  lists,
+  onSelectList,
+  onEditList,
   onDeleteList,
   onExportList,
   onImportWords,
+  onShareToggle,
   urlDirection,
   listId,
   showOnlyDue,
@@ -38,24 +40,25 @@ const VocabListGrid = ({
         .filter(list => !showOnlyDue || list.words.some(word => {
           const now = new Date();
           return (!word.nextReview?.translateFrom || word.nextReview.translateFrom <= now) ||
-                 (!word.nextReview?.translateTo || word.nextReview.translateTo <= now);
+            (!word.nextReview?.translateTo || word.nextReview.translateTo <= now);
         }))
         .map((list) => (
-        <div key={list.id} className="flex flex-col">
-          <ListCard
-            list={list}
-            onSelect={() => {
-              onSelectList(list.id);
-              goToList(list.id);
-            }}
-            onEdit={() => onEditList(list.id)}
-            onDelete={() => onDeleteList(list.id)}
-            onPractice={(direction) => handlePractice(direction, list.id)}
-            onExport={onExportList}
-            onImport={async (file) => await onImportWords(file, list.name)}
-          />
-        </div>
-      ))}
+          <div key={list.id} className="flex flex-col">
+            <ListCard
+              list={list}
+              onSelect={() => {
+                onSelectList(list.id);
+                goToList(list.id);
+              }}
+              onEdit={() => onEditList(list.id)}
+              onDelete={() => onDeleteList(list.id)}
+              onPractice={(direction) => handlePractice(direction, list.id)}
+              onExport={onExportList}
+              onImport={async (file) => await onImportWords(file, list.name)}
+              onShareToggle={onShareToggle}
+            />
+          </div>
+        ))}
     </div>
   );
 };

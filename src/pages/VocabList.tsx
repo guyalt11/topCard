@@ -27,12 +27,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { Download, Upload, Pencil, Trash2 } from 'lucide-react';
+import { Download, Upload, Pencil, Trash2, Share2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import FlagIcon, { DirectionFlag } from '@/components/FlagIcon';
 import ArrowIcon from '@/components/ArrowIcon';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 const VocabList = () => {
 
@@ -353,7 +354,7 @@ const VocabList = () => {
         </div>
       </div>
       <div className="flex items-center space-x-2 mb-6">
-        <div className="relative max-w-sm w-full">
+        <div className="relative max-w-sm w-full hidden md:block">
           <Input
             placeholder="Search words..."
             value={searchTerm}
@@ -399,6 +400,22 @@ const VocabList = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
+            <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
+          </svg>
+          <Switch
+            id="share-toggle"
+            checked={currentList.share || false}
+            onCheckedChange={(checked) => {
+              updateList(currentList.id, { share: checked });
+              toast({
+                title: checked ? "List shared" : "List unshared",
+                description: checked ? "This list is now shared." : "This list is no longer shared.",
+              });
+            }}
+          />
+        </div>
         <input
           type="file"
           ref={fileInputRef}
@@ -407,7 +424,24 @@ const VocabList = () => {
           className="hidden"
         />
       </div>
-
+      <div className="relative max-w-sm w-full mb-6 block md:hidden">
+        <Input
+          placeholder="Search words..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pr-8"
+        />
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => setSearchTerm('')}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            title="Clear"
+          >
+            ×
+          </button>
+        )}
+      </div>
       {filteredWords.length === 0 ? (
         <div className="text-center py-12">
           {searchTerm ? (
