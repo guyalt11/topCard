@@ -11,6 +11,7 @@ interface VocabListGridProps {
   onExportList: (id: string, format: 'json') => void;
   onImportWords: (file: File, listName: string) => Promise<void>;
   onShareToggle: (id: string, share: boolean) => void;
+  onPinToggle: (id: string, pinned: boolean) => void;
   urlDirection: string;
   listId: string;
   showOnlyDue: boolean;
@@ -24,6 +25,7 @@ const VocabListGrid = ({
   onExportList,
   onImportWords,
   onShareToggle,
+  onPinToggle,
   urlDirection,
   listId,
   showOnlyDue,
@@ -37,6 +39,12 @@ const VocabListGrid = ({
   return (
     <div className="space-y-4">
       {lists
+        .sort((a, b) => {
+          // Pinned lists come first
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          return 0;
+        })
         .filter(list => !showOnlyDue || list.words.some(word => {
           const now = new Date();
           return (!word.nextReview?.translateFrom || word.nextReview.translateFrom <= now) ||
@@ -56,6 +64,7 @@ const VocabListGrid = ({
               onExport={onExportList}
               onImport={async (file) => await onImportWords(file, list.name)}
               onShareToggle={onShareToggle}
+              onPinToggle={onPinToggle}
             />
           </div>
         ))}

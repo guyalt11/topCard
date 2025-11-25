@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { VocabList } from "@/types/vocabulary";
-import { Edit, Trash2, Share2 } from "lucide-react";
+import { Edit, Trash2, Share2, Pin } from "lucide-react";
 import ListActions from "@/components/ListActions";
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import FlagIcon from '@/components/FlagIcon';
@@ -19,9 +19,10 @@ interface ListCardProps {
   onExport: (id: string, format: 'json') => void;
   onImport: (file: File) => Promise<void>;
   onShareToggle: (id: string, share: boolean) => void;
+  onPinToggle: (id: string, pinned: boolean) => void;
 }
 
-const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onImport, onShareToggle }: ListCardProps) => {
+const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onImport, onShareToggle, onPinToggle }: ListCardProps) => {
   const { goToPractice } = useAppNavigation();
   // Count words due for practice in each direction
   const now = new Date();
@@ -68,6 +69,15 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             </Button>
             <Button variant="ghost" size="icon" className="text-destructive h-8 w-8" onClick={() => onDelete(list.id)}>
               <Trash2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-8 w-8 ${list.pinned ? 'text-yellow-500' : ''}`}
+              onClick={() => onPinToggle(list.id, !list.pinned)}
+              title={list.pinned ? 'Unpin list' : 'Pin list'}
+            >
+              <Pin className={`h-4 w-4 ${list.pinned ? 'fill-current' : ''}`} />
             </Button>
           </div>
         </div>

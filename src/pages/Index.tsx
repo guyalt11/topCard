@@ -155,6 +155,10 @@ const Index = () => {
     updateList(id, { share });
   };
 
+  const handlePinToggle = (id: string, pinned: boolean) => {
+    updateList(id, { pinned });
+  };
+
   return (
     <div className="container py-6 max-w-3xl">
       <ListsHeader
@@ -181,6 +185,7 @@ const Index = () => {
             await importListFunc(file, listName);
           }}
           onShareToggle={handleShareToggle}
+          onPinToggle={handlePinToggle}
           urlDirection=""
           listId=""
           showOnlyDue={showOnlyDue}

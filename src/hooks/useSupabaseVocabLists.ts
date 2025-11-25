@@ -62,6 +62,7 @@ export const useSupabaseVocabLists = () => {
             description: list.description || undefined,
             language: list.language || 'de', // Default to 'de' for backward compatibility
             share: list.share || false, // Default to false if not set
+            pinned: list.pinned || false, // Default to false if not set
             words: words.map(word => ({
               ...word,
               // Parse JSON fields if they exist
@@ -121,6 +122,7 @@ export const useSupabaseVocabLists = () => {
           description: list.description || null,
           language: list.language,
           share: list.share || false,
+          pinned: list.pinned || false,
           user_id: currentUser.id
         })
       });
@@ -141,6 +143,7 @@ export const useSupabaseVocabLists = () => {
             description: list.description || null,
             language: list.language,
             share: list.share !== undefined ? list.share : false,
+            pinned: list.pinned !== undefined ? list.pinned : false,
             updated_at: new Date().toISOString()
           })
         }

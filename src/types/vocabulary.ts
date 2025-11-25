@@ -45,6 +45,7 @@ export interface VocabList {
   description?: string;
   language: string;  // The target language code (e.g., 'de', 'fr', etc.)
   share?: boolean;
+  pinned?: boolean;
   words: VocabWord[];
   createdAt: Date;
   updatedAt: Date;
