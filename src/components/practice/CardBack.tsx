@@ -17,7 +17,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
   // For translateFrom (English to Language), show language word
   const backText = direction === 'translateTo' ? word.en : word.lng;
   const showGender = direction === 'translateFrom' && word.gender;
-  
+
   const getLanguageCode = (lang: string) => {
     switch (lang) {
       case 'de': return 'de-DE';
@@ -26,17 +26,17 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
       default: return 'en-US';
     }
   };
-  
+
   return (
     <div className="text-center mt-6 pt-4 w-full">
       <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
-        <DirectionFlag direction={direction === 'translateTo' ? 'translateFrom' : 'translateTo'} size={25} />
+        <DirectionFlag direction={direction === 'translateTo' ? 'translateFrom' : 'translateTo'} size={16} />
       </div>
       <div className="flex items-center justify-center gap-2">
         <h3 className="text-xl font-semibold">{backText}</h3>
         {showGender && <GenderTag gender={word.gender!} />}
       </div>
-      
+
       {direction === 'translateFrom' && (
         <Button
           variant="ghost"

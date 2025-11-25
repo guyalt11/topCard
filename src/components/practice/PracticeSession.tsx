@@ -24,7 +24,7 @@ interface PracticeSessionProps {
   onDirectionChange: (direction: PracticeDirection) => void;
 }
 
-const PracticeSession: React.FC<PracticeSessionProps> = ({ 
+const PracticeSession: React.FC<PracticeSessionProps> = ({
   direction,
   onDirectionChange
 }) => {
@@ -35,7 +35,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   const { practiceWords, resetPracticeWords } = usePracticeWords(direction);
   const [isAnswered, setIsAnswered] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  
+
   // Store the initial word list as a ref so it never changes during the session
   const initialWordsRef = useRef<typeof practiceWords>([]);
   // Store the initial total words count as a ref so it never changes during the session
@@ -49,6 +49,9 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
     }
   }, [practiceWords]);
 
+  // Add a refresh counter to force re-render when refreshing
+  const [refreshCounter, setRefreshCounter] = useState(0);
+
   // Reset session and refs when direction changes
   const resetSession = () => {
     resetPracticeWords();
@@ -57,6 +60,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
     setIsAnswered(false);
     initialWordsRef.current = [];
     totalWordsRef.current = 0;
+    setRefreshCounter(prev => prev + 1); // Increment refresh counter
   };
 
   // Reset only the session state without fetching new words
@@ -95,7 +99,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
   const currentWord = wordsToUse[currentIndex];
   const totalWords = totalWordsRef.current > 0 ? totalWordsRef.current : wordsToUse.length;
   const isComplete = currentIndex >= wordsToUse.length || wordsToUse.length === 0;
-  
+
   const handleAnswered = (difficulty: DifficultyLevel) => {
     if (currentWord) {
       // Update the word's difficulty and next review time
@@ -117,7 +121,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
       };
 
       // Update the word in the practice list
-      initialWordsRef.current = initialWordsRef.current.map(w => 
+      initialWordsRef.current = initialWordsRef.current.map(w =>
         w.id === currentWord.id ? updatedWord : w
       );
 
@@ -152,7 +156,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
       // Remove the word from our practice list
       initialWordsRef.current = initialWordsRef.current.filter(w => w.id !== currentWord.id);
       totalWordsRef.current = initialWordsRef.current.length;
-      
+
       // If we've deleted all words, set counts to trigger completion screen
       if (initialWordsRef.current.length === 0) {
         setCompletedCount(0);
@@ -165,7 +169,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
 
   return (
     <div className="container py-6 max-w-3xl">
-      <PracticeHeader 
+      <PracticeHeader
         listName={currentList.name}
         direction={direction}
         onDirectionChange={onDirectionChange}
@@ -174,27 +178,28 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
       />
 
       <div className="mb-4">
-        <PracticeProgressBar 
+        <PracticeProgressBar
           currentProgress={completedCount}
           totalWords={totalWords}
         />
       </div>
 
       <div className="mb-6">
-        <WordCompletionCounter 
-          completedCount={completedCount} 
-          totalWords={totalWords} 
+        <WordCompletionCounter
+          completedCount={completedCount}
+          totalWords={totalWords}
         />
       </div>
 
       {isComplete ? (
-        <PracticeComplete 
+        <PracticeComplete
           totalWords={totalWords}
           onRestart={handleRestart}
           onBack={() => navigate(`/list/${currentList?.id}`)}
         />
       ) : (
         <PracticeCard
+          key={`${currentWord?.id}-${currentIndex}-${direction}-${refreshCounter}`}
           word={currentWord}
           direction={direction}
           onAnswer={handleAnswered}

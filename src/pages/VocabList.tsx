@@ -30,11 +30,12 @@ import {
 import { Download, Upload, Pencil, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import FlagIcon, { DirectionFlag } from '@/components/FlagIcon';
+import ArrowIcon from '@/components/ArrowIcon';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
 const VocabList = () => {
-  
+
   const { listId } = useParams<{ listId: string }>();
   const { getListById, deleteWord, exportList, importList, deleteList, updateList, addWord, selectList, isLoading } = useVocab();
   const { goToHome, goToPractice } = useAppNavigation();
@@ -47,12 +48,12 @@ const VocabList = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [initialized, setInitialized] = useState(false);
   const [listNotFound, setListNotFound] = useState(false);
-  
+
   // Edit list state
   const [editListDialogOpen, setEditListDialogOpen] = useState(false);
   const [editListName, setEditListName] = useState('');
   const [editListDescription, setEditListDescription] = useState('');
-  
+
   // Delete list state
   const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
 
@@ -98,8 +99,8 @@ const VocabList = () => {
   if (!initialized || !currentList) {
     return null;
   }
-  
-  const filteredWords = currentList.words.filter(word => 
+
+  const filteredWords = currentList.words.filter(word =>
     word.lng.toLowerCase().includes(searchTerm.toLowerCase()) ||
     word.en.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -135,9 +136,9 @@ const VocabList = () => {
 
   const importToList = async (file: File, listId: string) => {
     try {
-      const { importList } = useVocabImportExport({ lists: [], setLists: () => {} });
+      const { importList } = useVocabImportExport({ lists: [], setLists: () => { } });
       const importedList = await importList(file, 'temp');
-      
+
       if (!importedList || !importedList.words.length) {
         return;
       }
@@ -188,7 +189,7 @@ const VocabList = () => {
     setEditListDescription(currentList.description || '');
     setEditListDialogOpen(true);
   };
-  
+
   const handleSaveListEdit = () => {
     if (editListName.trim()) {
       updateList(currentList.id, {
@@ -202,11 +203,11 @@ const VocabList = () => {
       setEditListDialogOpen(false);
     }
   };
-  
+
   const handleDeleteList = () => {
     setDeleteListDialogOpen(true);
   };
-  
+
   const confirmDeleteList = () => {
     deleteList(currentList.id);
     toast({
@@ -246,13 +247,13 @@ const VocabList = () => {
 
   const formatNextReview = (date: Date | undefined): string => {
     if (!date) return 'Ready for review';
-    
+
     const now = new Date();
-    
+
     if (date <= now) {
       return 'Ready for review';
     }
-    
+
     return `In ${formatDistanceToNow(date)}`;
   };
 
@@ -266,19 +267,19 @@ const VocabList = () => {
   const isWordDueForReview = (word: VocabWord): boolean => {
     if (!word.nextReview) return true;
     const now = new Date();
-    
-    const translateFromDue = !getNextReviewDate(word, 'translateFrom') || 
-                              getNextReviewDate(word, 'translateFrom')! <= now;
-    const translateToDue = !getNextReviewDate(word, 'translateTo') || 
-                            getNextReviewDate(word, 'translateTo')! <= now;
-    
+
+    const translateFromDue = !getNextReviewDate(word, 'translateFrom') ||
+      getNextReviewDate(word, 'translateFrom')! <= now;
+    const translateToDue = !getNextReviewDate(word, 'translateTo') ||
+      getNextReviewDate(word, 'translateTo')! <= now;
+
     return translateFromDue || translateToDue;
   };
 
   const getFormattedReviewTimes = (word: VocabWord): React.ReactNode => {
     const translateFromFormatted = formatNextReview(getNextReviewDate(word, 'translateFrom'));
     const translateToFormatted = formatNextReview(getNextReviewDate(word, 'translateTo'));
-    
+
     return (
       <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
@@ -306,9 +307,9 @@ const VocabList = () => {
             className={`relative overflow-hidden truncate ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
             disabled={translateFromDue === 0}
           >
-            <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
-            <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
-            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="w-5 h-5 object-contain" />
+            <FlagIcon country="en" size={20} />
+            <ArrowIcon size={20} className="text-white" />
+            <FlagIcon country={currentList.language} size={20} />
           </Button>
           <Button
             variant="default"
@@ -316,28 +317,28 @@ const VocabList = () => {
             className={`relative overflow-hidden truncate ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
             disabled={translateToDue === 0}
           >
-            <img src={`/flags/${currentList.language}.ico`} alt={currentList.language.toUpperCase()} className="w-5 h-5 object-contain" />
-            <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
-            <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
+            <FlagIcon country={currentList.language} size={20} />
+            <ArrowIcon size={20} className="text-white" />
+            <FlagIcon country="en" size={20} />
           </Button>
         </div>
         <div className="mt-4 sm:mt-0">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{currentList.name}</h1>
             <span>({currentList.words.length} words)</span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7" 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               onClick={handleEditList}
               title="Edit list"
             >
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7 text-destructive" 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-destructive"
               onClick={handleDeleteList}
               title="Delete list"
             >
@@ -352,28 +353,28 @@ const VocabList = () => {
         </div>
       </div>
       <div className="flex items-center space-x-2 mb-6">
-      <div className="relative max-w-sm w-full">
-        <Input
-          placeholder="Search words..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pr-8"
-        />
-        {searchTerm && (
-          <button
-            type="button"
-            onClick={() => setSearchTerm('')}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            title="Clear"
-          >
-            ×
-          </button>
-        )}
-      </div>
+        <div className="relative max-w-sm w-full">
+          <Input
+            placeholder="Search words..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pr-8"
+          />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              title="Clear"
+            >
+              ×
+            </button>
+          )}
+        </div>
         <Button onClick={handleAddWord}>Add Word</Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => setShowReviewTimes(!showReviewTimes)}
           title={showReviewTimes ? "Hide review times" : "Show review times"}
           className="px-3"
@@ -433,10 +434,10 @@ const VocabList = () => {
         </div>
       )}
 
-      <AddWordForm 
-        editWord={wordToEdit} 
-        open={addWordOpen} 
-        onOpenChange={setAddWordOpen} 
+      <AddWordForm
+        editWord={wordToEdit}
+        open={addWordOpen}
+        onOpenChange={setAddWordOpen}
       />
 
       {/* Delete Word Dialog */}
@@ -454,7 +455,7 @@ const VocabList = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       {/* Edit List Dialog */}
       <Dialog open={editListDialogOpen} onOpenChange={setEditListDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -499,7 +500,7 @@ const VocabList = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Delete List Dialog */}
       <AlertDialog open={deleteListDialogOpen} onOpenChange={setDeleteListDialogOpen}>
         <AlertDialogContent>

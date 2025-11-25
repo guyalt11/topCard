@@ -25,13 +25,13 @@ interface AddWordFormProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const AddWordForm: React.FC<AddWordFormProps> = ({ 
-  editWord, 
-  open, 
-  onOpenChange 
+const AddWordForm: React.FC<AddWordFormProps> = ({
+  editWord,
+  open,
+  onOpenChange
 }) => {
   const { addWord, updateWord, currentList } = useVocab();
-  
+
   // Initialize form state with existing word data if editing
   const [lng, setLng] = useState('');
   const [en, setEn] = useState('');
@@ -55,18 +55,26 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
   }, [editWord]);
 
   useEffect(() => {
+    // Only auto-translate for specific languages with translation support
+    const languagesWithTranslation = ['de', 'he', 'is'];
+    const currentLanguage = currentList?.language || 'de';
+
+    if (!languagesWithTranslation.includes(currentLanguage)) {
+      return; // Skip translation for other languages
+    }
+
     const debounceTimeout = setTimeout(async () => {
       if (lng.trim().length >= 2 && !editWord) {
         setIsTranslating(true);
         setTranslateError(null);
-        
+
         try {
-          const result = await translateWord(lng, currentList?.language || 'de');
-          
+          const result = await translateWord(lng, currentLanguage);
+
           if (result.translation) {
             setEn(result.translation);
           }
-          
+
           setGender(result.gender);
         } catch (error) {
           console.error("Translation error:", error);
@@ -76,7 +84,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
         }
       }
     }, 800); // Debounce for 800ms
-    
+
     return () => clearTimeout(debounceTimeout);
   }, [lng, editWord, currentList]);
 
@@ -148,8 +156,8 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
         <DialogHeader>
           <DialogTitle>{editWord ? 'Edit Word' : 'Add New Word'}</DialogTitle>
           <DialogDescription>
-            {editWord 
-              ? 'Update this word in your vocabulary list.' 
+            {editWord
+              ? 'Update this word in your vocabulary list.'
               : 'Fill in the details to add a new word to your vocabulary list.'}
           </DialogDescription>
         </DialogHeader>
@@ -188,45 +196,48 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
               </Alert>
             )}
           </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Label>Gender (for nouns)</Label>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={clearGender} 
-                  className="h-8 flex items-center gap-1"
-                >
-                  <X className="h-4 w-4" />
-                  <span>Clear</span>
-                </Button>
-              </div>
-            </div>
-            <RadioGroup 
-              value={gender || ""} 
-              onValueChange={(value) => value ? setGender(value as Gender) : setGender(undefined)}
-              className="flex space-x-3"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="m" id="male" />
-                <Label htmlFor="male" className="gender-tag-m px-2 rounded">m.</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="f" id="female" />
-                <Label htmlFor="female" className="gender-tag-f px-2 rounded">f.</Label>
-              </div>
-              {currentList?.language !== 'he' && (
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="n" id="neutral" />
-                  <Label htmlFor="neutral" className="gender-tag-n px-2 rounded">n.</Label>
+
+          {/* Only show gender selection for languages with translation support */}
+          {['de', 'he', 'is'].includes(currentList?.language || '') && (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Label>Gender (for nouns)</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearGender}
+                    className="h-8 flex items-center gap-1"
+                  >
+                    <X className="h-4 w-4" />
+                    <span>Clear</span>
+                  </Button>
                 </div>
-              )}
-            </RadioGroup>
-          </div>
-          
+              </div>
+              <RadioGroup
+                value={gender || ""}
+                onValueChange={(value) => value ? setGender(value as Gender) : setGender(undefined)}
+                className="flex space-x-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="m" id="male" />
+                  <Label htmlFor="male" className="gender-tag-m px-2 rounded">m.</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="f" id="female" />
+                  <Label htmlFor="female" className="gender-tag-f px-2 rounded">f.</Label>
+                </div>
+                {currentList?.language !== 'he' && (
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="n" id="neutral" />
+                    <Label htmlFor="neutral" className="gender-tag-n px-2 rounded">n.</Label>
+                  </div>
+                )}
+              </RadioGroup>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="en">English Translation</Label>
             <Input
@@ -237,7 +248,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="notes">Notes (Optional)</Label>
             <Textarea
@@ -247,7 +258,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
               placeholder="Add any additional notes here..."
             />
           </div>
-          
+
           <DialogFooter>
             <Button type="submit">
               {editWord ? 'Update Word' : 'Add Word'}

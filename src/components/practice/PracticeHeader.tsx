@@ -4,6 +4,8 @@ import { PracticeDirection } from '@/types/vocabulary';
 import { useNavigate } from 'react-router-dom';
 import { useVocab } from '@/context/VocabContext';
 import { RefreshCcw } from "lucide-react";
+import FlagIcon from '@/components/FlagIcon';
+import ArrowIcon from '@/components/ArrowIcon';
 
 interface PracticeHeaderProps {
   listName: string;
@@ -13,8 +15,8 @@ interface PracticeHeaderProps {
   onRefresh: () => void;
 }
 
-const PracticeHeader: React.FC<PracticeHeaderProps> = ({ 
-  listName, 
+const PracticeHeader: React.FC<PracticeHeaderProps> = ({
+  listName,
   direction,
   onDirectionChange,
   onBack,
@@ -32,7 +34,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
     const nextReview = word.nextReview?.translateTo;
     return !nextReview || nextReview <= now;
   }).length || 0;
-  
+
   const dueTranslateFrom = currentList?.words.filter(word => {
     const nextReview = word.nextReview?.translateFrom;
     return !nextReview || nextReview <= now;
@@ -46,35 +48,26 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
         <Button
           variant="default"
           onClick={toggleDirection}
-          className={`relative px-[6px] sm:px-2 ${
+          className={`relative px-[6px] sm:px-2 ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
+            (direction !== 'translateFrom' && dueTranslateFrom === 0)
+            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+            : 'bg-input hover:bg-accent'
+            }`}
+          disabled={
             (direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0)
-              ? 'bg-muted text-muted-foreground cursor-not-allowed'
-              : 'bg-input hover:bg-accent'
-            }`}
-            disabled={
-              (direction !== 'translateTo' && dueTranslateTo === 0) ||
-              (direction !== 'translateFrom' && dueTranslateFrom === 0)
-            } 
-          >
-          <div className="flex items-center">
-            <span className="inline-block align-middle">
-              <img
-                src={direction !== 'translateTo' ? `/flags/${currentList?.language}.ico` : '/flags/en.ico'}
-                alt={direction !== 'translateTo' ? currentList?.language.toUpperCase() : 'EN'}
-                className="w-6 h-6 object-contain"
-              />
-            </span>
-            <span className="inline-block align-middle mx-1">
-              <img src="/ra.webp" alt="arrow" className="w-4 h-4 sm:w-6 sm:h-6 object-contain" />
-            </span>
-            <span className="inline-block align-middle">
-              <img
-                src={direction !== 'translateTo' ? '/flags/en.ico' : `/flags/${currentList?.language}.ico`}
-                alt={direction !== 'translateTo' ? 'EN' : currentList?.language.toUpperCase()}
-                className="w-6 h-6 object-contain"
-              />
-            </span>
+          }
+        >
+          <div className="flex items-center gap-1">
+            <FlagIcon
+              country={direction !== 'translateTo' ? (currentList?.language || 'de') : 'en'}
+              size={24}
+            />
+            <ArrowIcon size={24} className="text-white" />
+            <FlagIcon
+              country={direction !== 'translateTo' ? 'en' : (currentList?.language || 'de')}
+              size={24}
+            />
           </div>
         </Button>
         <Button onClick={onBack}>Back to List</Button>

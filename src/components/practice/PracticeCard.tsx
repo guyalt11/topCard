@@ -24,12 +24,12 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   onDelete,
 }) => {
   const [flipped, setFlipped] = useState(false);
-  
-  // Reset flipped state when word changes
+
+  // Reset flipped state when word or direction changes
   useEffect(() => {
     setFlipped(false);
-  }, [word]);
-  
+  }, [word, direction]);
+
   // Return early if word is undefined
   if (!word) {
     return (
@@ -40,7 +40,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
       </Card>
     );
   }
-  
+
   const handleFlip = () => {
     if (!flipped) {
       setFlipped(true);
@@ -67,32 +67,32 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <Card 
-        className={`min-h-[200px] flex flex-col cursor-pointer transition-transform bg-muted/30 ${flipped ? 'animate-flip' : ''}`} 
+      <Card
+        className={`min-h-[200px] flex flex-col cursor-pointer transition-transform bg-muted/30 ${flipped ? 'animate-flip' : ''}`}
         onClick={handleFlip}
       >
         <CardContent className="flex-1 flex flex-col justify-center items-center p-6">
-          <CardFront 
-            word={word} 
-            direction={direction} 
+          <CardFront
+            word={word}
+            direction={direction}
             flipped={flipped}
             onDelete={onDelete}
           />
-          
+
           {flipped && (
-            <CardBack 
-              word={word} 
-              direction={direction} 
+            <CardBack
+              word={word}
+              direction={direction}
             />
           )}
-          
+
           {!flipped && (
             <div className={`text-sm text-muted-foreground ${direction === 'translateFrom' ? 'py-2 mb-24 mt-28' : 'pb-1 mb-20 mt-24'} `}>
-              Click to reveal the answer 
+              Click to reveal the answer
             </div>
           )}
         </CardContent>
-        
+
         {flipped && !isAnswered && (
           <CardFooter className="flex-col space-y-2 pt-0">
             <div className="font-medium text-center w-full mb-2">How well did you know this word?</div>

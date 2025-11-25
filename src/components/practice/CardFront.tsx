@@ -19,7 +19,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
   // For translateTo (Language to English), show language word
   // For translateFrom (English to Language), show English word
   const frontText = direction === 'translateTo' ? word.lng : word.en;
-  
+
   const getLanguageCode = (lang: string) => {
     switch (lang) {
       case 'de': return 'de-DE';
@@ -28,11 +28,11 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
       default: return 'en-US';
     }
   };
-  
+
   return (
     <div className="text-center w-full">
       <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
-        <DirectionFlag direction={direction} size={25} />
+        <DirectionFlag direction={direction} size={16} />
       </div>
       <div className="flex items-center justify-center gap-2">
         <h2 className="text-2xl font-bold">{frontText}</h2>
@@ -62,10 +62,10 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
       )}
 
       <div className="mt-6 border-b pb-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-8 w-8 hover:text-destructive" 
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:text-destructive"
           onClick={(e) => {
             e.stopPropagation();
             onDelete();

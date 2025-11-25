@@ -5,6 +5,8 @@ import { VocabList } from "@/types/vocabulary";
 import { Edit, Trash2, FileDown, FileUp } from "lucide-react";
 import ListActions from "@/components/ListActions";
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import FlagIcon from '@/components/FlagIcon';
+import ArrowIcon from '@/components/ArrowIcon';
 
 interface ListCardProps {
   list: VocabList;
@@ -24,12 +26,12 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
     const nextReview = word.nextReview?.translateFrom;
     return !nextReview || nextReview <= now;
   }).length;
-  
+
   const translateToCount = list.words.filter(word => {
     const nextReview = word.nextReview?.translateTo;
     return !nextReview || nextReview <= now;
   }).length;
-  
+
   const totalDueCount = translateFromCount + translateToCount;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,22 +47,22 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg mb-1 flex-1 text-left">{list.name}</CardTitle>
           <div className="flex space-x-1">
-            <ListActions 
+            <ListActions
               listId={list.id}
               onExport={onExport}
               onImport={onImport}
             />
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8"
               onClick={() => onEdit(list.id)}
             >
               <Edit className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="text-destructive h-8 w-8"
               onClick={() => onDelete(list.id)}
             >
@@ -76,18 +78,18 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
           )}
           {list.words.length} words total
           {totalDueCount > 0 && (
-            <> 
-            <span> - </span>
-            <span className="text-green-500 font-medium">
-              {totalDueCount} Ready for review
-            </span>
+            <>
+              <span> - </span>
+              <span className="text-green-500 font-medium">
+                {totalDueCount} Ready for review
+              </span>
             </>
           )}
         </CardDescription>
       </CardHeader>
       <CardFooter className="pt-2 mt-auto flex flex-wrap sm:flex-nowrap gap-2">
         <div className="w-full sm:w-auto">
-          <Button 
+          <Button
             className="w-full sm:w-auto flex-1 sm:px-10"
             onClick={() => onSelect(list.id)}
           >
@@ -103,9 +105,9 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
               className={`relative overflow-hidden truncate ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
               disabled={translateFromCount === 0}
             >
-              <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
-              <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
-              <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="w-5 h-5 object-contain" />
+              <FlagIcon country="en" size={20} />
+              <ArrowIcon size={20} className="text-white" />
+              <FlagIcon country={list.language} size={20} />
             </Button>
             <Button
               variant="default"
@@ -113,9 +115,9 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
               className={`relative overflow-hidden truncate ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
               disabled={translateToCount === 0}
             >
-              <img src={`/flags/${list.language}.ico`} alt={list.language.toUpperCase()} className="w-5 h-5 object-contain" />
-              <img src="/ra.webp" alt="arrow" className="w-5 h-5 object-contain" />
-              <img src="/flags/en.ico" alt="EN" className="w-5 h-5 object-contain" />
+              <FlagIcon country={list.language} size={20} />
+              <ArrowIcon size={20} className="text-white" />
+              <FlagIcon country="en" size={20} />
             </Button>
           </div>
         </div>
