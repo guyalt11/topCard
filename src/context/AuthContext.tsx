@@ -11,9 +11,11 @@ type AuthContextType = {
   login: (credentials: UserCredentials) => Promise<boolean>;
   logout: () => void;
   register: (credentials: UserCredentials) => Promise<boolean>;
+  signInWithGoogle: () => Promise<boolean>;
   isAuthenticated: boolean;
   isLoading: boolean;
   updatePassword: (newPassword: string) => Promise<boolean>;
+  deleteUser: () => Promise<boolean>;
   checkAndRefreshToken: () => void;
 };
 
@@ -85,6 +87,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const signInWithGoogle = async (): Promise<boolean> => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
+      return false;
+    }
+  };
+
   const updatePassword = async (newPassword: string): Promise<boolean> => {
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -96,7 +114,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const checkAndRefreshToken = () => {}; // Optional if Supabase handles it
+  const deleteUser = async (): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase.rpc('delete_user');
+
+      if (error) {
+        console.error('Delete user RPC error:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        throw error;
+      }
+
+      // Log out the user after deletion
+      await supabase.auth.signOut();
+      setCurrentUser(null);
+      setToken(null);
+
+      return true;
+    } catch (error) {
+      console.error('User deletion failed:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error object:', error);
+      return false;
+    }
+  };
+
+  const checkAndRefreshToken = () => { }; // Optional if Supabase handles it
 
   return (
     <AuthContext.Provider value={{
@@ -105,9 +147,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       login,
       logout,
       register,
+      signInWithGoogle,
       isAuthenticated: !!currentUser,
       isLoading,
       updatePassword,
+      deleteUser,
       checkAndRefreshToken,
     }}>
       {children}

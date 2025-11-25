@@ -1,5 +1,5 @@
 
-import { Settings, LogOut, User, KeyRound } from 'lucide-react';
+import { Settings, LogOut, User, KeyRound, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,6 +17,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '@/context/AuthContext';
@@ -25,9 +35,11 @@ import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
 const SettingsMenu = () => {
-  const { currentUser, logout, updatePassword } = useAuth();
+  const { currentUser, logout, updatePassword, deleteUser } = useAuth();
   const navigate = useNavigate();
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -38,9 +50,9 @@ const SettingsMenu = () => {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!currentUser) return;
-    
+
     if (newPassword.trim() === '') {
       toast({
         title: "Password cannot be empty",
@@ -48,7 +60,7 @@ const SettingsMenu = () => {
       });
       return;
     }
-    
+
     if (newPassword !== confirmPassword) {
       toast({
         title: "Passwords don't match",
@@ -56,14 +68,14 @@ const SettingsMenu = () => {
       });
       return;
     }
-    
+
     const success = await updatePassword(newPassword);
-    
+
     if (success) {
       setNewPassword('');
       setConfirmPassword('');
       setIsResetPasswordOpen(false);
-      
+
       toast({
         title: "Password updated",
         description: "Your password has been successfully updated.",
@@ -74,6 +86,45 @@ const SettingsMenu = () => {
         description: "An error occurred while updating your password.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!currentUser || isDeleting) return;
+
+    setIsDeleting(true);
+
+    try {
+      const success = await deleteUser();
+
+      if (success) {
+        toast({
+          title: "Account deleted",
+          description: "Your account has been permanently deleted.",
+        });
+
+        // Navigate to login after a short delay
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
+      } else {
+        setIsDeleting(false);
+        toast({
+          title: "Deletion failed",
+          description: "Unable to delete your account. Please try again or contact support.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Account deletion error:', error);
+      setIsDeleting(false);
+      toast({
+        title: "Deletion error",
+        description: "An error occurred while deleting your account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleteAccountOpen(false);
     }
   };
 
@@ -105,6 +156,14 @@ const SettingsMenu = () => {
                 <KeyRound className="h-4 w-4" />
                 <span>Reset Password</span>
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setIsDeleteAccountOpen(true)}
+                className="flex items-center gap-2 text-destructive focus:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Delete Account</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2">
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>
@@ -152,6 +211,29 @@ const SettingsMenu = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isDeleteAccountOpen} onOpenChange={setIsDeleteAccountOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove all your data from our servers, including all your vocabulary lists
+              and practice progress.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Account'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
