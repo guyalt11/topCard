@@ -8,7 +8,7 @@ import { Edit, Trash2, Share2, Pin } from "lucide-react";
 import ListActions from "@/components/ListActions";
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import FlagIcon from '@/components/FlagIcon';
-import ArrowIcon from '@/components/ArrowIcon';
+import { RightArrow } from '@/components/Icon';
 
 interface ListCardProps {
   list: VocabList;
@@ -48,32 +48,45 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   return (
     <Card className="h-full flex flex-col bg-muted/30">
       <CardHeader className="pb-2">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-          <CardTitle className="text-lg mb-2 sm:mb-0 w-full sm:flex-1 text-left">
-            {list.name}
-          </CardTitle>
-          <div className="flex flex-wrap sm:flex-row items-start sm:items-center space-x-1 gap-1 w-full sm:w-auto">
-            <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
-                <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
-              </svg>
-              <Switch
-                id={`share-${list.id}`}
-                checked={list.share || false}
-                onCheckedChange={(checked) => onShareToggle(list.id, checked)}
-              />
-            </div>
-            <ListActions listId={list.id} onExport={onExport} onImport={onImport} />
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(list.id)}>
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="text-destructive h-8 w-8" onClick={() => onDelete(list.id)}>
-              <Trash2 className="h-4 w-4" />
-            </Button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-start justify-between sm:flex-1">
+            <CardTitle className="text-lg text-left flex-1">
+              {list.name}
+            </CardTitle>
             <Button
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 ${list.pinned ? 'text-yellow-500' : ''}`}
+              className={`h-8 w-8 flex-shrink-0 sm:hidden ${list.pinned ? 'text-yellow-500' : ''}`}
+              onClick={() => onPinToggle(list.id, !list.pinned)}
+              title={list.pinned ? 'Unpin list' : 'Pin list'}
+            >
+              <Pin className={`h-4 w-4 ${list.pinned ? 'fill-current' : ''}`} />
+            </Button>
+          </div>
+          <div className="flex items-center gap-1 w-full sm:w-auto justify-start">
+            <div className="flex flex-row-reverse sm:flex-row gap-1">
+              <Button variant="ghost" size="icon" className="text-destructive h-8 w-8" onClick={() => onDelete(list.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(list.id)}>
+                <Edit className="h-4 w-4" />
+              </Button>
+              <ListActions listId={list.id} onExport={onExport} onImport={onImport} />
+              <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
+                  <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
+                </svg>
+                <Switch
+                  id={`share-${list.id}`}
+                  checked={list.share || false}
+                  onCheckedChange={(checked) => onShareToggle(list.id, checked)}
+                />
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-8 w-8 flex-shrink-0 hidden sm:flex items-center justify-center ${list.pinned ? 'text-yellow-500' : ''}`}
               onClick={() => onPinToggle(list.id, !list.pinned)}
               title={list.pinned ? 'Unpin list' : 'Pin list'}
             >
@@ -117,7 +130,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
               disabled={translateFromCount === 0}
             >
               <FlagIcon country="en" size={20} />
-              <ArrowIcon size={20} className="text-white" />
+              <RightArrow size={20} className="text-white" />
               <FlagIcon country={list.language} size={20} />
             </Button>
             <Button
@@ -127,7 +140,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
               disabled={translateToCount === 0}
             >
               <FlagIcon country={list.language} size={20} />
-              <ArrowIcon size={20} className="text-white" />
+              <RightArrow size={20} className="text-white" />
               <FlagIcon country="en" size={20} />
             </Button>
           </div>

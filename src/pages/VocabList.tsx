@@ -30,7 +30,7 @@ import {
 import { Download, Upload, Pencil, Trash2, Share2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import FlagIcon, { DirectionFlag } from '@/components/FlagIcon';
-import ArrowIcon from '@/components/ArrowIcon';
+import { ImportExportArrow, RightArrow } from '@/components/Icon';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -309,7 +309,7 @@ const VocabList = () => {
             disabled={translateFromDue === 0}
           >
             <FlagIcon country="en" size={20} />
-            <ArrowIcon size={20} className="text-white" />
+            <RightArrow size={20} className="text-white" />
             <FlagIcon country={currentList.language} size={20} />
           </Button>
           <Button
@@ -319,7 +319,7 @@ const VocabList = () => {
             disabled={translateToDue === 0}
           >
             <FlagIcon country={currentList.language} size={20} />
-            <ArrowIcon size={20} className="text-white" />
+            <RightArrow size={20} className="text-white" />
             <FlagIcon country="en" size={20} />
           </Button>
         </div>
@@ -385,7 +385,7 @@ const VocabList = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" title="List actions" className="px-3">
-              <img src="/arrows.webp" alt="List actions" className="mx-3 h-4 w-4" />
+              <ImportExportArrow size={16} className="mx-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>

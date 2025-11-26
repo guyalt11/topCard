@@ -1,4 +1,5 @@
 import { Download, Upload } from "lucide-react";
+import { ImportExportArrow } from '@/components/Icon';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,7 +24,7 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
   const { getListById, addWord } = useVocab();
-  const { importList } = useVocabImportExport({ lists: [], setLists: () => {} });
+  const { importList } = useVocabImportExport({ lists: [], setLists: () => { } });
 
   const handleImportClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -97,7 +98,7 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8" title="List actions">
-            <img src="/arrows.webp" alt="List actions" className="mx-3 h-4 w-4" />
+            <ImportExportArrow size={16} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -106,8 +107,8 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
           <DropdownMenuItem onClick={() => onExport(listId, 'json')}>
             Export as JSON
           </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={handleImportClick} 
+          <DropdownMenuItem
+            onClick={handleImportClick}
             disabled={isImporting}
             className="flex items-center"
           >

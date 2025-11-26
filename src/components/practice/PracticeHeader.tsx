@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useVocab } from '@/context/VocabContext';
 import { RefreshCcw } from "lucide-react";
 import FlagIcon from '@/components/FlagIcon';
-import ArrowIcon from '@/components/ArrowIcon';
+import { RightArrow } from '@/components/Icon';
 
 interface PracticeHeaderProps {
   listName: string;
@@ -63,7 +63,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
               country={direction !== 'translateTo' ? (currentList?.language || 'de') : 'en'}
               size={24}
             />
-            <ArrowIcon size={24} className="text-white" />
+            <RightArrow size={24} className="text-white" />
             <FlagIcon
               country={direction !== 'translateTo' ? 'en' : (currentList?.language || 'de')}
               size={24}
