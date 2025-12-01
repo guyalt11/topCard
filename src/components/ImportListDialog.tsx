@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ImportListDialogProps {
   open: boolean;
@@ -14,16 +15,45 @@ interface ImportListDialogProps {
 const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProps) => {
   const [importListName, setImportListName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [useFileNameFromFile, setUseFileNameFromFile] = useState(false);
+  const [fileListName, setFileListName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+
+      // Try to extract the list name from the JSON file
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        if (json.name && typeof json.name === 'string') {
+          setFileListName(json.name);
+          // If checkbox is already checked, update the import name
+          if (useFileNameFromFile) {
+            setImportListName(json.name);
+          }
+        } else {
+          setFileListName('');
+        }
+      } catch (error) {
+        console.error('Failed to parse JSON file:', error);
+        setFileListName('');
+      }
+    }
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setUseFileNameFromFile(checked);
+    if (checked && fileListName) {
+      setImportListName(fileListName);
+    } else if (!checked) {
+      setImportListName('');
     }
   };
 
@@ -37,14 +67,18 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       setImportListName('');
+      setUseFileNameFromFile(false);
+      setFileListName('');
       onOpenChange(false);
-      
+
       // Now import after dialog is closed
       await onImport(file, name);
     } catch (error) {
       // Error is already handled by the import function
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
+      setUseFileNameFromFile(false);
+      setFileListName('');
     }
   };
 
@@ -68,7 +102,23 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
                 value={importListName}
                 onChange={(e) => setImportListName(e.target.value)}
                 className="col-span-3"
+                disabled={useFileNameFromFile}
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="col-start-2 col-span-3 flex items-center space-x-2">
+                <Checkbox
+                  id="use-file-name"
+                  checked={useFileNameFromFile}
+                  onCheckedChange={handleCheckboxChange}
+                />
+                <label
+                  htmlFor="use-file-name"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Use name from file {fileListName && `(${fileListName})`}
+                </label>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <Button variant="secondary" onClick={handleFileSelect}>
@@ -89,8 +139,8 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
             }}>
               Cancel
             </Button>
-            <Button 
-              onClick={handleCreate} 
+            <Button
+              onClick={handleCreate}
               disabled={!importListName.trim() || !selectedFile}
             >
               Create List
@@ -98,7 +148,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Hidden file input */}
       <input
         type="file"
