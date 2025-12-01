@@ -233,7 +233,7 @@ export const ILFlag: React.FC<FlagProps> = ({ className = '', width = 24, height
 );
 
 // Japan (Japanese)
-export const JPFlag: React.FC<FlagProps> = ({ className = '', width = 24, height = 18 }) => (
+export const JAFlag: React.FC<FlagProps> = ({ className = '', width = 24, height = 18 }) => (
     <svg enableBackground="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
         <circle cx="256" cy="256" fill="#f0f0f0" r="256" />
         <circle cx="256" cy="256" fill="#d80027" r="111.304" />
@@ -664,7 +664,7 @@ export const getFlag = (countryCode: string): React.FC<FlagProps> | null => {
         ua: UAFlag,
         il: ILFlag,
         he: ILFlag, // Alias for Hebrew
-        jp: JPFlag,
+        ja: JAFlag,
         cn: CNFlag,
         kr: KRFlag,
         sa: SAFlag,
@@ -726,7 +726,7 @@ export const flags = {
     ua: UAFlag,
     il: ILFlag,
     he: ILFlag,
-    jp: JPFlag,
+    ja: JAFlag,
     cn: CNFlag,
     kr: KRFlag,
     sa: SAFlag,

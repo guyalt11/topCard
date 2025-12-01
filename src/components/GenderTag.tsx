@@ -1,6 +1,6 @@
 
 import { Gender } from '@/types/vocabulary';
-import { 
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger

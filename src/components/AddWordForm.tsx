@@ -56,7 +56,9 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 
   useEffect(() => {
     // Only auto-translate for specific languages with translation support
-    const languagesWithTranslation = ['de', 'he', 'is'];
+    // Languages with m/f/n gender: de, is, bg, hr, cz, gr, mk, pl, ro, ru, rs, sk, si, ua
+    // Languages with m/f gender: he, al, sa, fr, in, it, lv, lt, pt, es, pk
+    const languagesWithTranslation = ['de', 'he', 'is', 'bg', 'hr', 'cz', 'gr', 'mk', 'pl', 'ro', 'ru', 'rs', 'sk', 'si', 'ua', 'al', 'sa', 'fr', 'in', 'it', 'lv', 'lt', 'pt', 'es', 'pk'];
     const currentLanguage = currentList?.language || 'de';
 
     if (!languagesWithTranslation.includes(currentLanguage)) {
@@ -197,8 +199,10 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
             )}
           </div>
 
-          {/* Only show gender selection for languages with translation support */}
-          {['de', 'he', 'is'].includes(currentList?.language || '') && (
+          {/* Only show gender selection for languages with gender support */}
+          {/* Languages with m/f/n: de, is, bg, hr, cz, gr, mk, pl, ro, ru, rs, sk, si, ua */}
+          {/* Languages with m/f: he, al, sa, fr, in, it, lv, lt, pt, es, pk */}
+          {['de', 'he', 'is', 'bg', 'hr', 'cz', 'gr', 'mk', 'pl', 'ro', 'ru', 'rs', 'sk', 'si', 'ua', 'al', 'sa', 'fr', 'in', 'it', 'lv', 'lt', 'pt', 'es', 'pk'].includes(currentList?.language || '') && (
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -228,7 +232,8 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
                   <RadioGroupItem value="f" id="female" />
                   <Label htmlFor="female" className="gender-tag-f px-2 rounded">f.</Label>
                 </div>
-                {currentList?.language !== 'he' && (
+                {/* Only show neuter for languages that have it (m/f/n languages, not m/f languages) */}
+                {['de', 'is', 'bg', 'hr', 'cz', 'gr', 'mk', 'pl', 'ro', 'ru', 'rs', 'sk', 'si', 'ua'].includes(currentList?.language || '') && (
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="n" id="neutral" />
                     <Label htmlFor="neutral" className="gender-tag-n px-2 rounded">n.</Label>
