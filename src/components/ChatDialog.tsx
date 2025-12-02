@@ -163,7 +163,7 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-full md:max-w-3xl h-[100dvh] flex flex-col p-0 gap-0 border-0 sm:border animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4 duration-300 sm:rounded-lg rounded-none">
-                <DialogHeader className="px-6 pt-6 pb-4 border-b-0 sm:border-b border-white/20 bg-card-gradient">
+                <DialogHeader className="px-6 pt-5 pb-5 border-b-0 sm:border-b border-white/20 bg-card-gradient">
                     <DialogTitle className="flex items-center gap-2 text-xl">
                         <MessageCircle className="h-6 w-6 text-primary" />
                         Vocabulary Assistant
