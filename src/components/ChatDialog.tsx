@@ -162,7 +162,7 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-full md:max-w-4xl lg:max-w-5xl h-[100vh] sm:h-[90vh] flex flex-col p-0 gap-0 border-0 sm:border animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4 duration-300 sm:rounded-lg rounded-none">
+            <DialogContent className="sm:max-w-full md:max-w-3xl min-h-screen max-h-[100dvh] sm:h-[90vh] flex flex-col p-0 gap-0 border-0 sm:border animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4 duration-300 sm:rounded-lg rounded-none">
                 <DialogHeader className="px-6 pt-6 pb-4 border-b-0 sm:border-b border-white/20 bg-card-gradient">
                     <DialogTitle className="flex items-center gap-2 text-xl">
                         <MessageCircle className="h-6 w-6 text-primary" />
@@ -171,9 +171,9 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
                 </DialogHeader>
 
                 {/* Messages Container */}
-                <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-dark-transparent">
+                <div className="flex-1 flex flex-col overflow-y-auto px-6 py-6 bg-dark-transparent">
                     {messages.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                        <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
                             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
                                 <MessageCircle className="h-8 w-8 text-primary" />
                             </div>
@@ -186,18 +186,8 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
                         </div>
                     ) : (
                         messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in-0 slide-in-from-bottom-2 duration-300`}
-                                style={{ animationDelay: `${index * 50}ms` }}
-                            >
-                                <div
-                                    className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-5 py-3 shadow-lg transition-all hover:shadow-xl ${message.role === 'user'
-                                        ? 'bg-primary text-primary-foreground'
-                                        : ''
-                                        }`}
-                                    style={message.role === 'assistant' ? { background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' } : {}}
-                                >
+                            <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in-0 slide-in-from-bottom-2 duration-300`} style={{ animationDelay: `${index * 50}ms` }}>
+                                <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-5 py-3 shadow-lg transition-all hover:shadow-xl ${message.role === 'user' ? 'bg-primary text-primary-foreground' : ''}`} style={message.role === 'assistant' ? { background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' } : {}}>
                                     <p className="text-sm md:text-base whitespace-pre-wrap break-words leading-relaxed">
                                         {message.content}
                                     </p>
@@ -217,6 +207,7 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
                     )}
                     <div ref={messagesEndRef} />
                 </div>
+
 
                 {/* Input Container */}
                 <div className="border-t-0 sm:border-t border-white/20 px-6 py-4 bg-card-gradient">
