@@ -61,7 +61,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
         </div>
       )}
 
-      <div className="mt-6 border-b pb-4">
+      <div className="mt-6 border-b border-white pb-4">
         <Button
           variant="ghost"
           size="icon"

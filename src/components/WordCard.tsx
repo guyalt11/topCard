@@ -20,38 +20,38 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
 
   const formatNextReview = (date: Date | undefined): string => {
     if (!date) return 'Ready for review';
-    
+
     const now = new Date();
-    
+
     if (date <= now) {
       return 'Ready for review';
     }
-    
+
     return `In ${formatDistanceToNow(date)}`;
   };
 
   const isWordDueForReview = (word: VocabWord): boolean => {
     if (!word.nextReview) return true;
     const now = new Date();
-    
-    const translateFromDue = !getNextReviewDate(word, 'translateFrom') || 
-                            getNextReviewDate(word, 'translateFrom')! <= now;
-    const translateToDue = !getNextReviewDate(word, 'translateTo') || 
-                          getNextReviewDate(word, 'translateTo')! <= now;
-    
+
+    const translateFromDue = !getNextReviewDate(word, 'translateFrom') ||
+      getNextReviewDate(word, 'translateFrom')! <= now;
+    const translateToDue = !getNextReviewDate(word, 'translateTo') ||
+      getNextReviewDate(word, 'translateTo')! <= now;
+
     return translateFromDue || translateToDue;
   };
 
   const getFormattedReviewTimes = (word: VocabWord): React.ReactNode => {
     const translateFromFormatted = formatNextReview(getNextReviewDate(word, 'translateFrom'));
     const translateToFormatted = formatNextReview(getNextReviewDate(word, 'translateTo'));
-    
+
     return (
       <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateFrom" size={14} />
           <span className={translateFromFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-muted-foreground'}>
-             {translateFromFormatted}
+            {translateFromFormatted}
           </span>
         </div>
         <div className="flex items-center gap-1">
@@ -65,7 +65,8 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
   };
 
   return (
-    <Card className="bg-muted/30">
+    <Card className="" style={{ background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' }}>
+      {/*<Card className="" style={{ background: 'linear-gradient(135deg, rgba(8, 35, 38, 1) 0%, rgba(21, 76, 82, 1) 100%)' }}>*/}
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
           <div className="flex-1">
@@ -82,18 +83,18 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
             )}
           </div>
           <div className="flex space-x-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8" 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
               onClick={onEdit}
             >
               <Edit className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 hover:text-destructive" 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:text-destructive"
               onClick={onDelete}
             >
               <Trash2 className="h-4 w-4" />

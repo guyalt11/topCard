@@ -82,8 +82,6 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
             if (!list) continue;
 
             try {
-                console.log('Importing list:', list.name, 'with', list.words.length, 'words');
-
                 // Convert the list to JSON format - ensure words array is properly included
                 const listData = {
                     name: list.name,
@@ -96,8 +94,6 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                         notes: word.notes || null
                     }))
                 };
-
-                console.log('List data:', JSON.stringify(listData, null, 2));
 
                 // Create a blob and file from the data
                 const blob = new Blob([JSON.stringify(listData)], { type: 'application/json' });

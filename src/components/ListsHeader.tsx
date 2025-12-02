@@ -46,11 +46,26 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
     <>
       <div className="flex flex-wrap flex-col sm:flex-row gap-2 mb-5 sm:mb-6">
         <div className="flex gap-2">
-          <Button title="Add new list" onClick={onAddList} className="gap-1">
-            <Plus className="h-4 w-4" />
+          {onPracticeAll && (
+            <Button
+              title="Practice all words"
+              onClick={onPracticeAll}
+              disabled={totalDueWords === 0}
+              className={`gap-1 transition-all hover:brightness-110 ${totalDueWords === 0 ? 'cursor-not-allowed' : ''}`}
+              variant="default"
+              style={totalDueWords > 0 ? { backgroundColor: '#00E5CC' } : {}}
+            >
+              <Play className="h-4 w-4 text-black" />
+            </Button>
+          )}
+          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all hover:brightness-110" style={{ backgroundColor: '#00C4B4', borderColor: '#00C4B4', color: 'white' }}>
+            <Plus className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1">
-            <Upload className="h-4 w-4" />
+          <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1 transition-all hover:brightness-110" style={{ backgroundColor: '#00A39C', borderColor: '#00A39C', color: 'white' }}>
+            <Upload className="h-4 w-4 text-black" />
+          </Button>
+          <Button title="Browse shared lists" variant="outline" onClick={onLibrary} className="gap-1 transition-all hover:brightness-110" style={{ backgroundColor: '#008284', borderColor: '#008284', color: 'white' }}>
+            <BookOpen className="h-4 w-4 text-black" />
           </Button>
           <Button
             title={showOnlyDue ? "All lists" : "Only practicable lists"}
@@ -59,28 +74,15 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setShowOnlyDue(!showOnlyDue);
               onFilterChange(!showOnlyDue);
             }}
-            className="gap-1"
+            className="gap-1 transition-all hover:brightness-110"
+            style={{ backgroundColor: '#008284', borderColor: '#008284', color: 'white' }}
           >
             {showOnlyDue ? (
-              <Eye className="h-4 w-4" />
+              <Eye className="h-4 w-4 text-black" />
             ) : (
-              <EyeOff className="h-4 w-4" />
+              <EyeOff className="h-4 w-4 text-black" />
             )}
           </Button>
-          <Button title="Browse shared lists" variant="outline" onClick={onLibrary} className="gap-1">
-            <BookOpen className="h-4 w-4" />
-          </Button>
-          {onPracticeAll && (
-            <Button
-              title="Practice all words"
-              onClick={onPracticeAll}
-              disabled={totalDueWords === 0}
-              className={`gap-1 ${totalDueWords === 0 ? 'cursor-not-allowed' : ''}`}
-              variant="default"
-            >
-              <Play className="h-4 w-4" />
-            </Button>
-          )}
         </div>
         <div className="h-full flex mt-3 sm:mt-0 sm:ml-auto justify-start w-full sm:w-auto self-center">
           Total words: {lists.reduce((total, list) => total + list.words.length, 0)}&nbsp;&nbsp;·&nbsp;&nbsp;{totalDueWords} Ready for review
@@ -97,6 +99,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               onSearchChange(e.target.value);
             }}
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            style={{ backgroundColor: 'rgba(8, 35, 38, 1)' }}
           />
           {searchQuery && (
             <button

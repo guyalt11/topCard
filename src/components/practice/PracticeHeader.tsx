@@ -48,11 +48,11 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
         <Button
           variant="default"
           onClick={toggleDirection}
-          className={`relative px-[6px] sm:px-2 ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
+          className={`relative px-[6px] sm:px-2 transition-all hover:brightness-110 ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0)
             ? 'bg-muted text-muted-foreground cursor-not-allowed'
-            : 'bg-input hover:bg-accent'
-            }`}
+            : ''}`}
+          style={(direction === 'translateTo' && dueTranslateTo > 0) || (direction === 'translateFrom' && dueTranslateFrom > 0) ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
           disabled={
             (direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0)

@@ -46,7 +46,8 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   };
 
   return (
-    <Card className="h-full flex flex-col bg-muted/30">
+    <Card className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' }}>
+      {/*<Card className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(8, 35, 38, 1) 0%, rgba(21, 76, 82, 1) 100%)' }}>*/}
       <CardHeader className="pb-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-start justify-between sm:flex-1">
@@ -72,7 +73,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
                 <Edit className="h-4 w-4" />
               </Button>
               <ListActions listId={list.id} onExport={onExport} onImport={onImport} />
-              <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md">
+              <div className="flex items-center gap-2 px-2 py-1 rounded-md" style={{ backgroundColor: 'rgba(13, 76, 81, 0.8)' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
                   <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
                 </svg>
@@ -126,7 +127,8 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <Button
               variant="default"
               onClick={() => goToPractice(list.id, 'translateFrom')}
-              className={`relative overflow-hidden truncate ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+              className={`relative overflow-hidden truncate transition-all hover:brightness-110 ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : ''} px-3`}
+              style={translateFromCount > 0 ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
               disabled={translateFromCount === 0}
             >
               <FlagIcon country="en" size={20} />
@@ -136,7 +138,8 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <Button
               variant="default"
               onClick={() => goToPractice(list.id, 'translateTo')}
-              className={`relative overflow-hidden truncate ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+              className={`relative overflow-hidden truncate transition-all hover:brightness-110 ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : ''} px-3`}
+              style={translateToCount > 0 ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
               disabled={translateToCount === 0}
             >
               <FlagIcon country={list.language} size={20} />

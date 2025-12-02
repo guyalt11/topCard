@@ -305,7 +305,8 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateFrom')}
-            className={`relative overflow-hidden truncate ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+            className={`relative overflow-hidden truncate transition-all hover:brightness-110 ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : ''} px-3`}
+            style={translateFromDue > 0 ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
             disabled={translateFromDue === 0}
           >
             <FlagIcon country="en" size={20} />
@@ -315,7 +316,8 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateTo')}
-            className={`relative overflow-hidden truncate ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-input hover:bg-accent'} px-3`}
+            className={`relative overflow-hidden truncate transition-all hover:brightness-110 ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : ''} px-3`}
+            style={translateToDue > 0 ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
             disabled={translateToDue === 0}
           >
             <FlagIcon country={currentList.language} size={20} />
@@ -360,6 +362,7 @@ const VocabList = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pr-8"
+            style={{ backgroundColor: 'rgba(8, 35, 38, 1)' }}
           />
           {searchTerm && (
             <button
@@ -430,6 +433,7 @@ const VocabList = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pr-8"
+          style={{ backgroundColor: 'rgba(8, 35, 38, 1)' }}
         />
         {searchTerm && (
           <button

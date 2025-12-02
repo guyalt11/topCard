@@ -33,7 +33,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   // Return early if word is undefined
   if (!word) {
     return (
-      <Card className="min-h-[200px] flex flex-col justify-center items-center bg-muted/30">
+      <Card className="min-h-[200px] flex flex-col justify-center items-center">
         <CardContent className="text-center">
           <p>Loading word data...</p>
         </CardContent>
@@ -57,7 +57,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   // Safeguard against undefined word
   if (!word || !word.lng) {
     return (
-      <Card className="min-h-[200px] flex flex-col justify-center items-center bg-muted/30">
+      <Card className="min-h-[200px] flex flex-col justify-center items-center">
         <CardContent className="text-center">
           <p>No word available for practice.</p>
         </CardContent>
@@ -68,8 +68,9 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   return (
     <div className="w-full max-w-md mx-auto">
       <Card
-        className={`min-h-[200px] flex flex-col cursor-pointer transition-transform bg-muted/30 ${flipped ? 'animate-flip' : ''}`}
+        className={`min-h-[200px] flex flex-col cursor-pointer transition-transform ${flipped ? 'animate-flip' : ''}`}
         onClick={handleFlip}
+        style={{ background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' }}
       >
         <CardContent className="flex-1 flex flex-col justify-center items-center p-6">
           <CardFront
