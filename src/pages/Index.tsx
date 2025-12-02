@@ -12,6 +12,7 @@ import ImportListDialog from '@/components/ImportListDialog';
 import EditListDialog from '@/components/EditListDialog';
 import DeleteListDialog from '@/components/DeleteListDialog';
 import LibraryDialog from '@/components/LibraryDialog';
+import ChatButton from '@/components/ChatButton';
 import { VocabList } from '@/types/vocabulary';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { useEffect, useRef } from 'react';
@@ -161,6 +162,7 @@ const Index = () => {
 
   return (
     <div className="container py-6 max-w-3xl">
+      <ChatButton />
       <ListsHeader
         onAddList={handleAddList}
         onImport={handleImportClick}
