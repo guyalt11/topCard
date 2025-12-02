@@ -33,8 +33,8 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
   const { addWord, updateWord, currentList } = useVocab();
 
   // Initialize form state with existing word data if editing
-  const [lng, setLng] = useState('');
-  const [en, setEn] = useState('');
+  const [origin, setOrigin] = useState('');
+  const [transl, setTransl] = useState('');
   const [gender, setGender] = useState<Gender | undefined>();
   const [notes, setNotes] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -42,13 +42,13 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 
   useEffect(() => {
     if (editWord) {
-      setLng(editWord.lng);
-      setEn(editWord.en);
+      setOrigin(editWord.origin);
+      setTransl(editWord.transl);
       setGender(editWord.gender);
       setNotes(editWord.notes || '');
     } else {
-      setLng('');
-      setEn('');
+      setOrigin('');
+      setTransl('');
       setGender(undefined);
       setNotes('');
     }
@@ -67,15 +67,15 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
     }
 
     const debounceTimeout = setTimeout(async () => {
-      if (lng.trim().length >= 2 && !editWord) {
+      if (origin.trim().length >= 2 && !editWord) {
         setIsTranslating(true);
         setTranslateError(null);
 
         try {
-          const result = await translateWord(lng, currentLanguage);
+          const result = await translateWord(origin, currentLanguage);
 
           if (result.translation) {
-            setEn(result.translation);
+            setTransl(result.translation);
           }
 
           setGender(result.gender);
@@ -89,13 +89,13 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
     }, 800); // Debounce for 800ms
 
     return () => clearTimeout(debounceTimeout);
-  }, [lng, editWord, currentList]);
+  }, [origin, editWord, currentList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentList) return;
 
-    if (!lng.trim() || !en.trim()) {
+    if (!origin.trim() || !transl.trim()) {
       toast({
         title: "Error",
         description: "Both language and English fields are required.",
@@ -106,8 +106,8 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
 
     try {
       const wordData = {
-        lng,
-        en,
+        origin,
+        transl,
         gender,
         notes,
         ...(editWord ? { id: editWord.id } : { list_id: currentList.id })
@@ -130,8 +130,8 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
       }
 
       // Clear form state after successful submission
-      setLng('');
-      setEn('');
+      setOrigin('');
+      setTransl('');
       setGender(undefined);
       setNotes('');
     } catch (error) {
@@ -166,12 +166,12 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="lng">{currentList?.language.toUpperCase() || 'Target Language'} Word</Label>
+            <Label htmlFor="origin">{currentList?.language.toUpperCase() || 'Target Language'} Word</Label>
             <div className="relative">
               <Input
-                id="lng"
-                value={lng}
-                onChange={(e) => setLng(e.target.value)}
+                id="origin"
+                value={origin}
+                onChange={(e) => setOrigin(e.target.value)}
                 placeholder={`e.g. ${currentList?.language === 'de' ? 'Apfel' : 'word'}`}
                 required
                 autoFocus
@@ -258,11 +258,11 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="en">English Translation</Label>
+            <Label htmlFor="transl">Translation</Label>
             <Input
-              id="en"
-              value={en}
-              onChange={(e) => setEn(e.target.value)}
+              id="transl"
+              value={transl}
+              onChange={(e) => setTransl(e.target.value)}
               placeholder="e.g. apple"
               required
             />

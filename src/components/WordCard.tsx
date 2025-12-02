@@ -72,9 +72,9 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
           <div className="flex-1">
             <div className="flex items-center gap-2">
               {word.gender && <GenderTag gender={word.gender} />}
-              <h3 className="font-medium text-lg">{word.lng}</h3>
+              <h3 className="font-medium text-lg">{word.origin}</h3>
             </div>
-            <p className="text-muted-foreground">{word.en}</p>
+            <p className="text-muted-foreground">{word.transl}</p>
             {word.notes && <p className="text-sm text-muted-foreground mt-2">{word.notes}</p>}
             {showReviewTimes && (
               <div className="text-xs mt-2">

@@ -63,8 +63,8 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
             typeof obj.language === 'string' &&
             Array.isArray(obj.words) &&
             obj.words.every((word: any) =>
-                typeof word.lng === 'string' &&
-                typeof word.en === 'string'
+                typeof word.origin === 'string' &&
+                typeof word.transl === 'string'
             )
         );
     };

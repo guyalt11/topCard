@@ -41,19 +41,19 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Use the Supabase hook to manage vocabulary lists
-  const { 
-    lists, 
-    isLoading, 
+  const {
+    lists,
+    isLoading,
     error,
     refreshLists,
-    saveList, 
+    saveList,
     deleteList: deleteListFromSupabase,
-    saveWord, 
+    saveWord,
     deleteWord: deleteWordFromSupabase,
     setLists,
     currentUser
   } = useSupabaseVocabLists();
-  
+
   const [currentList, setCurrentList] = useState<VocabList | null>(null);
   const { exportList, importList: importListFunc } = useVocabImportExport({ lists, setLists });
   const { token } = useAuth();
@@ -91,15 +91,15 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
     try {
       const list = lists.find(l => l.id === id);
       if (!list) throw new Error('List not found');
-      
-      const updatedList = { 
-        ...list, 
-        ...updates, 
-        updatedAt: new Date() 
+
+      const updatedList = {
+        ...list,
+        ...updates,
+        updatedAt: new Date()
       };
 
       await saveList(updatedList);
-      
+
       // If we're updating the current list, update it in state too
       if (currentList && currentList.id === id) {
         setCurrentList(updatedList);
@@ -118,7 +118,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   const deleteList = async (id: string): Promise<void> => {
     try {
       await deleteListFromSupabase(id);
-      
+
       // If the deleted list is the current list, clear it
       if (currentList && currentList.id === id) {
         setCurrentList(null);
@@ -152,7 +152,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       };
 
       await saveWord(listId, word);
-      
+
       // Update the current list if this word is being added to it
       if (currentList && currentList.id === listId) {
         const updatedWords = [...currentList.words, word];
@@ -178,7 +178,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       // Find which list contains this word
       let list: VocabList | undefined;
       let word: VocabWord | undefined;
-      
+
       for (const l of lists) {
         word = l.words.find(w => w.id === wordId);
         if (word) {
@@ -186,15 +186,15 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           break;
         }
       }
-      
+
       if (!list || !word) throw new Error('Word not found');
-      
+
       const updatedWord = { ...word, ...updates };
       await saveWord(list.id, updatedWord);
-      
+
       // Update the current list if this word is part of it
       if (currentList && currentList.id === list.id) {
-        const updatedWords = currentList.words.map(w => 
+        const updatedWords = currentList.words.map(w =>
           w.id === wordId ? updatedWord : w
         );
         setCurrentList({
@@ -217,7 +217,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   const deleteWord = async (wordId: string): Promise<void> => {
     try {
       await deleteWordFromSupabase(wordId);
-      
+
       // Update the current list if this word was part of it
       if (currentList) {
         const wordInCurrentList = currentList.words.some(w => w.id === wordId);
@@ -242,7 +242,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
 
   // Update a word's difficulty and next review time based on spaced repetition
   const updateWordDifficulty = async (
-    wordId: string, 
+    wordId: string,
     difficulty: DifficultyLevel,
     direction: PracticeDirection
   ): Promise<void> => {
@@ -252,7 +252,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       // Find which list contains this word
       let list: VocabList | undefined;
       let word: VocabWord | undefined;
-      
+
       for (const l of lists) {
         word = l.words.find(w => w.id === wordId);
         if (word) {
@@ -260,9 +260,9 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           break;
         }
       }
-      
+
       if (!list || !word) throw new Error('Word not found');
-      
+
       // Get current SM2 parameters or initialize
       const currentSM2 = word.sm2?.[direction] || {
         easeFactor: 2.5,
@@ -272,7 +272,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
 
       // Get SM2 quality rating from our difficulty level
       const quality = DIFFICULTY_TO_SM2_QUALITY[difficulty];
-      
+
       // Calculate next interval using SM2 algorithm
       const { nextParams, intervalMs } = calculateSM2NextInterval(currentSM2, quality);
 
@@ -285,8 +285,8 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Update word with new SM2 parameters and next review date
-      const updatedWord = { 
-        ...word, 
+      const updatedWord = {
+        ...word,
         sm2: {
           ...word.sm2 || {}, // Keep existing SM2 data for other direction if it exists
           [direction]: nextParams
@@ -298,10 +298,10 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
       };
 
       await saveWord(list.id, updatedWord);
-      
+
       // Update the current list if this word is part of it
       if (currentList && currentList.id === list.id) {
-        const updatedWords = currentList.words.map(w => 
+        const updatedWords = currentList.words.map(w =>
           w.id === wordId ? updatedWord : w
         );
         setCurrentList({
@@ -349,13 +349,13 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
         const savedWords: VocabWord[] = [];
         for (const word of importedList.words) {
           const newWordId = uuidv4();
-          
+
           // Create formatted word for Supabase
           const supabaseWord = {
             id: newWordId,
             list_id: newListId,
-            en: word.en,
-            lng: word.lng,
+            transl: word.transl,
+            origin: word.origin,
             gender: word.gender || null,
             notes: word.notes || null,
             nextReview: word.nextReview ? JSON.stringify(word.nextReview) : null,
@@ -365,8 +365,8 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           // Create word for local state
           const localWord: VocabWord = {
             id: newWordId,
-            en: word.en,
-            lng: word.lng,
+            transl: word.transl,
+            origin: word.origin,
             gender: word.gender || null,
             notes: word.notes || null,
             nextReview: word.nextReview || undefined,
@@ -420,7 +420,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   function calculateSM2NextInterval(currentParams: any, quality: number) {
     // Extract current parameters
     let { easeFactor, interval, repetitions } = currentParams;
-    
+
     // Apply SM2 algorithm
     if (quality < 3) {
       // If quality is less than 3, reset repetitions
@@ -429,36 +429,36 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
     } else {
       // Update repetitions
       repetitions += 1;
-      
+
       // Calculate interval based on repetitions
       if (repetitions === 1) {
         // First successful repetition
         interval = quality === 3 ? 0.021 :  // 12 hours for quality 3
-                  quality === 4 ? 0.083 :     // 1 day for quality 4
-                  0.33;                      // 3 days for quality 5 (perfect)
+          quality === 4 ? 0.083 :     // 1 day for quality 4
+            0.33;                      // 3 days for quality 5 (perfect)
       } else if (repetitions === 2) {
         // Second successful repetition
         interval = quality === 3 ? 0.083 :    // 3 days for quality 3
-                  quality === 4 ? 0.33 :     // 5 days for quality 4
-                  1;                      // 7 days for quality 5
+          quality === 4 ? 0.33 :     // 5 days for quality 4
+            1;                      // 7 days for quality 5
       } else {
         // For repetitions > 2, use the formula with quality adjustments
         const qualityFactor = quality === 3 ? 0.5 :   // Reduce interval for OK
-                             quality === 4 ? 1.0 :   // Normal interval for Good
-                             1.5;                    // Increase interval for Perfect
+          quality === 4 ? 1.0 :   // Normal interval for Good
+            1.5;                    // Increase interval for Perfect
         interval = interval * easeFactor * qualityFactor;
       }
     }
-    
+
     // Update easeFactor using the formula from SM2
     easeFactor = Math.max(
       1.3, // Minimum value for easeFactor
       easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
     );
-    
+
     // Calculate next interval in milliseconds
     const intervalMs = interval * 24 * 60 * 60 * 1000;
-    
+
     return {
       nextParams: { easeFactor, interval, repetitions },
       intervalMs
@@ -479,7 +479,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
     updateWordDifficulty,
     exportList,
     importList,
-    getListById 
+    getListById
   };
 
   return (

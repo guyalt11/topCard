@@ -55,7 +55,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   };
 
   // Safeguard against undefined word
-  if (!word || !word.lng) {
+  if (!word || !word.origin) {
     return (
       <Card className="min-h-[200px] flex flex-col justify-center items-center">
         <CardContent className="text-center">

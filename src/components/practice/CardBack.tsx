@@ -15,7 +15,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
   const { currentList } = useVocab();
   // For translateTo (Language to English), show English word
   // For translateFrom (English to Language), show language word
-  const backText = direction === 'translateTo' ? word.en : word.lng;
+  const backText = direction === 'translateTo' ? word.transl : word.origin;
   const showGender = direction === 'translateFrom' && word.gender;
 
   const getLanguageCode = (lang: string) => {
@@ -44,7 +44,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
           className="mt-2"
           onClick={(e) => {
             e.stopPropagation();
-            speak(word.lng, getLanguageCode(currentList?.language || 'en'));
+            speak(word.origin, getLanguageCode(currentList?.language || 'en'));
           }}
         >
           🔊 Listen

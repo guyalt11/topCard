@@ -13,8 +13,8 @@ export interface SM2Params {
 
 export interface VocabWord {
   id: string;
-  en: string;      // English (anchor language)
-  lng: string;     // Target language word
+  transl: string;  // Translation (anchor language)
+  origin: string;  // Origin language word
   gender?: Gender;
   notes?: string;
 

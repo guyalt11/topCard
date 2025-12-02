@@ -19,8 +19,8 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
       description: list.description,
       language: list.language,
       words: list.words.map(word => ({
-        lng: word.lng,
-        en: word.en,
+        origin: word.origin,
+        transl: word.transl,
         gender: word.gender,
         notes: word.notes
       }))
@@ -53,7 +53,7 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
     try {
       const text = await file.text();
       let importData: any;
-      
+
       if (file.name.endsWith('.json')) {
         importData = JSON.parse(text);
       } else {
@@ -64,7 +64,7 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         });
         return null;
       }
-      
+
       // Validate the imported data
       if (!importData.words || !Array.isArray(importData.words)) {
         toast({
@@ -84,15 +84,15 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         });
         return null;
       }
-      
+
       // Create new list with the imported words
       const newList: VocabList = {
         id: uuidv4(),
         name: listName || importData.name || 'Imported List',
         words: importData.words.map((w: any) => ({
           id: uuidv4(),
-          lng: w.lng || '',
-          en: w.en || '',
+          origin: w.origin || '',
+          transl: w.transl || '',
           gender: w.gender || undefined,
           notes: w.notes || undefined,
         })),
@@ -100,14 +100,14 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         updatedAt: new Date(),
         language: importData.language
       };
-      
+
       toast({
         title: "Import successful",
         description: `Imported ${newList.words.length} words into "${newList.name}".`,
       });
-      
+
       return newList;
-      
+
     } catch (error) {
       console.error("Import error:", error);
       toast({

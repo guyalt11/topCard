@@ -88,8 +88,8 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                     description: list.description || '',
                     language: list.language,
                     words: list.words.map(word => ({
-                        en: word.en,
-                        lng: word.lng,
+                        transl: word.transl,
+                        origin: word.origin,
                         gender: word.gender || null,
                         notes: word.notes || null
                     }))
@@ -228,9 +228,9 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                                                             key={index}
                                                             className="text-sm flex items-center gap-2 py-1 px-2 hover:bg-muted/50 rounded"
                                                         >
-                                                            <span className="font-medium">{word.lng}</span>
+                                                            <span className="font-medium">{word.origin}</span>
                                                             <span className="text-muted-foreground">|</span>
-                                                            <span>{word.en}</span>
+                                                            <span>{word.transl}</span>
                                                             {word.gender && (
                                                                 <span className="text-xs text-muted-foreground ml-auto">
                                                                     ({word.gender})

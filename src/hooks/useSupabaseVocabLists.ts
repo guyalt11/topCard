@@ -212,8 +212,8 @@ export const useSupabaseVocabLists = () => {
     // Prepare the word data for Supabase - excluding removed columns
     const wordData = {
       list_id: listId,
-      en: word.en,
-      lng: word.lng,
+      transl: word.transl,
+      origin: word.origin,
       gender: word.gender || null,
       notes: word.notes || null,
       nextReview: word.nextReview || null,

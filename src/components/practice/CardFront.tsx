@@ -18,7 +18,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
   const { currentList } = useVocab();
   // For translateTo (Language to English), show language word
   // For translateFrom (English to Language), show English word
-  const frontText = direction === 'translateTo' ? word.lng : word.en;
+  const frontText = direction === 'translateTo' ? word.origin : word.transl;
 
   const getLanguageCode = (lang: string) => {
     switch (lang) {
@@ -48,7 +48,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
           className="mt-4"
           onClick={(e) => {
             e.stopPropagation();
-            speak(word.lng, getLanguageCode(currentList?.language || 'en'));
+            speak(word.origin, getLanguageCode(currentList?.language || 'en'));
           }}
         >
           🔊 Listen

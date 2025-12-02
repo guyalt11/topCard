@@ -102,8 +102,8 @@ const VocabList = () => {
   }
 
   const filteredWords = currentList.words.filter(word =>
-    word.lng.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    word.en.toLowerCase().includes(searchTerm.toLowerCase())
+    word.origin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    word.transl.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleEditWord = (word: VocabWord) => {
@@ -147,8 +147,8 @@ const VocabList = () => {
       // Add each word to the list asynchronously
       const addWordPromises = importedList.words.map(async (word) => {
         await addWord(listId, {
-          lng: word.lng,
-          en: word.en,
+          origin: word.origin,
+          transl: word.transl,
           gender: word.gender,
           notes: word.notes
         });
