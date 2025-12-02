@@ -1,4 +1,4 @@
-export type Gender = 'm' | 'f' | 'n';
+export type Gender = 'm' | 'f' | 'n' | 'c';
 
 export type DifficultyLevel = 'hard' | 'ok' | 'good' | 'perfect';
 
