@@ -171,7 +171,7 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
                 </DialogHeader>
 
                 {/* Messages Container */}
-                <div className="flex-1 flex flex-col overflow-y-auto px-6 py-6 bg-dark-transparent">
+                <div className="flex-1 flex flex-col overflow-y-auto px-6 bg-dark-transparent">
                     {messages.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
                             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
