@@ -65,7 +65,7 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
   };
 
   return (
-    <Card className="" style={{ background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' }}>
+    <Card className="bg-card-gradient">
       {/*<Card className="" style={{ background: 'linear-gradient(135deg, rgba(8, 35, 38, 1) 0%, rgba(21, 76, 82, 1) 100%)' }}>*/}
       <CardContent className="p-4">
         <div className="flex justify-between items-start">

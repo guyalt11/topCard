@@ -49,6 +49,21 @@
     --sidebar-ring: 174 100% 45%;
 
     --radius: 0.5rem;
+
+    /* Custom gradient and background colors - EXACT original values */
+    --card-gradient: linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%);
+    --bg-dark: rgba(8, 35, 38, 1);
+    --bg-dark-transparent: rgba(8, 35, 38, 0.3);
+    --practice-button: rgba(20, 95, 100, 1);
+    --share-container: rgba(13, 76, 81, 0.8);
+    --header-btn-1: #00E5CC;
+    --header-btn-2: #00C4B4;
+    --header-btn-3: #00A39C;
+    --header-btn-4: #009390;
+    --header-btn-5: #008284;
+
+    /* Hover variants */
+    --practice-button-hover: rgba(25, 115, 120, 1);
   }
 
   /* Remove light mode completely */
@@ -126,5 +141,56 @@
 
   .card-flip.flipped .card-flip-inner {
     @apply rotate-y-180;
+  }
+
+  /* Custom utility classes for gradients and backgrounds */
+  .bg-card-gradient {
+    background: var(--card-gradient);
+  }
+
+  .bg-dark-solid {
+    background-color: var(--bg-dark);
+  }
+
+  .bg-dark-transparent {
+    background-color: var(--bg-dark-transparent);
+  }
+
+  .bg-practice-button {
+    background-color: var(--practice-button);
+  }
+
+  .bg-practice-button:hover {
+    background-color: var(--practice-button-hover) !important;
+    filter: none !important;
+  }
+
+  .bg-share-container {
+    background-color: var(--share-container);
+  }
+
+  .bg-header-btn-1 {
+    background-color: var(--header-btn-1);
+  }
+
+
+  .bg-header-btn-2 {
+    background-color: var(--header-btn-2);
+    border-color: var(--header-btn-2);
+  }
+
+  .bg-header-btn-3 {
+    background-color: var(--header-btn-3);
+    border-color: var(--header-btn-3);
+  }
+
+  .bg-header-btn-4 {
+    background-color: var(--header-btn-4);
+    border-color: var(--header-btn-4);
+  }
+
+  .bg-header-btn-5 {
+    background-color: var(--header-btn-5);
+    border-color: var(--header-btn-5);
   }
 }

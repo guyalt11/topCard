@@ -305,8 +305,7 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateFrom')}
-            className={`relative overflow-hidden truncate transition-all hover:brightness-110 ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : ''} px-3`}
-            style={translateFromDue > 0 ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
+            className={`relative overflow-hidden truncate transition-all ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
             disabled={translateFromDue === 0}
           >
             <FlagIcon country="en" size={20} />
@@ -316,8 +315,7 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateTo')}
-            className={`relative overflow-hidden truncate transition-all hover:brightness-110 ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : ''} px-3`}
-            style={translateToDue > 0 ? { backgroundColor: 'rgba(20, 95, 100)' } : {}}
+            className={`relative overflow-hidden truncate transition-all ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
             disabled={translateToDue === 0}
           >
             <FlagIcon country={currentList.language} size={20} />
@@ -355,14 +353,13 @@ const VocabList = () => {
           )}
         </div>
       </div>
-      <div className="flex items-center space-x-2 mb-6">
+      <div className="flex items-center mb-6">
         <div className="relative max-w-sm w-full hidden md:block">
           <Input
             placeholder="Search words..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-8"
-            style={{ backgroundColor: 'rgba(8, 35, 38, 1)' }}
+            className="w-full pr-8 bg-dark-solid"
           />
           {searchTerm && (
             <button
@@ -375,36 +372,47 @@ const VocabList = () => {
             </button>
           )}
         </div>
-        <Button onClick={handleAddWord}>Add Word</Button>
+
+        <Button className="ml-0 md:ml-4" onClick={handleAddWord}>Add Word</Button>
         <Button
+          className="ml-4"
           variant="outline"
           size="icon"
           onClick={() => setShowReviewTimes(!showReviewTimes)}
           title={showReviewTimes ? "Hide review times" : "Show review times"}
-          className="px-3"
         >
           ⏱️
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" title="List actions" className="px-3">
-              <ImportExportArrow size={16} className="mx-3" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>List Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleExport('json')}>
-              Export as JSON
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleImportClick}>
-              <Upload className="h-4 w-4 mr-2" />
-              Import Words
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
+        <div className="ml-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" title="List actions" className="px-3">
+                <ImportExportArrow size={16} className="mx-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>List Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleExport('json')}>
+                Export as JSON
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleImportClick}>
+                <Upload className="h-4 w-4 mr-2" />
+                Import Words
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md ml-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className="bi bi-share-fill"
+            viewBox="0 0 16 16"
+          >
             <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
           </svg>
           <Switch
@@ -419,6 +427,7 @@ const VocabList = () => {
             }}
           />
         </div>
+
         <input
           type="file"
           ref={fileInputRef}
@@ -427,13 +436,13 @@ const VocabList = () => {
           className="hidden"
         />
       </div>
+
       <div className="relative max-w-sm w-full mb-6 block md:hidden">
         <Input
           placeholder="Search words..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pr-8"
-          style={{ backgroundColor: 'rgba(8, 35, 38, 1)' }}
+          className="w-full pr-8 bg-dark-solid"
         />
         {searchTerm && (
           <button

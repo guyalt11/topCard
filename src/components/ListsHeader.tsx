@@ -51,20 +51,19 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               title="Practice all words"
               onClick={onPracticeAll}
               disabled={totalDueWords === 0}
-              className={`gap-1 transition-all hover:brightness-110 ${totalDueWords === 0 ? 'cursor-not-allowed' : ''}`}
+              className={`gap-1 transition-all hover:brightness-90 ${totalDueWords === 0 ? 'cursor-not-allowed' : 'bg-header-btn-1'}`}
               variant="default"
-              style={totalDueWords > 0 ? { backgroundColor: '#00E5CC' } : {}}
             >
               <Play className="h-4 w-4 text-black" />
             </Button>
           )}
-          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all hover:brightness-110" style={{ backgroundColor: '#00C4B4', borderColor: '#00C4B4', color: 'white' }}>
+          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all hover:brightness-110 bg-header-btn-2 text-white">
             <Plus className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1 transition-all hover:brightness-110" style={{ backgroundColor: '#00A39C', borderColor: '#00A39C', color: 'white' }}>
+          <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1 transition-all hover:brightness-110 bg-header-btn-3 text-white">
             <Upload className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Browse shared lists" variant="outline" onClick={onLibrary} className="gap-1 transition-all hover:brightness-110" style={{ backgroundColor: '#008284', borderColor: '#008284', color: 'white' }}>
+          <Button title="Browse shared lists" variant="outline" onClick={onLibrary} className="gap-1 transition-all hover:brightness-110 bg-header-btn-4 text-white">
             <BookOpen className="h-4 w-4 text-black" />
           </Button>
           <Button
@@ -74,8 +73,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setShowOnlyDue(!showOnlyDue);
               onFilterChange(!showOnlyDue);
             }}
-            className="gap-1 transition-all hover:brightness-110"
-            style={{ backgroundColor: '#008284', borderColor: '#008284', color: 'white' }}
+            className="gap-1 transition-all hover:brightness-110 bg-header-btn-5 text-white"
           >
             {showOnlyDue ? (
               <Eye className="h-4 w-4 text-black" />
@@ -98,8 +96,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setSearchQuery(e.target.value);
               onSearchChange(e.target.value);
             }}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            style={{ backgroundColor: 'rgba(8, 35, 38, 1)' }}
+            className="flex h-10 w-full rounded-md border border-input bg-dark-solid px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           />
           {searchQuery && (
             <button
