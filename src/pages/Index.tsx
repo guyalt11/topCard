@@ -175,7 +175,7 @@ const Index = () => {
       />
 
       {showEmptyState ? (
-        <EmptyListsState onAddList={handleAddList} />
+        <EmptyListsState onAddList={handleAddList} onLibrary={handleLibraryClick} />
       ) : (
         <VocabListGrid
           lists={lists.filter(list => list.name.toLowerCase().includes(searchQuery.toLowerCase()))}
