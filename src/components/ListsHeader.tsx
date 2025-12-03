@@ -51,29 +51,27 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               title="Practice all words"
               onClick={onPracticeAll}
               disabled={totalDueWords === 0}
-              className={`gap-1 transition-all hover:brightness-90 ${totalDueWords === 0 ? 'cursor-not-allowed' : 'bg-header-btn-1'}`}
-              variant="default"
+              className={`gap-1 transition-all ${totalDueWords === 0 ? 'cursor-not-allowed opacity-50' : 'bg-header-btn-1 hover:!bg-header-btn-1 hover:brightness-110'}`}
             >
               <Play className="h-4 w-4 text-black" />
             </Button>
           )}
-          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all hover:brightness-110 bg-header-btn-2 text-white">
+          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all bg-header-btn-2 text-white hover:!bg-header-btn-2 hover:brightness-110">
             <Plus className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Import lists" variant="outline" onClick={onImport} className="gap-1 transition-all hover:brightness-110 bg-header-btn-3 text-white">
+          <Button title="Import lists" onClick={onImport} className="gap-1 transition-all bg-header-btn-3 text-white hover:!bg-header-btn-3 hover:brightness-110">
             <Upload className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Browse shared lists" variant="outline" onClick={onLibrary} className="gap-1 transition-all hover:brightness-110 bg-header-btn-4 text-white">
+          <Button title="Browse shared lists" onClick={onLibrary} className="gap-1 transition-all bg-header-btn-4 text-white hover:!bg-header-btn-4 hover:brightness-110">
             <BookOpen className="h-4 w-4 text-black" />
           </Button>
           <Button
             title={showOnlyDue ? "All lists" : "Only practicable lists"}
-            variant="outline"
             onClick={() => {
               setShowOnlyDue(!showOnlyDue);
               onFilterChange(!showOnlyDue);
             }}
-            className="gap-1 transition-all hover:brightness-110 bg-header-btn-5 text-white"
+            className={`gap-1 transition-all ${showOnlyDue ? 'bg-header-btn-1 hover:!bg-header-btn-1' : 'bg-header-btn-5 hover:!bg-header-btn-5'} text-white hover:brightness-110`}
           >
             {showOnlyDue ? (
               <Eye className="h-4 w-4 text-black" />

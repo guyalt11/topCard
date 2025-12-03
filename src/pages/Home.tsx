@@ -24,15 +24,16 @@ const Home = () => {
         {
             icon: <BookOpen className="h-12 w-12 text-primary" />,
             title: "Shared Library",
-            description: "Access thousands of community-created vocabulary lists or share your own"
+            description: "Access our community library with a wide range of vocabulary lists for over 50 languages"
         }
     ];
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
             {/* Hero Section */}
-            <div className="container mx-auto px-4 py-20 text-center">
-                <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <div className="container mx-auto px-4 pt-8 pb-20 text-center">
+                <img src="/logo.png" alt="Wörtli Logo" className="w-20 sm:w-24 h-20 sm:h-24 mb-6 mx-auto" />
+                <h1 className="text-5xl md:text-6xl font-bold pb-3 mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                     Master Any Language
                 </h1>
                 <p className="text-xl md:text-2xl text-muted-foreground mb-4">
@@ -97,7 +98,7 @@ const Home = () => {
                         Ready to start learning?
                     </h2>
                     <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                        Join thousands of language learners who are already mastering vocabulary with Wörtli.
+                        Join our unique community of language learners who are already mastering vocabulary with Wörtli.
                     </p>
                     <Button
                         size="lg"
