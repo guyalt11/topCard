@@ -18,6 +18,7 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
       name: list.name,
       description: list.description,
       language: list.language,
+      target: list.target || 'en',
       words: list.words.map(word => ({
         origin: word.origin,
         transl: word.transl,
@@ -98,7 +99,8 @@ export function useVocabImportExport({ lists, setLists }: VocabImportExportProps
         })),
         createdAt: new Date(),
         updatedAt: new Date(),
-        language: importData.language
+        language: importData.language,
+        target: importData.target || 'en'
       };
 
       toast({

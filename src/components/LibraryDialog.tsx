@@ -87,6 +87,7 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                     name: list.name,
                     description: list.description || '',
                     language: list.language,
+                    target: list.target || 'en',
                     words: list.words.map(word => ({
                         transl: word.transl,
                         origin: word.origin,

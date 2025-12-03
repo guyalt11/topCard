@@ -43,7 +43,8 @@ export interface VocabList {
   id: string;
   name: string;
   description?: string;
-  language: string;  // The target language code (e.g., 'de', 'fr', etc.)
+  language: string;
+  target?: string;
   share?: boolean;
   pinned?: boolean;
   words: VocabWord[];

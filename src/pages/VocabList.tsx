@@ -308,7 +308,7 @@ const VocabList = () => {
             className={`relative overflow-hidden truncate transition-all ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
             disabled={translateFromDue === 0}
           >
-            <FlagIcon country="en" size={20} />
+            <FlagIcon country={currentList.target || 'en'} size={20} />
             <RightArrow size={20} className="text-white" />
             <FlagIcon country={currentList.language} size={20} />
           </Button>
@@ -320,7 +320,7 @@ const VocabList = () => {
           >
             <FlagIcon country={currentList.language} size={20} />
             <RightArrow size={20} className="text-white" />
-            <FlagIcon country="en" size={20} />
+            <FlagIcon country={currentList.target || 'en'} size={20} />
           </Button>
         </div>
         <div className="mt-4 sm:mt-0">

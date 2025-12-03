@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { VocabList } from '@/types/vocabulary';
 import { useVocab } from '@/context/VocabContext';
+import { LANGUAGES } from '@/constants/languages';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,7 +39,8 @@ const AddListForm: React.FC<AddListFormProps> = ({
 
   const [name, setName] = useState(editList?.name || '');
   const [description, setDescription] = useState(editList?.description || '');
-  const [language, setLanguage] = useState(editList?.language || 'al');
+  const [language, setLanguage] = useState(editList?.language || '');
+  const [target, setTarget] = useState(editList?.target || 'en');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +54,7 @@ const AddListForm: React.FC<AddListFormProps> = ({
         name: name.trim(),
         description: description.trim() || undefined,
         language,
+        target,
       });
 
       // If edit was successful and we have a callback, call it with the updated list
@@ -61,12 +64,13 @@ const AddListForm: React.FC<AddListFormProps> = ({
           name: name.trim(),
           description: description.trim() || undefined,
           language,
+          target,
         };
         onSuccess(updatedList);
       }
     } else {
       // When creating a new list, use the description parameter correctly
-      const newList = await addList(name.trim(), description.trim() || undefined, language);
+      const newList = await addList(name.trim(), description.trim() || undefined, language, target);
 
       // If creation was successful and we have a callback, call it with the new list
       if (newList && onSuccess) {
@@ -77,7 +81,8 @@ const AddListForm: React.FC<AddListFormProps> = ({
     // Reset form
     setName('');
     setDescription('');
-    setLanguage('al');
+    setLanguage('');
+    setTarget('en');
     onOpenChange(false);
   };
 
@@ -100,68 +105,35 @@ const AddListForm: React.FC<AddListFormProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Food Vocabulary"
+              className='bg-dark-solid'
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="language">Language</Label>
+            <Label htmlFor="language">Translate From</Label>
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
-              <SelectContent className="max-h-60 overflow-y-auto">
-                <SelectItem value="al">Albanian</SelectItem>
-                <SelectItem value="sa">Arabic</SelectItem>
-                <SelectItem value="bd">Bengali</SelectItem>
-                <SelectItem value="bg">Bulgarian</SelectItem>
-                <SelectItem value="mm">Burmese</SelectItem>
-                <SelectItem value="cn">Chinese</SelectItem>
-                <SelectItem value="hr">Croatian</SelectItem>
-                <SelectItem value="cz">Czech</SelectItem>
-                <SelectItem value="dk">Danish</SelectItem>
-                <SelectItem value="nl">Dutch</SelectItem>
-                <SelectItem value="ee">Estonian</SelectItem>
-                <SelectItem value="et">Ethiopian</SelectItem>
-                <SelectItem value="fi">Finnish</SelectItem>
-                <SelectItem value="fr">French</SelectItem>
-                <SelectItem value="de">German</SelectItem>
-                <SelectItem value="gr">Greek</SelectItem>
-                <SelectItem value="he">Hebrew</SelectItem>
-                <SelectItem value="in">Hindi</SelectItem>
-                <SelectItem value="hu">Hungarian</SelectItem>
-                <SelectItem value="is">Icelandic</SelectItem>
-                <SelectItem value="id">Indonesian</SelectItem>
-                <SelectItem value="it">Italian</SelectItem>
-                <SelectItem value="ja">Japanese</SelectItem>
-                <SelectItem value="kh">Khmer</SelectItem>
-                <SelectItem value="kr">Korean</SelectItem>
-                <SelectItem value="la">Lao</SelectItem>
-                <SelectItem value="lv">Latvian</SelectItem>
-                <SelectItem value="lt">Lithuanian</SelectItem>
-                <SelectItem value="mk">Macedonian</SelectItem>
-                <SelectItem value="my">Malay</SelectItem>
-                <SelectItem value="mn">Mongolian</SelectItem>
-                <SelectItem value="no">Norwegian</SelectItem>
-                <SelectItem value="ir">Persian</SelectItem>
-                <SelectItem value="pl">Polish</SelectItem>
-                <SelectItem value="pt">Portuguese</SelectItem>
-                <SelectItem value="ro">Romanian</SelectItem>
-                <SelectItem value="ru">Russian</SelectItem>
-                <SelectItem value="rs">Serbian</SelectItem>
-                <SelectItem value="sk">Slovak</SelectItem>
-                <SelectItem value="si">Slovenian</SelectItem>
-                <SelectItem value="so">Somali</SelectItem>
-                <SelectItem value="es">Spanish</SelectItem>
-                <SelectItem value="tz">Swahili</SelectItem>
-                <SelectItem value="se">Swedish</SelectItem>
-                <SelectItem value="ph">Tagalog</SelectItem>
-                <SelectItem value="th">Thai</SelectItem>
-                <SelectItem value="tr">Turkish</SelectItem>
-                <SelectItem value="ua">Ukrainian</SelectItem>
-                <SelectItem value="pk">Urdu</SelectItem>
-                <SelectItem value="vn">Vietnamese</SelectItem>
-                <SelectItem value="za">Zulu</SelectItem>
+              <SelectContent className="max-h-60 overflow-y-auto bg-dark-solid">
+                {LANGUAGES.map(lang => (
+                  <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="target">To</Label>
+            <Select value={target} onValueChange={setTarget}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a language" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60 overflow-y-auto bg-dark-solid">
+                {LANGUAGES.map(lang => (
+                  <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -173,6 +145,7 @@ const AddListForm: React.FC<AddListFormProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add a short description of this list..."
+              className="bg-dark-solid"
             />
           </div>
 

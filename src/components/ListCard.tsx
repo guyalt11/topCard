@@ -130,7 +130,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
               className={`relative overflow-hidden truncate transition-all ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
               disabled={translateFromCount === 0}
             >
-              <FlagIcon country="en" size={20} />
+              <FlagIcon country={list.target || 'en'} size={20} />
               <RightArrow size={20} className="text-white" />
               <FlagIcon country={list.language} size={20} />
             </Button>
@@ -142,7 +142,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             >
               <FlagIcon country={list.language} size={20} />
               <RightArrow size={20} className="text-white" />
-              <FlagIcon country="en" size={20} />
+              <FlagIcon country={list.target || 'en'} size={20} />
             </Button>
           </div>
         </div>

@@ -11,7 +11,7 @@ interface VocabContextType {
   lists: VocabList[];
   isLoading: boolean;
   currentList: VocabList | null;
-  addList: (name: string, description?: string, language?: string) => Promise<VocabList | null>;
+  addList: (name: string, description?: string, language?: string, target?: string) => Promise<VocabList | null>;
   updateList: (id: string, updates: Partial<VocabList>) => Promise<void>;
   deleteList: (id: string) => Promise<void>;
   selectList: (id: string) => Promise<void>;
@@ -59,13 +59,14 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
   const { token } = useAuth();
 
   // Add a new list
-  const addList = async (name: string, description?: string, language: string = 'de'): Promise<VocabList | null> => {
+  const addList = async (name: string, description?: string, language: string = 'de', target: string = 'en'): Promise<VocabList | null> => {
     try {
       const newList: VocabList = {
         id: uuidv4(),
         name,
         description,
         language,
+        target,
         words: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -332,6 +333,7 @@ export const VocabProvider = ({ children }: { children: ReactNode }) => {
           name: listName,
           description: importedList.description,
           language: importedList.language, // Use the language from the imported list
+          target: importedList.target || 'en', // Use target from imported list or default to 'en'
           words: [],
           createdAt: new Date(),
           updatedAt: new Date(),

@@ -171,16 +171,16 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
                 </DialogHeader>
 
                 {/* Messages Container */}
-                <div className="flex-1 flex flex-col overflow-y-auto px-6 bg-dark-transparent">
+                <div className="flex-1 flex flex-col overflow-y-auto px-6 py-3 space-y-3 bg-dark-transparent">
                     {messages.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
                             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
                                 <MessageCircle className="h-8 w-8 text-primary" />
                             </div>
                             <div className="space-y-2">
-                                <p className="text-lg font-semibold">Start a conversation!</p>
+                                <p className="text-lg font-semibold">Start a conversation</p>
                                 <p className="text-sm text-muted-foreground max-w-md">
-                                    Ask me to generate vocabulary lists, translate words, or help you learn a new language.
+                                    I'm here to help you generate vocabulary lists!
                                 </p>
                             </div>
                         </div>

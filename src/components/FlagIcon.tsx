@@ -38,7 +38,7 @@ export const DirectionFlag: React.FC<{ direction: PracticeDirection, size?: numb
 
   return direction === 'translateFrom' ? (
     <div className={`flex items-center gap-1 ${className || ''}`}>
-      <FlagIcon country="en" size={size} />
+      <FlagIcon country={currentList?.target || 'en'} size={size} />
     </div>
   ) : (
     <div className={`flex items-center gap-1 ${className || ''}`}>
