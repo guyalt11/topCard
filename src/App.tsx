@@ -8,6 +8,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import SettingsMenu from "@/components/SettingsMenu";
 import Index from "./pages/Index";
 import Home from "./pages/Home";
+import Settings from "./pages/Settings";
 import VocabList from "./pages/VocabList";
 import Practice from "./pages/Practice";
 import PracticeAll from "./pages/PracticeAll";
@@ -53,6 +54,11 @@ const App = () => (
               <Route path="/practice-all" element={
                 <ProtectedRoute>
                   <PracticeAll />
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />

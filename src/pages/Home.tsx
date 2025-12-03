@@ -60,9 +60,6 @@ const Home = () => {
                         Log In
                     </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                    or try it in your browser
-                </p>
             </div>
 
             {/* How It Works Section */}
@@ -98,7 +95,7 @@ const Home = () => {
                         Ready to start learning?
                     </h2>
                     <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                        Join our unique community of language learners who are already mastering vocabulary with Wörtli.
+                        Join our unique community of language learners who are already mastering their vocabulary with Wörtli.
                     </p>
                     <Button
                         size="lg"

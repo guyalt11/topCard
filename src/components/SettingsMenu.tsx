@@ -1,5 +1,5 @@
 
-import { Settings, LogOut, User, KeyRound, Trash2 } from 'lucide-react';
+import { Settings, LogOut, User, KeyRound, Trash2, Cog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -152,6 +152,10 @@ const SettingsMenu = () => {
           {currentUser && (
             <>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate('/settings')} className="flex items-center gap-2">
+                <Cog className="h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsResetPasswordOpen(true)} className="flex items-center gap-2">
                 <KeyRound className="h-4 w-4" />
                 <span>Reset Password</span>

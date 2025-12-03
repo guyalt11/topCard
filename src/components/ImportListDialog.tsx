@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface ImportListDialogProps {
   open: boolean;
@@ -17,6 +18,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [useFileNameFromFile, setUseFileNameFromFile] = useState(false);
   const [fileListName, setFileListName] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = () => {
@@ -61,29 +63,37 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
     if (!selectedFile || !importListName.trim()) return;
 
     try {
-      // Store values and reset state
+      setIsImporting(true);
+      // Store values
       const file = selectedFile;
       const name = importListName;
+
+      // Close dialog first
+      onOpenChange(false);
+
+      // Import with loading overlay visible
+      await onImport(file, name);
+
+      // Reset state after successful import
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       setImportListName('');
       setUseFileNameFromFile(false);
       setFileListName('');
-      onOpenChange(false);
-
-      // Now import after dialog is closed
-      await onImport(file, name);
     } catch (error) {
       // Error is already handled by the import function
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       setUseFileNameFromFile(false);
       setFileListName('');
+    } finally {
+      setIsImporting(false);
     }
   };
 
   return (
     <>
+      {isImporting && <LoadingOverlay message="Importing list..." />}
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -101,7 +111,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
                 id="name"
                 value={importListName}
                 onChange={(e) => setImportListName(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 bg-dark-solid"
                 disabled={useFileNameFromFile}
               />
             </div>
@@ -121,7 +131,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="secondary" onClick={handleFileSelect}>
+              <Button variant="default" className="" onClick={handleFileSelect}>
                 Select File
               </Button>
               {selectedFile && (

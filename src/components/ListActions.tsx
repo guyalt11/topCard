@@ -13,6 +13,8 @@ import { useRef, useState } from "react";
 import { useVocabImportExport } from "@/hooks/useVocabImportExport";
 import { useVocab } from "@/context/VocabContext";
 import { toast } from "@/components/ui/use-toast";
+import LoadingOverlay from "@/components/LoadingOverlay";
+import { useNavigate } from "react-router-dom";
 
 interface ListActionsProps {
   listId: string;
@@ -23,8 +25,10 @@ interface ListActionsProps {
 const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { getListById, addWord } = useVocab();
   const { importList } = useVocabImportExport({ lists: [], setLists: () => { } });
+  const navigate = useNavigate();
 
   const handleImportClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,31 +49,36 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Close the dropdown menu first
+    setIsOpen(false);
+
     setIsImporting(true);
     try {
       const list = getListById(listId);
       if (list) {
         const importedList = await importList(file, list.name);
         if (importedList && importedList.words.length) {
-          // Add each word to the list asynchronously
-          const addWordPromises = importedList.words.map(async (word) => {
+          // Add all words sequentially
+          for (const word of importedList.words) {
             await addWord(listId, {
               origin: word.origin,
               transl: word.transl,
               gender: word.gender,
               notes: word.notes
             });
-          });
-
-          // Process words one by one to update UI in real-time
-          for (const promise of addWordPromises) {
-            await promise;
           }
 
           toast({
             title: "Import successful",
             description: `Added ${importedList.words.length} words to the list.`,
           });
+
+          // Navigate to the list page and reload to show updated list
+          navigate(`/list/${listId}`);
+          // Small delay to ensure navigation completes before reload
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
         }
       }
     } catch (error) {
@@ -88,6 +97,7 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
 
   return (
     <>
+      {isImporting && <LoadingOverlay message="Importing words..." />}
       <input
         type="file"
         ref={fileInputRef}
@@ -95,7 +105,7 @@ const ListActions = ({ listId, onExport, onImport }: ListActionsProps) => {
         accept=".json"
         onChange={handleFileChange}
       />
-      <DropdownMenu>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8" title="List actions">
             <ImportExportArrow size={16} />
