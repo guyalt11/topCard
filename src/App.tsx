@@ -7,6 +7,7 @@ import { VocabProvider } from "@/context/VocabContext";
 import { AuthProvider } from "@/context/AuthContext";
 import SettingsMenu from "@/components/SettingsMenu";
 import Index from "./pages/Index";
+import Home from "./pages/Home";
 import VocabList from "./pages/VocabList";
 import Practice from "./pages/Practice";
 import PracticeAll from "./pages/PracticeAll";
@@ -31,6 +32,7 @@ const App = () => (
               <SettingsMenu />
             </div>
             <Routes>
+              <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/" element={
