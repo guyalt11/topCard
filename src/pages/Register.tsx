@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -6,41 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
+import { CheckCircle2, Mail } from 'lucide-react';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [registrationComplete, setRegistrationComplete] = useState(false);
 
-  const { register, signInWithGoogle, isAuthenticated, isLoading } = useAuth();
+  const { register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
-
-  // Handle redirection after successful registration
-  useEffect(() => {
-    if (isAuthenticated && isSubmitting) {
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 100);
-    }
-  }, [isAuthenticated, isSubmitting, navigate]);
-
-  // Show loading state while checking initial auth
-  if (isLoading && !isSubmitting) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't show register form if already authenticated
-  if (isAuthenticated && !isSubmitting) {
-    return null;
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,18 +45,15 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const success = await register({ email: trimmedEmail, password });
+      const result = await register({ email: trimmedEmail, password });
 
-      if (success) {
-        toast({
-          title: "Registration successful",
-          description: `Welcome, ${trimmedEmail}! Please check your email to confirm your account.`,
-        });
+      if (result.success) {
+        setRegistrationComplete(true);
       } else {
         setIsSubmitting(false);
         toast({
           title: "Registration failed",
-          description: "Unable to create account. Please try again.",
+          description: result.error || "Unable to create account. Please try again.",
           variant: "destructive",
         });
       }
@@ -122,6 +95,51 @@ const Register = () => {
       });
     }
   };
+
+  // Show success screen after registration
+  if (registrationComplete) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <div className="flex justify-center mb-4">
+              <CheckCircle2 className="h-16 w-16 text-green-500" />
+            </div>
+            <CardTitle className="text-2xl text-center">Registration Successful!</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
+              <Mail className="h-5 w-5 mt-0.5 text-muted-foreground flex-shrink-0" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium">Check your email</p>
+                <p className="text-sm text-muted-foreground">
+                  We've sent a verification link to <span className="font-semibold">{email}</span>.
+                  Please verify your email address to activate your account.
+                </p>
+              </div>
+            </div>
+            <div className="text-sm text-muted-foreground text-center">
+              <p>Didn't receive the email? Check your spam folder or try registering again.</p>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-2">
+            <Button
+              className="w-full"
+              onClick={() => navigate('/home')}
+            >
+              Back to Home
+            </Button>
+            <div className="text-center text-sm">
+              Already verified?{' '}
+              <Link to="/login" className="underline">
+                Login here
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen">

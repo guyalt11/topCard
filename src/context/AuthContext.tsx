@@ -10,7 +10,7 @@ type AuthContextType = {
   token: string | null;
   login: (credentials: UserCredentials) => Promise<boolean>;
   logout: () => void;
-  register: (credentials: UserCredentials) => Promise<boolean>;
+  register: (credentials: UserCredentials) => Promise<{ success: boolean; error?: string }>;
   signInWithGoogle: () => Promise<boolean>;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -76,14 +76,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (credentials: UserCredentials): Promise<boolean> => {
+  const register = async (credentials: UserCredentials): Promise<{ success: boolean; error?: string }> => {
     try {
-      const { error } = await supabase.auth.signUp(credentials);
-      if (error) throw error;
-      return true;
-    } catch (error) {
+      // Sign up the user
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        ...credentials,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        }
+      });
+
+      if (signUpError) {
+        return {
+          success: false,
+          error: signUpError.message || 'Registration failed. Please try again.'
+        };
+      }
+
+      return { success: true };
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      return false;
+      return {
+        success: false,
+        error: error?.message || 'An unexpected error occurred during registration.'
+      };
     }
   };
 
