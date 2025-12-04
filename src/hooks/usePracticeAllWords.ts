@@ -6,6 +6,7 @@ export interface WordWithListInfo extends VocabWord {
   listId: string;
   listName: string;
   listLanguage: string;
+  listTarget: string;
 }
 
 export function usePracticeAllWords(direction: PracticeDirection) {
@@ -15,45 +16,46 @@ export function usePracticeAllWords(direction: PracticeDirection) {
   // Fetch due words from all lists
   const getDueWords = useCallback(() => {
     if (!lists || lists.length === 0) return [];
-  
+
     const now = new Date();
     const allDueWords: WordWithListInfo[] = [];
-    
+
     lists.forEach(list => {
       list.words.forEach(word => {
         const nextReview = word.nextReview?.[direction];
         const isDue = !nextReview || nextReview <= now;
-        
+
         if (isDue) {
           allDueWords.push({
             ...word,
             listId: list.id,
             listName: list.name,
-            listLanguage: list.language
+            listLanguage: list.language,
+            listTarget: list.target || 'en'
           });
         }
       });
     });
-    
+
     return allDueWords;
   }, [lists, direction]);
-  
+
   // Reset and shuffle practice words
   const resetPracticeWords = useCallback(() => {
     const dueWords = getDueWords();
     const shuffled = [...dueWords].sort(() => Math.random() - 0.5);
     setPracticeWords(shuffled);
   }, [getDueWords, lists.length]);
-  
+
   // Initialize practice words when lists are loaded or direction changes
   useEffect(() => {
     if (isLoading) return;
-    
+
     if (!lists || lists.length === 0) {
       setPracticeWords([]);
       return;
     }
-    
+
     resetPracticeWords();
   }, [lists, direction, isLoading, resetPracticeWords]);
 

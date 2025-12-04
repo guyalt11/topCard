@@ -78,12 +78,16 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
             direction={direction}
             flipped={flipped}
             onDelete={onDelete}
+            language={(word as any).listLanguage}
+            target={(word as any).listTarget}
           />
 
           {flipped && (
             <CardBack
               word={word}
               direction={direction}
+              language={(word as any).listLanguage}
+              target={(word as any).listTarget}
             />
           )}
 

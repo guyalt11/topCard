@@ -25,7 +25,7 @@ import {
 const PracticeAll: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { updateWordDifficulty, deleteWord, isLoading, lists, currentList } = useVocab();
+  const { updateWordDifficulty, deleteWord, isLoading, lists } = useVocab();
   const [direction, setDirection] = useState<PracticeDirection>('translateFrom');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -220,12 +220,12 @@ const PracticeAll: React.FC = () => {
           >
             <div className="flex items-center gap-1">
               <FlagIcon
-                country={direction !== 'translateTo' ? (currentList?.language || 'de') : (currentList?.target || 'en')}
+                country={direction !== 'translateTo' ? (currentWord?.listTarget || 'de') : (currentWord?.listLanguage || 'en')}
                 size={24}
               />
               <RightArrow size={24} className="text-white" />
               <FlagIcon
-                country={direction !== 'translateTo' ? (currentList?.target || 'en') : (currentList?.language || 'de')}
+                country={direction !== 'translateTo' ? (currentWord?.listLanguage || 'en') : (currentWord?.listTarget || 'de')}
                 size={24}
               />
             </div>

@@ -12,9 +12,11 @@ interface CardFrontProps {
   direction: PracticeDirection;
   flipped: boolean;
   onDelete: () => void;
+  language?: string;
+  target?: string;
 }
 
-const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelete }) => {
+const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelete, language, target }) => {
   const { currentList } = useVocab();
   // For translateTo (Language to English), show language word
   // For translateFrom (English to Language), show English word
@@ -32,7 +34,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
   return (
     <div className="text-center w-full">
       <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
-        <DirectionFlag direction={direction} size={16} />
+        <DirectionFlag direction={direction} size={16} language={language} target={target} />
       </div>
       <div className="flex items-center justify-center gap-2">
         <h2 className="text-2xl font-bold">{frontText}</h2>

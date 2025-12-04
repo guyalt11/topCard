@@ -9,9 +9,11 @@ import { useVocab } from '@/context/VocabContext';
 interface CardBackProps {
   word: VocabWord;
   direction: PracticeDirection;
+  language?: string;
+  target?: string;
 }
 
-const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
+const CardBack: React.FC<CardBackProps> = ({ word, direction, language, target }) => {
   const { currentList } = useVocab();
   // For translateTo (Language to English), show English word
   // For translateFrom (English to Language), show language word
@@ -30,7 +32,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction }) => {
   return (
     <div className="text-center mt-6 pt-4 w-full">
       <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
-        <DirectionFlag direction={direction === 'translateTo' ? 'translateFrom' : 'translateTo'} size={16} />
+        <DirectionFlag direction={direction === 'translateTo' ? 'translateFrom' : 'translateTo'} size={16} language={language} target={target} />
       </div>
       <div className="flex items-center justify-center gap-2">
         <h3 className="text-xl font-semibold">{backText}</h3>
