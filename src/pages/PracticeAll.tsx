@@ -8,6 +8,8 @@ import PracticeProgressBar from '@/components/PracticeProgressBar';
 import { DifficultyLevel, PracticeDirection } from '@/types/vocabulary';
 import { usePracticeAllWords, WordWithListInfo } from '@/hooks/usePracticeAllWords';
 import { Button } from '@/components/ui/button';
+import FlagIcon from '@/components/FlagIcon';
+import RightArrow from '@/components/Icon';
 import { RefreshCcw } from 'lucide-react';
 import {
   AlertDialog,
@@ -23,7 +25,7 @@ import {
 const PracticeAll: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { updateWordDifficulty, deleteWord, isLoading, lists } = useVocab();
+  const { updateWordDifficulty, deleteWord, isLoading, lists, currentList } = useVocab();
   const [direction, setDirection] = useState<PracticeDirection>('translateFrom');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -31,7 +33,7 @@ const PracticeAll: React.FC = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [initialized, setInitialized] = useState(false);
-  
+
   // Store the initial word list as a ref so it never changes during the session
   const initialWordsRef = useRef<WordWithListInfo[]>([]);
   const totalWordsRef = useRef<number>(0);
@@ -88,7 +90,7 @@ const PracticeAll: React.FC = () => {
   // Calculate due counts for both directions
   const getDueCounts = () => {
     if (!lists || lists.length === 0) return { translateFromDue: 0, translateToDue: 0 };
-    
+
     const now = new Date();
     let translateFromDue = 0;
     let translateToDue = 0;
@@ -97,7 +99,7 @@ const PracticeAll: React.FC = () => {
       list.words.forEach(word => {
         const nextReviewFrom = word.nextReview?.translateFrom;
         const nextReviewTo = word.nextReview?.translateTo;
-        
+
         if (!nextReviewFrom || nextReviewFrom <= now) {
           translateFromDue++;
         }
@@ -128,7 +130,7 @@ const PracticeAll: React.FC = () => {
   const currentWord = wordsToUse[currentIndex];
   const totalWords = totalWordsRef.current > 0 ? totalWordsRef.current : wordsToUse.length;
   const isComplete = currentIndex >= wordsToUse.length || wordsToUse.length === 0;
-  
+
   const handleAnswered = (difficulty: DifficultyLevel) => {
     if (currentWord) {
       // Update the word's difficulty and next review time
@@ -150,7 +152,7 @@ const PracticeAll: React.FC = () => {
       };
 
       // Update the word in the practice list
-      initialWordsRef.current = initialWordsRef.current.map(w => 
+      initialWordsRef.current = initialWordsRef.current.map(w =>
         w.id === currentWord.id ? updatedWord : w
       );
 
@@ -185,7 +187,7 @@ const PracticeAll: React.FC = () => {
       // Remove the word from our practice list
       initialWordsRef.current = initialWordsRef.current.filter(w => w.id !== currentWord.id);
       totalWordsRef.current = initialWordsRef.current.length;
-      
+
       // If we've deleted all words, set counts to trigger completion screen
       if (initialWordsRef.current.length === 0) {
         setCompletedCount(0);
@@ -206,35 +208,26 @@ const PracticeAll: React.FC = () => {
           <Button
             variant="default"
             onClick={toggleDirection}
-            className={`relative px-[6px] sm:px-2 ${
+            className={`relative px-[6px] sm:px-2 ${(direction !== 'translateTo' && translateToDue === 0) ||
+              (direction !== 'translateFrom' && translateFromDue === 0)
+              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+              : 'bg-input hover:bg-accent'
+              }`}
+            disabled={
               (direction !== 'translateTo' && translateToDue === 0) ||
               (direction !== 'translateFrom' && translateFromDue === 0)
-                ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                : 'bg-input hover:bg-accent'
-              }`}
-              disabled={
-                (direction !== 'translateTo' && translateToDue === 0) ||
-                (direction !== 'translateFrom' && translateFromDue === 0)
-              } 
-            >
-            <div className="flex items-center">
-              <span className="inline-block align-middle">
-                <img
-                  src={direction !== 'translateTo' ? '/flags/en.ico' : '/flags/de.ico'}
-                  alt={direction !== 'translateTo' ? 'EN' : 'DE'}
-                  className="w-6 h-6 object-contain"
-                />
-              </span>
-              <span className="inline-block align-middle mx-1">
-                <img src="/ra.webp" alt="arrow" className="w-4 h-4 sm:w-6 sm:h-6 object-contain" />
-              </span>
-              <span className="inline-block align-middle">
-                <img
-                  src={direction !== 'translateTo' ? '/flags/de.ico' : '/flags/en.ico'}
-                  alt={direction !== 'translateTo' ? 'DE' : 'EN'}
-                  className="w-6 h-6 object-contain"
-                />
-              </span>
+            }
+          >
+            <div className="flex items-center gap-1">
+              <FlagIcon
+                country={direction !== 'translateTo' ? (currentList?.language || 'de') : (currentList?.target || 'en')}
+                size={24}
+              />
+              <RightArrow size={24} className="text-white" />
+              <FlagIcon
+                country={direction !== 'translateTo' ? (currentList?.target || 'en') : (currentList?.language || 'de')}
+                size={24}
+              />
             </div>
           </Button>
           <Button onClick={() => navigate('/')}>Home</Button>
@@ -242,21 +235,21 @@ const PracticeAll: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <PracticeProgressBar 
+        <PracticeProgressBar
           currentProgress={completedCount}
           totalWords={totalWords}
         />
       </div>
 
       <div className="mb-6">
-        <WordCompletionCounter 
-          completedCount={completedCount} 
-          totalWords={totalWords} 
+        <WordCompletionCounter
+          completedCount={completedCount}
+          totalWords={totalWords}
         />
       </div>
 
       {isComplete ? (
-        <PracticeComplete 
+        <PracticeComplete
           totalWords={totalWords}
           onRestart={handleRestart}
           onBack={() => navigate('/')}
