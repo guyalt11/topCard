@@ -15,6 +15,8 @@ type PreferencesContextType = {
     preferences: UserPreferences | null;
     colorScheme: ColorScheme;
     updateColorScheme: (scheme: ColorScheme) => Promise<boolean>;
+    updateUsername: (username: string) => Promise<boolean>;
+    updateHideEmptyLists: (hideEmptyLists: boolean) => Promise<boolean>;
     isLoading: boolean;
 };
 
@@ -142,11 +144,61 @@ export const PreferencesProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    // Update username in database
+    const updateUsername = async (username: string): Promise<boolean> => {
+        if (!currentUser) return false;
+
+        try {
+            const { error } = await supabase
+                .from('preferences')
+                .update({ username })
+                .eq('user_id', currentUser.id);
+
+            if (error) {
+                console.error('Error updating username:', error);
+                return false;
+            }
+
+            // Update local state
+            setPreferences(prev => prev ? { ...prev, username } : null);
+            return true;
+        } catch (error) {
+            console.error('Error in updateUsername:', error);
+            return false;
+        }
+    };
+
+    // Update hide_empty_lists in database
+    const updateHideEmptyLists = async (hideEmptyLists: boolean): Promise<boolean> => {
+        if (!currentUser) return false;
+
+        try {
+            const { error } = await supabase
+                .from('preferences')
+                .update({ hide_empty_lists: hideEmptyLists })
+                .eq('user_id', currentUser.id);
+
+            if (error) {
+                console.error('Error updating hide_empty_lists:', error);
+                return false;
+            }
+
+            // Update local state
+            setPreferences(prev => prev ? { ...prev, hideEmptyLists } : null);
+            return true;
+        } catch (error) {
+            console.error('Error in updateHideEmptyLists:', error);
+            return false;
+        }
+    };
+
     return (
         <PreferencesContext.Provider value={{
             preferences,
             colorScheme: preferences?.colorScheme || 'dark',
             updateColorScheme,
+            updateUsername,
+            updateHideEmptyLists,
             isLoading,
         }}>
             {children}

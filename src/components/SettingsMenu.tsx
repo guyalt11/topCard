@@ -10,10 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/context/AuthContext';
+import { usePreferences } from '@/context/PreferencesContext';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsMenu = () => {
   const { currentUser, logout } = useAuth();
+  const { preferences } = usePreferences();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -36,7 +38,7 @@ const SettingsMenu = () => {
             <>
               <DropdownMenuLabel className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span>{currentUser.email}</span>
+                <span>{preferences?.username || currentUser.email}</span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
             </>

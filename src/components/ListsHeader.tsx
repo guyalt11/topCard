@@ -13,10 +13,11 @@ interface ListsHeaderProps {
   showOnlyDue: boolean;
   onSearchChange: (searchQuery: string) => void;
   onPracticeAll?: () => void;
+  initialShowOnlyDue?: boolean;
 }
 
-const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, onSearchChange, onPracticeAll }: ListsHeaderProps) => {
-  const [showOnlyDue, setShowOnlyDue] = useState(false);
+const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, onSearchChange, onPracticeAll, initialShowOnlyDue = false }: ListsHeaderProps) => {
+  const [showOnlyDue, setShowOnlyDue] = useState(initialShowOnlyDue);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Calculate total due words from all lists

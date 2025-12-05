@@ -28,7 +28,7 @@ import {
 
 const Settings = () => {
     const { currentUser, updatePassword, deleteUser } = useAuth();
-    const { colorScheme, updateColorScheme } = usePreferences();
+    const { colorScheme, updateColorScheme, preferences, updateUsername, updateHideEmptyLists } = usePreferences();
     const navigate = useNavigate();
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -37,6 +37,8 @@ const Settings = () => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isUpdatingTheme, setIsUpdatingTheme] = useState(false);
+    const [editedUsername, setEditedUsername] = useState("");
+    const [isEditingUsername, setIsEditingUsername] = useState(false);
 
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -150,6 +152,48 @@ const Settings = () => {
         setIsUpdatingTheme(false);
     };
 
+    const handleUsernameChange = async () => {
+        if (editedUsername.trim() === "") {
+            toast({
+                title: "Username cannot be empty",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        const success = await updateUsername(editedUsername.trim());
+        if (success) {
+            toast({
+                title: "Username updated",
+                description: "Your username has been successfully updated.",
+            });
+            setIsEditingUsername(false);
+        } else {
+            toast({
+                title: "Update failed",
+                description: "Unable to update username. Please try again.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleHideEmptyListsToggle = async () => {
+        const newValue = !preferences?.hideEmptyLists;
+        const success = await updateHideEmptyLists(newValue);
+        if (success) {
+            toast({
+                title: "Preference updated",
+                description: `Empty lists will ${newValue ? 'be hidden' : 'be shown'} by default.`,
+            });
+        } else {
+            toast({
+                title: "Update failed",
+                description: "Unable to update preference. Please try again.",
+                variant: "destructive",
+            });
+        }
+    };
+
     return (
         <div className="min-h-screen bg-background">
             <div className="container mx-auto px-4 py-8 max-w-3xl">
@@ -172,20 +216,64 @@ const Settings = () => {
                         <h2 className="text-xl font-semibold mb-4">Account</h2>
                         <div className="space-y-4">
                             <div>
+                                <Label htmlFor="username">Username</Label>
+                                <div className="flex gap-2 mt-2">
+                                    {isEditingUsername ? (
+                                        <>
+                                            <Input
+                                                id="username"
+                                                type="text"
+                                                value={editedUsername}
+                                                onChange={(e) => setEditedUsername(e.target.value)}
+                                                placeholder="Enter username"
+                                            />
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={handleUsernameChange}
+                                            >
+                                                Save
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    setIsEditingUsername(false);
+                                                    setEditedUsername(preferences?.username || '');
+                                                }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Input
+                                                id="username"
+                                                type="text"
+                                                value={preferences?.username || ''}
+                                                disabled
+                                                className="bg-dark"
+                                            />
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => {
+                                                    setEditedUsername(preferences?.username || '');
+                                                    setIsEditingUsername(true);
+                                                }}
+                                            >
+                                                Edit
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     value={currentUser?.email || ''}
-                                    disabled
-                                    className="bg-dark mt-2"
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="user-id">User ID</Label>
-                                <Input
-                                    id="user-id"
-                                    value={currentUser?.id || ''}
                                     disabled
                                     className="bg-dark mt-2"
                                 />
@@ -257,6 +345,19 @@ const Settings = () => {
                                         </label>
                                     ))}
                                 </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <Label>Hide Empty Lists by Default</Label>
+                                    <p className="text-sm text-tertiary-foreground">Show only lists with words ready for review by default</p>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleHideEmptyListsToggle}
+                                >
+                                    {preferences?.hideEmptyLists ? 'Enabled' : 'Disabled'}
+                                </Button>
                             </div>
                             <div className="flex items-center justify-between">
                                 <div>

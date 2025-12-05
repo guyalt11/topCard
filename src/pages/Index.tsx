@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useVocab } from '@/context/VocabContext';
+import { usePreferences } from '@/context/PreferencesContext';
 import { useVocabImportExport } from '@/hooks/useVocabImportExport';
 import { toast } from "@/components/ui/use-toast";
 import AddListForm from '@/components/AddListForm';
@@ -19,6 +20,7 @@ import { useEffect, useRef } from 'react';
 
 const Index = () => {
   const { lists, exportList, importList, deleteList, updateList, getListById, addWord } = useVocab();
+  const { preferences } = usePreferences();
   const navigate = useNavigate();
   const { goToList, goToPracticeAll } = useAppNavigation();
   const { importList: importListFunc } = useVocabImportExport({ lists, setLists: async () => { } });
@@ -172,6 +174,7 @@ const Index = () => {
         showOnlyDue={showOnlyDue}
         onSearchChange={setSearchQuery}
         onPracticeAll={handlePracticeAll}
+        initialShowOnlyDue={preferences?.hideEmptyLists || false}
       />
 
       {showEmptyState ? (
