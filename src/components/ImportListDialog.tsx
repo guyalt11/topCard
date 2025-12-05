@@ -111,7 +111,7 @@ const ImportListDialog = ({ open, onOpenChange, onImport }: ImportListDialogProp
                 id="name"
                 value={importListName}
                 onChange={(e) => setImportListName(e.target.value)}
-                className="col-span-3 bg-dark-solid"
+                className="col-span-3 bg-dark"
                 disabled={useFileNameFromFile}
               />
             </div>

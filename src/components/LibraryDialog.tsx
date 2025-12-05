@@ -166,20 +166,20 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                         {/* Lists */}
                         <div className="flex-1 overflow-y-auto border rounded-md p-2 space-y-2">
                             {isLoading ? (
-                                <div className="text-center py-8 text-muted-foreground">
+                                <div className="text-center py-8 text-light-foreground">
                                     Loading shared lists...
                                 </div>
                             ) : filteredLists.length === 0 ? (
-                                <div className="text-center py-8 text-muted-foreground">
+                                <div className="text-center py-8 text-light-foreground">
                                     No shared lists available.
                                 </div>
                             ) : (
                                 filteredLists.map(list => (
                                     <div key={list.id} className="border rounded-md overflow-hidden">
-                                        <div className="flex items-center gap-3 p-2 hover:bg-muted/50">
+                                        <div className="flex items-center gap-3 p-2 hover:bg-light/50">
                                             <button
                                                 onClick={() => toggleExpanded(list.id)}
-                                                className="p-1 hover:bg-muted rounded transition-transform duration-200"
+                                                className="p-1 hover:bg-light rounded transition-transform duration-200"
                                                 style={{
                                                     transform: expandedListId === list.id ? 'rotate(0deg)' : 'rotate(0deg)'
                                                 }}
@@ -197,11 +197,11 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                                             >
                                                 <div className="font-medium">{list.name}</div>
                                                 {list.description && (
-                                                    <div className="text-sm text-muted-foreground line-clamp-1">
+                                                    <div className="text-sm text-light-foreground line-clamp-1">
                                                         {list.description}
                                                     </div>
                                                 )}
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="text-xs text-light-foreground">
                                                     {list.words.length} words
                                                 </div>
                                             </div>
@@ -221,23 +221,23 @@ const LibraryDialog = ({ open, onOpenChange }: LibraryDialogProps) => {
                                                 opacity: expandedListId === list.id ? 1 : 0
                                             }}
                                         >
-                                            <div className="bg-muted/30 p-3 border-t overflow-y-auto" style={{ maxHeight: '15rem' }}>
+                                            <div className="bg-light/30 p-3 border-t overflow-y-auto" style={{ maxHeight: '15rem' }}>
                                                 <div className="space-y-1">
                                                     {list.words.length === 0 ? (
-                                                        <div className="text-sm text-muted-foreground text-center py-2">
+                                                        <div className="text-sm text-light-foreground text-center py-2">
                                                             No words in this list
                                                         </div>
                                                     ) : (
                                                         list.words.map((word, index) => (
                                                             <div
                                                                 key={index}
-                                                                className="text-sm flex items-center gap-2 py-1 px-2 hover:bg-muted/50 rounded"
+                                                                className="text-sm flex items-center gap-2 py-1 px-2 hover:bg-light/50 rounded"
                                                             >
                                                                 <span className="font-medium">{word.origin}</span>
-                                                                <span className="text-muted-foreground">|</span>
+                                                                <span className="text-light-foreground">|</span>
                                                                 <span>{word.transl}</span>
                                                                 {word.gender && (
-                                                                    <span className="text-xs text-muted-foreground ml-auto">
+                                                                    <span className="text-xs text-light-foreground ml-auto">
                                                                         ({word.gender})
                                                                     </span>
                                                                 )}

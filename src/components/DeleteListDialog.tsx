@@ -19,7 +19,7 @@ const DeleteListDialog = ({ open, onOpenChange, onConfirm }: DeleteListDialogPro
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogAction onClick={onConfirm} className="bg-danger text-danger-foreground hover:bg-danger/90">
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

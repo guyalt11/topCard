@@ -46,7 +46,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   };
 
   return (
-    <Card className="h-full flex flex-col bg-dark-mild">
+    <Card className="h-full flex flex-col bg-secondary">
       {/*<Card className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(8, 35, 38, 1) 0%, rgba(21, 76, 82, 1) 100%)' }}>*/}
       <CardHeader className="pb-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -73,7 +73,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
                 <Edit className="h-4 w-4" />
               </Button>
               <ListActions listId={list.id} onExport={onExport} onImport={onImport} />
-              <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-share-container">
+              <div className="flex items-center gap-2 px-2 py-1 rounded-md backdrop-blur bg-white/10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share-fill" viewBox="0 0 16 16">
                   <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5" />
                 </svg>
@@ -81,6 +81,8 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
                   id={`share-${list.id}`}
                   checked={list.share || false}
                   onCheckedChange={(checked) => onShareToggle(list.id, checked)}
+                  className="data-[state=unchecked]:bg-tertiary"
+
                 />
               </div>
             </div>
@@ -97,7 +99,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
         </div>
         <CardDescription className="text-left">
           {list.description && (
-            <p className="text-muted-foreground mb-2">
+            <p className="text-light-foreground mb-2">
               {list.description}
             </p>
           )}
@@ -115,7 +117,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
       <CardFooter className="pt-2 mt-auto flex flex-wrap sm:flex-nowrap gap-2">
         <div className="w-full sm:w-auto">
           <Button
-            className="w-full sm:w-auto flex-1 sm:px-10"
+            className="w-full sm:w-auto flex-1 sm:px-10 bg-gradient-light text-dark"
             onClick={() => onSelect(list.id)}
           >
             View List
@@ -127,7 +129,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <Button
               variant="default"
               onClick={() => goToPractice(list.id, 'translateFrom')}
-              className={`relative overflow-hidden truncate transition-all ${translateFromCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
+              className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateFromCount === 0 ? 'cursor-not-allowed' : ''} px-3`}
               disabled={translateFromCount === 0}
             >
               <FlagIcon country={list.target || 'en'} size={20} />
@@ -137,7 +139,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <Button
               variant="default"
               onClick={() => goToPractice(list.id, 'translateTo')}
-              className={`relative overflow-hidden truncate transition-all ${translateToCount === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
+              className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateToCount === 0 ? 'cursor-not-allowed' : ''} px-3`}
               disabled={translateToCount === 0}
             >
               <FlagIcon country={list.language} size={20} />

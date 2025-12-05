@@ -305,7 +305,7 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateFrom')}
-            className={`relative overflow-hidden truncate transition-all ${translateFromDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
+            className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateFromDue === 0 ? 'cursor-not-allowed' : ''} px-3`}
             disabled={translateFromDue === 0}
           >
             <FlagIcon country={currentList.target || 'en'} size={20} />
@@ -315,7 +315,7 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateTo')}
-            className={`relative overflow-hidden truncate transition-all ${translateToDue === 0 ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-practice-button'} px-3`}
+            className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateToDue === 0 ? 'cursor-not-allowed' : ''} px-3`}
             disabled={translateToDue === 0}
           >
             <FlagIcon country={currentList.language} size={20} />
@@ -347,7 +347,7 @@ const VocabList = () => {
             </Button>
           </div>
           {currentList.description && (
-            <p className="text-muted-foreground mt-2 max-w-lg line-clamp-3">
+            <p className="text-light-foreground mt-2 max-w-lg line-clamp-3">
               {currentList.description}
             </p>
           )}
@@ -359,7 +359,7 @@ const VocabList = () => {
             placeholder="Search words..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-8 bg-dark-solid"
+            className="w-full pr-8 bg-dark"
           />
           {searchTerm && (
             <button
@@ -404,7 +404,7 @@ const VocabList = () => {
           </DropdownMenu>
         </div>
 
-        <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md ml-4">
+        <div className="flex items-center gap-2 bg-light/50 px-2 py-1 rounded-md ml-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -442,7 +442,7 @@ const VocabList = () => {
           placeholder="Search words..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pr-8 bg-dark-solid"
+          className="w-full pr-8 bg-tertiary"
         />
         {searchTerm && (
           <button
@@ -559,7 +559,7 @@ const VocabList = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteList} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction onClick={confirmDeleteList} className="bg-danger text-danger-foreground hover:bg-danger/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

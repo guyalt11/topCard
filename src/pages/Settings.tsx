@@ -151,7 +151,7 @@ const Settings = () => {
                                     type="email"
                                     value={currentUser?.email || ''}
                                     disabled
-                                    className="bg-dark-solid mt-2"
+                                    className="bg-dark mt-2"
                                 />
                             </div>
                             <div>
@@ -160,7 +160,7 @@ const Settings = () => {
                                     id="user-id"
                                     value={currentUser?.id || ''}
                                     disabled
-                                    className="bg-dark-solid mt-2"
+                                    className="bg-dark mt-2"
                                 />
                             </div>
                         </div>
@@ -175,7 +175,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Change Password</Label>
-                                    <p className="text-sm text-muted-foreground">Update your account password</p>
+                                    <p className="text-sm text-light-foreground">Update your account password</p>
                                 </div>
                                 <Button
                                     variant="outline"
@@ -197,7 +197,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Practice Notifications</Label>
-                                    <p className="text-sm text-muted-foreground">Get reminded when words are due for review</p>
+                                    <p className="text-sm text-light-foreground">Get reminded when words are due for review</p>
                                 </div>
                                 <Button variant="outline" size="sm" disabled>
                                     Coming Soon
@@ -206,7 +206,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Daily Goal</Label>
-                                    <p className="text-sm text-muted-foreground">Set a daily practice target</p>
+                                    <p className="text-sm text-light-foreground">Set a daily practice target</p>
                                 </div>
                                 <Button variant="outline" size="sm" disabled>
                                     Coming Soon
@@ -224,7 +224,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Export Data</Label>
-                                    <p className="text-sm text-muted-foreground">Download all your vocabulary lists</p>
+                                    <p className="text-sm text-light-foreground">Download all your vocabulary lists</p>
                                 </div>
                                 <Button variant="outline" size="sm" disabled>
                                     Coming Soon
@@ -241,11 +241,11 @@ const Settings = () => {
                             <AlertTriangle className="h-5 w-5 text-destructive" />
                             <h2 className="text-xl font-semibold text-destructive">Danger Zone</h2>
                         </div>
-                        <div className="space-y-4 border border-destructive/50 rounded-lg p-4 bg-destructive/5">
+                        <div className="space-y-4 border border-danger/50 rounded-lg p-4 bg-danger/5">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label className="text-destructive">Delete Account</Label>
-                                    <p className="text-sm text-muted-foreground">Permanently delete your account and all data</p>
+                                    <p className="text-sm text-light-foreground">Permanently delete your account and all data</p>
                                 </div>
                                 <Button
                                     variant="destructive"
@@ -263,7 +263,7 @@ const Settings = () => {
                     {/* About Section */}
                     <div>
                         <h2 className="text-xl font-semibold mb-4">About</h2>
-                        <div className="space-y-2 text-sm text-muted-foreground">
+                        <div className="space-y-2 text-sm text-light-foreground">
                             <p>Wörtli - Vocabulary Learning App</p>
                             <p>Version 1.0.0</p>
                             <p>© 2025 Wörtli. All rights reserved.</p>
@@ -340,7 +340,7 @@ const Settings = () => {
                         <AlertDialogAction
                             onClick={handleDeleteAccount}
                             disabled={isDeleting}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            className="bg-danger text-danger-foreground hover:bg-danger/90"
                         >
                             {isDeleting ? 'Deleting...' : 'Delete Account'}
                         </AlertDialogAction>

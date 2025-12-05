@@ -72,7 +72,7 @@ const Home = () => {
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="flex flex-col items-center text-center p-6 rounded-lg bg-card-gradient hover:scale-105 transition-transform duration-300"
+                            className="flex flex-col items-center text-center p-6 rounded-lg bg-gradient-dark hover:scale-105 transition-transform duration-300"
                         >
                             <div className="mb-4">
                                 {feature.icon}
@@ -90,7 +90,7 @@ const Home = () => {
 
             {/* CTA Section */}
             <div className="container mx-auto px-4 py-20 text-center">
-                <div className="bg-card-gradient rounded-2xl p-12 max-w-4xl mx-auto">
+                <div className="bg-gradient-dark rounded-2xl p-12 max-w-4xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6">
                         Ready to start learning?
                     </h2>

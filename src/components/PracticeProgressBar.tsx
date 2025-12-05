@@ -16,8 +16,20 @@ const PracticeProgressBar: React.FC<PracticeProgressBarProps> = ({
 
   // Calculate color based on progress
   const getProgressColor = (percentage: number) => {
-    const start = { r: 0, g: 130, b: 132, a: 1 };
-    const end = { r: 0, g: 229, b: 204, a: 1 };
+    // Get color values from CSS custom properties
+    const root = document.documentElement;
+    const start = {
+      r: parseInt(getComputedStyle(root).getPropertyValue('--r-start')),
+      g: parseInt(getComputedStyle(root).getPropertyValue('--g-start')),
+      b: parseInt(getComputedStyle(root).getPropertyValue('--b-start')),
+      a: parseFloat(getComputedStyle(root).getPropertyValue('--a-start'))
+    };
+    const end = {
+      r: parseInt(getComputedStyle(root).getPropertyValue('--r-end')),
+      g: parseInt(getComputedStyle(root).getPropertyValue('--g-end')),
+      b: parseInt(getComputedStyle(root).getPropertyValue('--b-end')),
+      a: parseFloat(getComputedStyle(root).getPropertyValue('--a-end'))
+    };
 
     const r = Math.round(start.r + (percentage / 100) * (end.r - start.r));
     const g = Math.round(start.g + (percentage / 100) * (end.g - start.g));
@@ -30,7 +42,7 @@ const PracticeProgressBar: React.FC<PracticeProgressBarProps> = ({
   const progressColor = getProgressColor(progressPercentage);
 
   return (
-    <div className="w-full h-4 rounded-full border border-[hsl(210,100%,55%)] overflow-hidden">
+    <div className="w-full h-4 rounded-full border border-secondary overflow-hidden">
       <div
         className="h-full transition-all duration-300"
         style={{

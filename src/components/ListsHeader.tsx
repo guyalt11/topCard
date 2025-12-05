@@ -51,18 +51,18 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               title="Practice all words"
               onClick={onPracticeAll}
               disabled={totalDueWords === 0}
-              className={`gap-1 transition-all ${totalDueWords === 0 ? 'cursor-not-allowed opacity-50' : 'bg-header-btn-1 hover:!bg-header-btn-1 hover:brightness-110'}`}
+              className={`gap-1 transition-all ${totalDueWords === 0 ? 'cursor-not-allowed opacity-50' : 'btn-1'}`}
             >
               <Play className="h-4 w-4 text-black" />
             </Button>
           )}
-          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all bg-header-btn-2 text-white hover:!bg-header-btn-2 hover:brightness-110">
+          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all btn-2 text-white">
             <Plus className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Import lists" onClick={onImport} className="gap-1 transition-all bg-header-btn-3 text-white hover:!bg-header-btn-3 hover:brightness-110">
+          <Button title="Import lists" onClick={onImport} className="gap-1 transition-all btn-3 text-white">
             <Upload className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Browse shared lists" onClick={onLibrary} className="gap-1 transition-all bg-header-btn-4 text-white hover:!bg-header-btn-4 hover:brightness-110">
+          <Button title="Browse shared lists" onClick={onLibrary} className="gap-1 transition-all btn-4 text-white">
             <BookOpen className="h-4 w-4 text-black" />
           </Button>
           <Button
@@ -71,7 +71,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setShowOnlyDue(!showOnlyDue);
               onFilterChange(!showOnlyDue);
             }}
-            className={`gap-1 transition-all ${showOnlyDue ? 'bg-header-btn-1 hover:!bg-header-btn-1' : 'bg-header-btn-5 hover:!bg-header-btn-5'} text-white hover:brightness-110`}
+            className={`gap-1 transition-all ${showOnlyDue ? 'btn-1' : 'btn-5'} text-white`}
           >
             {showOnlyDue ? (
               <Eye className="h-4 w-4 text-black" />
@@ -94,7 +94,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setSearchQuery(e.target.value);
               onSearchChange(e.target.value);
             }}
-            className="flex h-10 w-full rounded-md border border-input bg-dark-solid px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            className="flex h-10 w-full rounded-md border border-input bg-tertiary px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           />
           {searchQuery && (
             <button

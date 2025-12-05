@@ -208,7 +208,7 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <Label>Gender (for nouns)</Label>
+                  <Label>Gender</Label>
                   <Button
                     type="button"
                     variant="outline"
@@ -229,34 +229,57 @@ const AddWordForm: React.FC<AddWordFormProps> = ({
                 {/* Only show m/f When needed */}
                 {!['se', 'dk', 'no', 'nl'].includes(currentList?.language || '') && (
                   <>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="m" id="male" />
-                      <Label htmlFor="male" className="gender-tag-m px-2 rounded">m.</Label>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                      <RadioGroupItem value="m" id="male" className="sr-only" />
+                      <Label
+                        htmlFor="male"
+                        className={`gender-tag-m w-8 h-8 flex items-center justify-center rounded-full cursor-pointer ${gender === 'm' ? 'gender-tag-selected' : ''}`}
+                        style={{ padding: 0, lineHeight: 1 }}
+                      >
+                        M
+                      </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="f" id="female" />
-                      <Label htmlFor="female" className="gender-tag-f px-2 rounded">f.</Label>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                      <RadioGroupItem value="f" id="female" className="sr-only" />
+                      <Label
+                        htmlFor="female"
+                        className={`gender-tag-f w-8 h-8 flex items-center justify-center rounded-full cursor-pointer ${gender === 'f' ? 'gender-tag-selected' : ''}`}
+                        style={{ padding: 0, lineHeight: 1 }}
+                      >
+                        F
+                      </Label>
                     </div>
                   </>
                 )}
                 {/* Only show neuter When needed */}
                 {(['de', 'is', 'bg', 'hr', 'cz', 'gr', 'mk', 'pl', 'ro', 'ru', 'rs', 'sk', 'si', 'ua', 'se', 'dk', 'no', 'nl'].includes(currentList?.language || '')) && (
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="n" id="neutral" />
-                    <Label htmlFor="neutral" className="gender-tag-n px-2 rounded">n.</Label>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                    <RadioGroupItem value="n" id="neutral" className="sr-only" />
+                    <Label
+                      htmlFor="neutral"
+                      className={`gender-tag-n w-8 h-8 flex items-center justify-center rounded-full cursor-pointer ${gender === 'n' ? 'gender-tag-selected' : ''}`}
+                      style={{ padding: 0, lineHeight: 1 }}
+                    >
+                      N
+                    </Label>
                   </div>
                 )}
                 {/* Only show common for When needed*/}
                 {['se', 'dk', 'no', 'nl'].includes(currentList?.language || '') && (
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="c" id="common" />
-                    <Label htmlFor="common" className="gender-tag-c px-2 rounded">c.</Label>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                    <RadioGroupItem value="c" id="common" className="sr-only" />
+                    <Label
+                      htmlFor="common"
+                      className={`gender-tag-c w-8 h-8 flex items-center justify-center rounded-full cursor-pointer ${gender === 'c' ? 'gender-tag-selected' : ''}`}
+                      style={{ padding: 0, lineHeight: 1 }}
+                    >
+                      C
+                    </Label>
                   </div>
                 )}
               </RadioGroup>
             </div>
           )}
-
           <div className="space-y-2">
             <Label htmlFor="transl">Translation</Label>
             <Input

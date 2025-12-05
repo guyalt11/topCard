@@ -68,9 +68,8 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   return (
     <div className="w-full max-w-md mx-auto">
       <Card
-        className={`min-h-[200px] flex flex-col cursor-pointer transition-transform ${flipped ? 'animate-flip' : ''}`}
+        className={`min-h-[200px] flex flex-col cursor-pointer transition-transform bg-gradient-dark ${flipped ? 'animate-flip' : ''}`}
         onClick={handleFlip}
-        style={{ background: 'linear-gradient(135deg, rgba(21, 76, 82, 1) 0%, rgba(8, 35, 38, 1) 100%)' }}
       >
         <CardContent className="flex-1 flex flex-col justify-center items-center p-6">
           <CardFront
@@ -92,7 +91,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
           )}
 
           {!flipped && (
-            <div className={`text-sm text-muted-foreground ${direction === 'translateFrom' ? 'py-2 mb-24 mt-28' : 'pb-1 mb-20 mt-24'} `}>
+            <div className={`text-sm text-light-foreground ${direction === 'translateFrom' ? 'py-2 mb-24 mt-28' : 'pb-1 mb-20 mt-24'} `}>
               Click to reveal the answer
             </div>
           )}

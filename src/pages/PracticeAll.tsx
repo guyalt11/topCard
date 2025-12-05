@@ -208,11 +208,8 @@ const PracticeAll: React.FC = () => {
           <Button
             variant="default"
             onClick={toggleDirection}
-            className={`relative px-[6px] sm:px-2 ${(direction !== 'translateTo' && translateToDue === 0) ||
-              (direction !== 'translateFrom' && translateFromDue === 0)
-              ? 'bg-muted text-muted-foreground cursor-not-allowed'
-              : 'bg-input hover:bg-accent'
-              }`}
+            className={`relative px-[6px] sm:px-2 bg-tertiary ${(direction !== 'translateTo' && translateToDue === 0) ||
+              (direction !== 'translateFrom' && translateFromDue === 0) ? 'cursor-not-allowed' : ''}`}
             disabled={
               (direction !== 'translateTo' && translateToDue === 0) ||
               (direction !== 'translateFrom' && translateFromDue === 0)
@@ -264,7 +261,7 @@ const PracticeAll: React.FC = () => {
             isAnswered={isAnswered}
             onDelete={() => setShowDeleteDialog(true)}
           />
-          <div className="mt-4 text-sm text-muted-foreground text-center">
+          <div className="mt-4 text-sm text-light-foreground text-center">
             From list: <span className="font-semibold">{currentWord.listName}</span>
           </div>
         </>
@@ -285,7 +282,7 @@ const PracticeAll: React.FC = () => {
                 handleDelete();
                 setShowDeleteDialog(false);
               }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-danger text-danger-foreground hover:bg-danger/90"
             >
               Delete
             </AlertDialogAction>

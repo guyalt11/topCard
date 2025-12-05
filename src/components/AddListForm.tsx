@@ -105,7 +105,6 @@ const AddListForm: React.FC<AddListFormProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Food Vocabulary"
-              className='bg-dark-solid'
               required
             />
           </div>
@@ -113,10 +112,10 @@ const AddListForm: React.FC<AddListFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="language">Translate From</Label>
             <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-tertiary">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
-              <SelectContent className="max-h-60 overflow-y-auto bg-dark-solid">
+              <SelectContent className="max-h-60 overflow-y-auto bg-tertiary">
                 {LANGUAGES.map(lang => (
                   <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
                 ))}
@@ -127,10 +126,10 @@ const AddListForm: React.FC<AddListFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="target">To</Label>
             <Select value={target} onValueChange={setTarget}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-tertiary">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
-              <SelectContent className="max-h-60 overflow-y-auto bg-dark-solid">
+              <SelectContent className="max-h-60 overflow-y-auto bg-tertiary">
                 {LANGUAGES.map(lang => (
                   <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
                 ))}
@@ -145,7 +144,6 @@ const AddListForm: React.FC<AddListFormProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add a short description of this list..."
-              className="bg-dark-solid"
             />
           </div>
 

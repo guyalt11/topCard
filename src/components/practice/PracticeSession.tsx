@@ -224,7 +224,7 @@ const PracticeSession: React.FC<PracticeSessionProps> = ({
                 handleDelete();
                 setShowDeleteDialog(false);
               }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-danger text-danger-foreground hover:bg-danger/90"
             >
               Delete
             </AlertDialogAction>

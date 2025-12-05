@@ -33,7 +33,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
 
   return (
     <div className="text-center w-full">
-      <div className="mb-2 text-muted-foreground text-sm flex items-center justify-center">
+      <div className="mb-2 text-light-foreground text-sm flex items-center justify-center">
         <DirectionFlag direction={direction} size={16} language={language} target={target} />
       </div>
       <div className="flex items-center justify-center gap-2">
@@ -58,7 +58,7 @@ const CardFront: React.FC<CardFrontProps> = ({ word, direction, flipped, onDelet
       )}
 
       {direction === 'translateTo' && word.notes && (
-        <div className="mt-4 text-sm text-muted-foreground">
+        <div className="mt-4 text-sm text-light-foreground">
           <p>{word.notes}</p>
         </div>
       )}

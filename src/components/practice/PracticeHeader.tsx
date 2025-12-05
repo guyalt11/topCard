@@ -44,14 +44,12 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
     <div className="mb-6 sm:flex sm:justify-between sm:items-center">
       <h1 className="text-2xl font-bold">Practice: {listName}</h1>
       <div className="flex gap-2 mt-2 sm:mt-0">
-        <Button onClick={onRefresh}><RefreshCcw /></Button>
+        <Button className="btn-2" onClick={onRefresh}><RefreshCcw /></Button>
         <Button
           variant="default"
           onClick={toggleDirection}
-          className={`relative px-[6px] sm:px-2 transition-all ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
-            (direction !== 'translateFrom' && dueTranslateFrom === 0)
-            ? 'bg-muted text-muted-foreground cursor-not-allowed'
-            : 'bg-practice-button'}`}
+          className={`relative px-[6px] sm:px-2 transition-all bg-tertiary ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
+            (direction !== 'translateFrom' && dueTranslateFrom === 0) ? 'cursor-not-allowed' : ''}`}
           disabled={
             (direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0)
@@ -69,8 +67,8 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
             />
           </div>
         </Button>
-        <Button onClick={onBack}>Back to List</Button>
-        <Button onClick={() => navigate('/')}>Home</Button>
+        <Button className="btn-2" onClick={onBack}>Back to List</Button>
+        <Button className="btn-2" onClick={() => navigate('/')}>Home</Button>
       </div>
     </div>
   );

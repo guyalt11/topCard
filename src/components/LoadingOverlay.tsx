@@ -7,7 +7,7 @@ interface LoadingOverlayProps {
 const LoadingOverlay = ({ message = "Loading..." }: LoadingOverlayProps) => {
     return (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-            <div className="bg-card-gradient rounded-lg p-8 flex flex-col items-center gap-4 shadow-xl">
+            <div className="bg-gradient-dark rounded-lg p-8 flex flex-col items-center gap-4 shadow-xl">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <p className="text-lg font-medium">{message}</p>
             </div>
