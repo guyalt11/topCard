@@ -112,10 +112,10 @@ const AddListForm: React.FC<AddListFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="language">Translate From</Label>
             <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="bg-tertiary">
+              <SelectTrigger className="bg-secondary">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
-              <SelectContent className="max-h-60 overflow-y-auto bg-tertiary">
+              <SelectContent className="max-h-60 overflow-y-auto bg-secondary">
                 {LANGUAGES.map(lang => (
                   <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
                 ))}
@@ -126,10 +126,10 @@ const AddListForm: React.FC<AddListFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="target">To</Label>
             <Select value={target} onValueChange={setTarget}>
-              <SelectTrigger className="bg-tertiary">
+              <SelectTrigger className="bg-secondary">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
-              <SelectContent className="max-h-60 overflow-y-auto bg-tertiary">
+              <SelectContent className="max-h-60 overflow-y-auto bg-secondary">
                 {LANGUAGES.map(lang => (
                   <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
                 ))}

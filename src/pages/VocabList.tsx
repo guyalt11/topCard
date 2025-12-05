@@ -305,21 +305,21 @@ const VocabList = () => {
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateFrom')}
-            className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateFromDue === 0 ? 'cursor-not-allowed' : ''} px-3`}
+            className={`relative overflow-hidden truncate transition-all bg-secondary ${translateFromDue === 0 ? 'cursor-not-allowed' : ''} px-3`}
             disabled={translateFromDue === 0}
           >
             <FlagIcon country={currentList.target || 'en'} size={20} />
-            <RightArrow size={20} className="text-white" />
+            <RightArrow size={20} className="text-foreground" />
             <FlagIcon country={currentList.language} size={20} />
           </Button>
           <Button
             variant="default"
             onClick={() => goToPractice(currentList.id, 'translateTo')}
-            className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateToDue === 0 ? 'cursor-not-allowed' : ''} px-3`}
+            className={`relative overflow-hidden truncate transition-all bg-secondary ${translateToDue === 0 ? 'cursor-not-allowed' : ''} px-3`}
             disabled={translateToDue === 0}
           >
             <FlagIcon country={currentList.language} size={20} />
-            <RightArrow size={20} className="text-white" />
+            <RightArrow size={20} className="text-foreground" />
             <FlagIcon country={currentList.target || 'en'} size={20} />
           </Button>
         </div>
@@ -347,7 +347,7 @@ const VocabList = () => {
             </Button>
           </div>
           {currentList.description && (
-            <p className="text-light-foreground mt-2 max-w-lg line-clamp-3">
+            <p className="text-tertiary-foreground mt-2 max-w-lg line-clamp-3">
               {currentList.description}
             </p>
           )}
@@ -404,7 +404,7 @@ const VocabList = () => {
           </DropdownMenu>
         </div>
 
-        <div className="flex items-center gap-2 bg-light/50 px-2 py-1 rounded-md ml-4">
+        <div className="flex items-center gap-2 bg-tertiary/50 px-2 py-1 rounded-md ml-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -442,7 +442,7 @@ const VocabList = () => {
           placeholder="Search words..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pr-8 bg-tertiary"
+          className="w-full pr-8 bg-secondary"
         />
         {searchTerm && (
           <button

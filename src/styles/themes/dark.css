@@ -1,0 +1,76 @@
+:root,
+[data-theme="dark"] {
+    /* Background & Foreground */
+    --background: #020b0b;
+    --foreground: #FFFFFF;
+
+    /* Primary - Bright cyan/turquoise */
+    --primary: #0A3D41;
+    --primary-foreground: #FFFFFF;
+
+    /* Secondary - Darker teal */
+    --secondary: #0a2c30;
+    --secondary-foreground: #FFFFFF;
+
+    /* Tertiary - Medium teal */
+    --tertiary: #00A39C;
+    --tertiary-foreground: #B3B3B3;
+
+    /* Danger - Red for destructive actions */
+    --danger: #D92626;
+    --danger-foreground: #FFFFFF;
+
+    /* Dark - Main dark background */
+    --dark: #020b0b;
+    --dark-foreground: #FFFFFF;
+
+    /* Light - Muted/subtle elements */
+    --light: #00E5CC;
+    --light-foreground: #020b0b;
+
+    /* Utility colors */
+    --border: var(--secondary);
+    --input: var(--secondary);
+    --ring: var(--light);
+    --radius: 0.5rem;
+
+    /* Button colors - Pure HEX */
+    --btn-1: #00E5CC;
+    --btn-2: #00C4B4;
+    --btn-3: #00A39C;
+    --btn-4: #009390;
+    --btn-5: #008284;
+
+    /* Progress bar colors */
+    --r-start: 0;
+    --g-start: 130;
+    --b-start: 132;
+    --a-start: 1;
+    --r-end: 0;
+    --g-end: 229;
+    --b-end: 204;
+    --a-end: 1;
+
+    /* Gradient colors */
+    --gradient-from: #154C52;
+    --gradient-to: #082326;
+
+    /* Difficulty colors */
+    --difficulty-hard: #F87171;
+    --difficulty-ok: #FCD34D;
+    --difficulty-good: #60A5FA;
+    --difficulty-perfect: #A3E635;
+
+    /* Gender colors */
+    --gender-male: #a4cdff;
+    --gender-male-foreground: #414141ff;
+    --gender-female: #ffb6b6;
+    --gender-female-foreground: #414141ff;
+    --gender-neuter: #a1ffa1;
+    --gender-neuter-foreground: #414141ff;
+    --gender-common: #fdff9e;
+    --gender-common-foreground: #414141ff;
+
+    --gradient-dark: linear-gradient(135deg, var(--gradient-from) 0%, var(--gradient-to) 100%);
+    --gradient-tertiary: linear-gradient(135deg, var(--btn-1) 0%, var(--btn-3) 100%);
+}

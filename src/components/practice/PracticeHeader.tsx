@@ -48,7 +48,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
         <Button
           variant="default"
           onClick={toggleDirection}
-          className={`relative px-[6px] sm:px-2 transition-all bg-tertiary ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
+          className={`relative px-[6px] sm:px-2 transition-all bg-secondary ${(direction !== 'translateTo' && dueTranslateTo === 0) ||
             (direction !== 'translateFrom' && dueTranslateFrom === 0) ? 'cursor-not-allowed' : ''}`}
           disabled={
             (direction !== 'translateTo' && dueTranslateTo === 0) ||
@@ -60,7 +60,7 @@ const PracticeHeader: React.FC<PracticeHeaderProps> = ({
               country={direction !== 'translateTo' ? (currentList?.language || 'de') : (currentList?.target || 'en')}
               size={24}
             />
-            <RightArrow size={24} className="text-white" />
+            <RightArrow size={24} className="text-foreground" />
             <FlagIcon
               country={direction !== 'translateTo' ? (currentList?.target || 'en') : (currentList?.language || 'de')}
               size={24}

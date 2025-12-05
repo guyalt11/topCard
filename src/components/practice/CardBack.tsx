@@ -31,7 +31,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction, language, target }
 
   return (
     <div className="text-center mt-6 pt-4 w-full">
-      <div className="mb-2 text-light-foreground text-sm flex items-center justify-center">
+      <div className="mb-2 text-tertiary-foreground text-sm flex items-center justify-center">
         <DirectionFlag direction={direction === 'translateTo' ? 'translateFrom' : 'translateTo'} size={16} language={language} target={target} />
       </div>
       <div className="flex items-center justify-center gap-2">
@@ -54,7 +54,7 @@ const CardBack: React.FC<CardBackProps> = ({ word, direction, language, target }
       )}
 
       {direction === 'translateFrom' && word.notes && (
-        <div className="mt-4 text-sm text-light-foreground">
+        <div className="mt-4 text-sm text-tertiary-foreground">
           <p>{word.notes}</p>
         </div>
       )}

@@ -1,0 +1,76 @@
+/* Neubrutalism Theme - Bold, high-contrast, flat design */
+[data-theme="neubrutalism"] {
+    /* Background & Foreground */
+    --background: #8452ff;
+    --foreground: #000000;
+
+    /* Primary - Bright yellow */
+    --primary: #fd6f57;
+    --primary-foreground: #000000;
+
+    /* Secondary - Bold pink */
+    --secondary: #3d9028;
+    --secondary-foreground: #000000;
+
+    /* Tertiary - Vibrant cyan */
+    --tertiary: #00BFFF;
+    --tertiary-foreground: #000000;
+
+    /* Danger - Strong red */
+    --danger: #FF0000;
+    --danger-foreground: #FFFFFF;
+
+    /* Dark - Pure black */
+    --dark: #000000;
+    --dark-foreground: #FFFFFF;
+
+    /* Light - Electric blue */
+    --light: #ceff4e;
+    --light-foreground: #000000;
+
+    /* Utility colors */
+    --border: #000000;
+    --input: #1A1A1A;
+    --ring: #FFD700;
+    --radius: 0.25rem;
+
+    /* Button colors */
+    --btn-1: #FFD700;
+    --btn-2: #FF1493;
+    --btn-3: #00FFFF;
+    --btn-4: #00FF00;
+    --btn-5: #FF00FF;
+
+    /* Progress bar colors */
+    --r-start: 255;
+    --g-start: 0;
+    --b-start: 255;
+    --a-start: 1;
+    --r-end: 255;
+    --g-end: 215;
+    --b-end: 0;
+    --a-end: 1;
+
+    /* Gradient colors */
+    --gradient-from: #FF1493;
+    --gradient-to: #000000;
+
+    /* Difficulty colors */
+    --difficulty-hard: #FF0000;
+    --difficulty-ok: #FFD700;
+    --difficulty-good: #00FFFF;
+    --difficulty-perfect: #00FF00;
+
+    /* Gender colors */
+    --gender-male: #00BFFF;
+    --gender-male-foreground: #000000;
+    --gender-female: #FF1493;
+    --gender-female-foreground: #FFFFFF;
+    --gender-neuter: #00FF00;
+    --gender-neuter-foreground: #000000;
+    --gender-common: #FFD700;
+    --gender-common-foreground: #000000;
+
+    --gradient-dark: var(--primary);
+    --gradient-tertiary: var(--light);
+}

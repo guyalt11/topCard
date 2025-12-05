@@ -42,7 +42,7 @@ const PracticeProgressBar: React.FC<PracticeProgressBarProps> = ({
   const progressColor = getProgressColor(progressPercentage);
 
   return (
-    <div className="w-full h-4 rounded-full border border-secondary overflow-hidden">
+    <div className="w-full h-4 rounded-full border border-primary overflow-hidden">
       <div
         className="h-full transition-all duration-300"
         style={{

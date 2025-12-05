@@ -7,22 +7,22 @@ const Home = () => {
 
     const features = [
         {
-            icon: <Brain className="h-12 w-12 text-primary" />,
+            icon: <Brain className="h-12 w-12 text-light" />,
             title: "AI-Powered Learning",
             description: "Generate vocabulary lists instantly with our AI assistant tailored to your learning goals"
         },
         {
-            icon: <Target className="h-12 w-12 text-primary" />,
+            icon: <Target className="h-12 w-12 text-light" />,
             title: "Smart Practice System",
             description: "Adaptive spaced repetition ensures you review words at the perfect time for maximum retention"
         },
         {
-            icon: <Zap className="h-12 w-12 text-primary" />,
+            icon: <Zap className="h-12 w-12 text-light" />,
             title: "Track Your Progress",
             description: "Monitor your learning journey with detailed statistics and achievement tracking"
         },
         {
-            icon: <BookOpen className="h-12 w-12 text-primary" />,
+            icon: <BookOpen className="h-12 w-12 text-light" />,
             title: "Shared Library",
             description: "Access our community library with a wide range of vocabulary lists for over 50 languages"
         }
@@ -33,7 +33,7 @@ const Home = () => {
             {/* Hero Section */}
             <div className="container mx-auto px-4 pt-8 pb-20 text-center">
                 <img src="/logo.png" alt="Wörtli Logo" className="w-20 sm:w-24 h-20 sm:h-24 mb-6 mx-auto" />
-                <h1 className="text-5xl md:text-6xl font-bold pb-3 mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                <h1 className="text-5xl md:text-6xl font-bold pb-3 mb-6 bg-gradient-to-r from-light to-light/60 bg-clip-text text-transparent">
                     Master Any Language
                 </h1>
                 <p className="text-xl md:text-2xl text-muted-foreground mb-4">
@@ -47,7 +47,7 @@ const Home = () => {
                     <Button
                         size="lg"
                         onClick={() => navigate('/register')}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg"
+                        className="bg-light hover:bg-light/90 text-light-foreground px-8 py-6 text-lg"
                     >
                         Get Started Free
                     </Button>
@@ -100,7 +100,7 @@ const Home = () => {
                     <Button
                         size="lg"
                         onClick={() => navigate('/register')}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg"
+                        className="bg-light hover:bg-light/90 text-light-foreground px-8 py-6 text-lg"
                     >
                         Start Learning Now
                     </Button>

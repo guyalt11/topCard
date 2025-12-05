@@ -56,13 +56,13 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               <Play className="h-4 w-4 text-black" />
             </Button>
           )}
-          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all btn-2 text-white">
+          <Button title="Add new list" onClick={onAddList} className="gap-1 transition-all btn-2 text-foreground">
             <Plus className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Import lists" onClick={onImport} className="gap-1 transition-all btn-3 text-white">
+          <Button title="Import lists" onClick={onImport} className="gap-1 transition-all btn-3 text-foreground">
             <Upload className="h-4 w-4 text-black" />
           </Button>
-          <Button title="Browse shared lists" onClick={onLibrary} className="gap-1 transition-all btn-4 text-white">
+          <Button title="Browse shared lists" onClick={onLibrary} className="gap-1 transition-all btn-4 text-foreground">
             <BookOpen className="h-4 w-4 text-black" />
           </Button>
           <Button
@@ -71,7 +71,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setShowOnlyDue(!showOnlyDue);
               onFilterChange(!showOnlyDue);
             }}
-            className={`gap-1 transition-all ${showOnlyDue ? 'btn-1' : 'btn-5'} text-white`}
+            className={`gap-1 transition-all ${showOnlyDue ? 'btn-1' : 'btn-5'} text-foreground`}
           >
             {showOnlyDue ? (
               <Eye className="h-4 w-4 text-black" />
@@ -94,7 +94,7 @@ const ListsHeader = ({ onAddList, onImport, onLibrary, lists, onFilterChange, on
               setSearchQuery(e.target.value);
               onSearchChange(e.target.value);
             }}
-            className="flex h-10 w-full rounded-md border border-input bg-tertiary px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            className="flex h-10 w-full rounded-md border border-input bg-secondary px-3 py-2 pr-10 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           />
           {searchQuery && (
             <button

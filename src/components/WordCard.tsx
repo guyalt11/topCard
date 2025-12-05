@@ -50,13 +50,13 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
       <div className="flex flex-col gap-1 items-start">
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateFrom" size={14} />
-          <span className={translateFromFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-light-foreground'}>
+          <span className={translateFromFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-tertiary-foreground'}>
             {translateFromFormatted}
           </span>
         </div>
         <div className="flex items-center gap-1">
           <DirectionFlag direction="translateTo" size={14} />
-          <span className={translateToFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-light-foreground'}>
+          <span className={translateToFormatted === 'Ready for review' ? 'text-green-500 font-medium' : 'text-tertiary-foreground'}>
             {translateToFormatted}
           </span>
         </div>
@@ -71,9 +71,9 @@ const WordCard = ({ word, onEdit, onDelete, showReviewTimes }: WordCardProps) =>
           <div className="flex-1">
             <div className="flex items-center gap-3">
               {word.gender && <GenderTag gender={word.gender} />}
-              <h3 className="font-medium text-lg">{word.origin}<span className="text-light-foreground"> · {word.transl}</span></h3>
+              <h3 className="font-medium text-lg">{word.origin}<span className="text-tertiary-foreground"> · {word.transl}</span></h3>
             </div>
-            {word.notes && <p className="text-sm text-light-foreground mt-2">{word.notes}</p>}
+            {word.notes && <p className="text-sm text-tertiary-foreground mt-2">{word.notes}</p>}
             {showReviewTimes && (
               <div className="text-xs mt-2">
                 {getFormattedReviewTimes(word)}

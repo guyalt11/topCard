@@ -28,6 +28,10 @@ export default {
 				// Core 7 colors
 				background: 'var(--background)',
 				foreground: 'var(--foreground)',
+				light: {
+					DEFAULT: 'var(--light)',
+					foreground: 'var(--light-foreground)'
+				},
 				primary: {
 					DEFAULT: 'var(--primary)',
 					foreground: 'var(--primary-foreground)'
@@ -36,21 +40,21 @@ export default {
 					DEFAULT: 'var(--secondary)',
 					foreground: 'var(--secondary-foreground)'
 				},
-				tertiary: {
-					DEFAULT: 'var(--tertiary)',
-					foreground: 'var(--tertiary-foreground)'
+				treitary: {
+					DEFAULT: 'var(--treitary)',
+					foreground: 'var(--treitary-foreground)'
 				},
 				danger: {
+					DEFAULT: 'var(--danger)',
+					foreground: 'var(--danger-foreground)'
+				},
+				destructive: {
 					DEFAULT: 'var(--danger)',
 					foreground: 'var(--danger-foreground)'
 				},
 				dark: {
 					DEFAULT: 'var(--dark)',
 					foreground: 'var(--dark-foreground)'
-				},
-				light: {
-					DEFAULT: 'var(--light)',
-					foreground: 'var(--light-foreground)'
 				},
 
 				// Additional utility colors

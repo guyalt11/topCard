@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { VocabProvider } from "@/context/VocabContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { PreferencesProvider } from "@/context/PreferencesContext";
 import SettingsMenu from "@/components/SettingsMenu";
 import Index from "./pages/Index";
 import Home from "./pages/Home";
@@ -26,44 +27,46 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <TokenExpiryChecker />
-          <VocabProvider>
-            <Toaster />
-            <Sonner />
-            <div className="fixed top-2 right-2 z-50">
-              <SettingsMenu />
-            </div>
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/list/:listId" element={
-                <ProtectedRoute>
-                  <VocabList />
-                </ProtectedRoute>
-              } />
-              <Route path="/practice/:listId" element={
-                <ProtectedRoute>
-                  <Practice />
-                </ProtectedRoute>
-              } />
-              <Route path="/practice-all" element={
-                <ProtectedRoute>
-                  <PracticeAll />
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </VocabProvider>
+          <PreferencesProvider>
+            <VocabProvider>
+              <Toaster />
+              <Sonner />
+              <div className="fixed top-2 right-2 z-50">
+                <SettingsMenu />
+              </div>
+              <Routes>
+                <Route path="/home" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } />
+                <Route path="/list/:listId" element={
+                  <ProtectedRoute>
+                    <VocabList />
+                  </ProtectedRoute>
+                } />
+                <Route path="/practice/:listId" element={
+                  <ProtectedRoute>
+                    <Practice />
+                  </ProtectedRoute>
+                } />
+                <Route path="/practice-all" element={
+                  <ProtectedRoute>
+                    <PracticeAll />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </VocabProvider>
+          </PreferencesProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

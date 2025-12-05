@@ -46,7 +46,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
   };
 
   return (
-    <Card className="h-full flex flex-col bg-secondary">
+    <Card className="h-full flex flex-col bg-primary">
       {/*<Card className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(8, 35, 38, 1) 0%, rgba(21, 76, 82, 1) 100%)' }}>*/}
       <CardHeader className="pb-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -81,7 +81,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
                   id={`share-${list.id}`}
                   checked={list.share || false}
                   onCheckedChange={(checked) => onShareToggle(list.id, checked)}
-                  className="data-[state=unchecked]:bg-tertiary"
+                  className="data-[state=unchecked]:bg-secondary"
 
                 />
               </div>
@@ -99,7 +99,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
         </div>
         <CardDescription className="text-left">
           {list.description && (
-            <p className="text-light-foreground mb-2">
+            <p className="text-tertiary-foreground mb-2">
               {list.description}
             </p>
           )}
@@ -117,7 +117,7 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
       <CardFooter className="pt-2 mt-auto flex flex-wrap sm:flex-nowrap gap-2">
         <div className="w-full sm:w-auto">
           <Button
-            className="w-full sm:w-auto flex-1 sm:px-10 bg-gradient-light text-dark"
+            className="w-full sm:w-auto flex-1 sm:px-10 bg-gradient-tertiary text-dark"
             onClick={() => onSelect(list.id)}
           >
             View List
@@ -129,21 +129,21 @@ const ListCard = ({ list, onSelect, onEdit, onDelete, onPractice, onExport, onIm
             <Button
               variant="default"
               onClick={() => goToPractice(list.id, 'translateFrom')}
-              className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateFromCount === 0 ? 'cursor-not-allowed' : ''} px-3`}
+              className={`relative overflow-hidden truncate transition-all bg-secondary ${translateFromCount === 0 ? 'cursor-not-allowed' : ''} px-3`}
               disabled={translateFromCount === 0}
             >
               <FlagIcon country={list.target || 'en'} size={20} />
-              <RightArrow size={20} className="text-white" />
+              <RightArrow size={20} className="text-foreground" />
               <FlagIcon country={list.language} size={20} />
             </Button>
             <Button
               variant="default"
               onClick={() => goToPractice(list.id, 'translateTo')}
-              className={`relative overflow-hidden truncate transition-all bg-tertiary ${translateToCount === 0 ? 'cursor-not-allowed' : ''} px-3`}
+              className={`relative overflow-hidden truncate transition-all bg-secondary ${translateToCount === 0 ? 'cursor-not-allowed' : ''} px-3`}
               disabled={translateToCount === 0}
             >
               <FlagIcon country={list.language} size={20} />
-              <RightArrow size={20} className="text-white" />
+              <RightArrow size={20} className="text-foreground" />
               <FlagIcon country={list.target || 'en'} size={20} />
             </Button>
           </div>

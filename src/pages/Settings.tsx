@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { usePreferences } from "@/context/PreferencesContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,7 @@ import {
 
 const Settings = () => {
     const { currentUser, updatePassword, deleteUser } = useAuth();
+    const { colorScheme, updateColorScheme } = usePreferences();
     const navigate = useNavigate();
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -34,6 +36,7 @@ const Settings = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isUpdatingTheme, setIsUpdatingTheme] = useState(false);
 
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -123,6 +126,30 @@ const Settings = () => {
         }
     };
 
+    const handleColorSchemeChange = async (scheme: 'dark' | 'light' | 'neubrutalism') => {
+        setIsUpdatingTheme(true);
+        const success = await updateColorScheme(scheme);
+
+        if (success) {
+            const themeNames = {
+                'dark': 'Dark (Teal)',
+                'light': 'Light',
+                'neubrutalism': 'Neubrutalism'
+            };
+            toast({
+                title: "Theme updated",
+                description: `Color scheme changed to ${themeNames[scheme]}.`,
+            });
+        } else {
+            toast({
+                title: "Update failed",
+                description: "Unable to update color scheme. Please try again.",
+                variant: "destructive",
+            });
+        }
+        setIsUpdatingTheme(false);
+    };
+
     return (
         <div className="min-h-screen bg-background">
             <div className="container mx-auto px-4 py-8 max-w-3xl">
@@ -175,7 +202,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Change Password</Label>
-                                    <p className="text-sm text-light-foreground">Update your account password</p>
+                                    <p className="text-sm text-tertiary-foreground">Update your account password</p>
                                 </div>
                                 <Button
                                     variant="outline"
@@ -194,10 +221,47 @@ const Settings = () => {
                     <div>
                         <h2 className="text-xl font-semibold mb-4">Preferences</h2>
                         <div className="space-y-4">
+                            <div>
+                                <Label>Color Scheme</Label>
+                                <p className="text-sm text-tertiary-foreground mb-3">Choose your preferred color theme</p>
+                                <div className="grid grid-cols-1 gap-3">
+                                    {[
+                                        { value: 'dark', label: 'Dark (Teal)', description: 'Default theme' },
+                                        { value: 'light', label: 'Light', description: 'Clean & bright' },
+                                        { value: 'neubrutalism', label: 'Neubrutalism', description: 'Bold & high-contrast' },
+                                    ].map((theme) => (
+                                        <label
+                                            key={theme.value}
+                                            className="flex items-center gap-3 p-3 border border-border rounded-lg cursor-pointer hover:bg-secondary/20 transition-colors"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="colorScheme"
+                                                value={theme.value}
+                                                checked={colorScheme === theme.value}
+                                                onChange={() => handleColorSchemeChange(theme.value as any)}
+                                                disabled={isUpdatingTheme}
+                                                className="w-4 h-4"
+                                            />
+                                            <div className="flex items-center gap-3 flex-1">
+                                                <div className="flex gap-1" data-theme={theme.value}>
+                                                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'var(--light)' }} />
+                                                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'var(--primary)' }} />
+                                                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'var(--secondary)' }} />
+                                                </div>
+                                                <div>
+                                                    <div className="font-medium">{theme.label}</div>
+                                                    <div className="text-xs text-tertiary-foreground">{theme.description}</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Practice Notifications</Label>
-                                    <p className="text-sm text-light-foreground">Get reminded when words are due for review</p>
+                                    <p className="text-sm text-tertiary-foreground">Get reminded when words are due for review</p>
                                 </div>
                                 <Button variant="outline" size="sm" disabled>
                                     Coming Soon
@@ -206,7 +270,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Daily Goal</Label>
-                                    <p className="text-sm text-light-foreground">Set a daily practice target</p>
+                                    <p className="text-sm text-tertiary-foreground">Set a daily practice target</p>
                                 </div>
                                 <Button variant="outline" size="sm" disabled>
                                     Coming Soon
@@ -224,7 +288,7 @@ const Settings = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label>Export Data</Label>
-                                    <p className="text-sm text-light-foreground">Download all your vocabulary lists</p>
+                                    <p className="text-sm text-tertiary-foreground">Download all your vocabulary lists</p>
                                 </div>
                                 <Button variant="outline" size="sm" disabled>
                                     Coming Soon
@@ -241,11 +305,11 @@ const Settings = () => {
                             <AlertTriangle className="h-5 w-5 text-destructive" />
                             <h2 className="text-xl font-semibold text-destructive">Danger Zone</h2>
                         </div>
-                        <div className="space-y-4 border border-danger/50 rounded-lg p-4 bg-danger/5">
+                        <div className="space-y-4 border-2 border-danger rounded-lg p-4 bg-danger/10">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label className="text-destructive">Delete Account</Label>
-                                    <p className="text-sm text-light-foreground">Permanently delete your account and all data</p>
+                                    <p className="text-sm text-tertiary-foreground">Permanently delete your account and all data</p>
                                 </div>
                                 <Button
                                     variant="destructive"
@@ -263,7 +327,7 @@ const Settings = () => {
                     {/* About Section */}
                     <div>
                         <h2 className="text-xl font-semibold mb-4">About</h2>
-                        <div className="space-y-2 text-sm text-light-foreground">
+                        <div className="space-y-2 text-sm text-tertiary-foreground">
                             <p>Wörtli - Vocabulary Learning App</p>
                             <p>Version 1.0.0</p>
                             <p>© 2025 Wörtli. All rights reserved.</p>

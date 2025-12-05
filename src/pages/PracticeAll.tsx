@@ -208,7 +208,7 @@ const PracticeAll: React.FC = () => {
           <Button
             variant="default"
             onClick={toggleDirection}
-            className={`relative px-[6px] sm:px-2 bg-tertiary ${(direction !== 'translateTo' && translateToDue === 0) ||
+            className={`relative px-[6px] sm:px-2 bg-secondary ${(direction !== 'translateTo' && translateToDue === 0) ||
               (direction !== 'translateFrom' && translateFromDue === 0) ? 'cursor-not-allowed' : ''}`}
             disabled={
               (direction !== 'translateTo' && translateToDue === 0) ||
@@ -220,7 +220,7 @@ const PracticeAll: React.FC = () => {
                 country={direction !== 'translateTo' ? (currentWord?.listTarget || 'de') : (currentWord?.listLanguage || 'en')}
                 size={24}
               />
-              <RightArrow size={24} className="text-white" />
+              <RightArrow size={24} className="text-foreground" />
               <FlagIcon
                 country={direction !== 'translateTo' ? (currentWord?.listLanguage || 'en') : (currentWord?.listTarget || 'de')}
                 size={24}
@@ -261,7 +261,7 @@ const PracticeAll: React.FC = () => {
             isAnswered={isAnswered}
             onDelete={() => setShowDeleteDialog(true)}
           />
-          <div className="mt-4 text-sm text-light-foreground text-center">
+          <div className="mt-4 text-sm text-tertiary-foreground text-center">
             From list: <span className="font-semibold">{currentWord.listName}</span>
           </div>
         </>
